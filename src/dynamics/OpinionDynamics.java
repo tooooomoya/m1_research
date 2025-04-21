@@ -163,7 +163,26 @@ public class OpinionDynamics {
 
             //// social rewiring
             for (int i = 0; i < agentNum; i++) {
-                int[] result = agentSet[i].rewire(agentSet);
+                
+                // follow List の作成
+                List<Integer> followList = new ArrayList<>();
+
+                for (int j = 0; j < agentNum; j++) {
+                    if (tempAdjacencyMatrix[i][j] > 0) { // iがjをフォローしている（1-hop）
+                        for (int k = 0; k < agentNum; k++) {
+                            if (tempAdjacencyMatrix[j][k] > 0 && k != i && tempAdjacencyMatrix[i][k] == 0) {
+                                // jがkをフォローしていて、iはkをフォローしていない → iにとっての2-hop先
+                                followList.add(k);
+                            }
+                        }
+                    }
+                }
+
+                // 重複を削除 (フォローしているユーザがフォローしているユーザは被る可能性がある)
+                followList = new ArrayList<>(new HashSet<>(followList));
+                
+                // rewire action
+                int[] result = agentSet[i].rewire(followList, agentSet);
                 if (result[0] != -1 && result[1] != -1) {
                     network.setEdge(i, result[1], tempAdjacencyMatrix[i][result[1]]);
                     network.setEdge(i, result[0], 0);
@@ -174,6 +193,7 @@ public class OpinionDynamics {
             ASChecker.assertionChecker(agentSet, network, agentNum, step);
             System.out.println("social rewiring finished.");
 
+            
             //// social influence
             for (int i = 0; i < agentNum; i++) {
                 agentSet[i].updateScreen(network.getAdjacencyMatrix());

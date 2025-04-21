@@ -11,14 +11,14 @@ public class Const {
 
     // follow parameter
     public static final double FOLLOW_RATE = 0.5;
-    public static final double BOUNDED_CONFIDENCE = 0.4;
 
     // unfollow parameter
     public static final double UNFOLLOW_RATE = 0.1;
-    public static final double MIN_OPINION_DIFF_TO_UNFOLLOW = 0.4;
+    //public static final double MIN_OPINION_DIFF_TO_UNFOLLOW = 0.4;
 
     // rewire parameter
-    public static final double REWIRE_RATE = 0.5;
+    public static final double REWIRE_RATE = 0.1;
+    public static final double BOUNDED_CONFIDENCE = 0.5;
 
     public static final String EDGES_FILE_PATH = "Twitter/edgesTwitter.txt";
     public static final String OPINION_FILE_PATH = "Twitter/Twitter_opinion.txt";

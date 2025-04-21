@@ -84,7 +84,7 @@ public class AdminOptim {
                     d[i] += W0[i][j]; // W0の行ごとの総和を計算
                 }
             }
-            //System.out.println("d[i]" + d[i]);
+            // System.out.println("d[i]" + d[i]);
         }
 
         // Add constraint
@@ -113,7 +113,6 @@ public class AdminOptim {
             }
         }
 
-        // オプション: ||W - W0||^2 ≤ λ^2 * ||W0||^2 の制約を追加（存在ベース）
         if (this.lambda > 0) {
             double normW0Sq = 0.0;
             for (int i = 0; i < n; i++) {
@@ -146,6 +145,20 @@ public class AdminOptim {
             model.addQConstr(diffExpr, GRB.LESS_EQUAL, rhs, "diff_norm_constraint");
         }
 
+        /*
+         * for (int i = 0; i < n; i++) {
+         * GRBQuadExpr diffExpr = new GRBQuadExpr();
+         * for (int j = 0; j < n; j++) {
+         * if (i != j) {
+         * diffExpr.addTerm(1.0, x[i][j], x[i][j]);
+         * diffExpr.addTerm(-2.0 * W0[i][j], x[i][j]);
+         * diffExpr.addConstant(W0[i][j] * W0[i][j]);
+         * }
+         * }
+         * model.addQConstr(diffExpr, GRB.LESS_EQUAL, 0.01, null);
+         * }
+         */
+
         // 最適化
         model.optimize();
         if (model.get(GRB.IntAttr.Status) != GRB.Status.OPTIMAL) {
@@ -158,6 +171,9 @@ public class AdminOptim {
             for (int j = 0; j < n; j++) {
                 if (i != j) {
                     W[i][j] = x[i][j].get(GRB.DoubleAttr.X);
+                    /*if(W[i][j] < 0.01){
+                        W[i][j] = 0.0;
+                    }*/
                 }
             }
         }

@@ -25,7 +25,7 @@ public class Agent {
     public Agent(int agentID) {
         this.id = agentID;
         // this.tolerance = rand.nextDouble(); // 0〜1 の乱数
-        this.tolerance = 0.5;
+        this.tolerance = 0.3;
         this.intrinsicOpinion = Math.max(-1.0, Math.min(1.0, rand.nextGaussian() * 0.5));
         this.opinion = this.intrinsicOpinion;
         this.screen = new int[NUM_OF_AGENTS]; // 全ユーザの中で、どのユーザの投稿を何件閲覧するかについての配列(隣接行列の行成分)
@@ -173,7 +173,7 @@ public class Agent {
         for (int i = 0; i < NUM_OF_AGENTS; i++) {
             if (this.screen[i] > 0 && this.id != i) {
                 double diff = Math.abs(this.opinion - agentSet[i].getOpinion());
-                if (diff >= Const.MIN_OPINION_DIFF_TO_UNFOLLOW) {
+                if (diff >= this.bc) {
                     unfollowCandidates.add(i);
                 }
             }
@@ -207,7 +207,7 @@ public class Agent {
         return result;
     }
 
-    public int[] rewire(Agent[] agentSet) {
+    public int[] rewire(List<Integer> followList, Agent[] agentSet) {
         int[] result = new int[2]; // result[0]が新しくフォローする人、result[1]がフォローを外す人
 
         if (rewireProbThres <= rand.nextDouble()) {
@@ -225,9 +225,17 @@ public class Agent {
                 continue; // 自分自身は対象外
 
             if (screen[i] > 0) {
-                unfollowCandidates.add(i);
-            } else if(screen[i] == 0) { // 絶対成立
-                followCandidates.add(i);
+                double diff = Math.abs(this.opinion - agentSet[i].getOpinion());
+                if (diff >= this.bc) {
+                    unfollowCandidates.add(i);
+                }
+            } else if(screen[i] == 0) { 
+                for (int id : followList) {
+                    double diff = Math.abs(this.opinion - agentSet[id].getOpinion());
+                    if (diff <= this.bc) {
+                        followCandidates.add(id);
+                    }
+                }
             }
         }
 

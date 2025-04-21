@@ -1,0 +1,617 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<gexf xmlns="http://gexf.net/1.3" version="1.3" xmlns:viz="http://gexf.net/1.3/viz" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://gexf.net/1.3 http://gexf.net/1.3/gexf.xsd">
+  <meta lastmodifieddate="2025-04-21">
+    <creator>Apache NetBeans Platform Dev (Build {0})</creator>
+    <title></title>
+    <description></description>
+  </meta>
+  <graph defaultedgetype="directed" mode="static">
+    <attributes class="node" mode="static">
+      <attribute id="opinion" title="opinion" type="double"/>
+      <attribute id="community" title="community" type="integer"/>
+    </attributes>
+    <nodes>
+      <node id="0" label="Node 0">
+        <attvalues>
+          <attvalue for="opinion" value="-0.1467285496034822"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="1" label="Node 1">
+        <attvalues>
+          <attvalue for="opinion" value="-0.27861327902183863"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="2" label="Node 2">
+        <attvalues>
+          <attvalue for="opinion" value="0.8011933191670105"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="3" label="Node 3">
+        <attvalues>
+          <attvalue for="opinion" value="0.6311957278510351"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="4" label="Node 4">
+        <attvalues>
+          <attvalue for="opinion" value="-0.8549577486484204"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="5" label="Node 5">
+        <attvalues>
+          <attvalue for="opinion" value="1.0"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="6" label="Node 6">
+        <attvalues>
+          <attvalue for="opinion" value="-0.22667266081637802"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="7" label="Node 7">
+        <attvalues>
+          <attvalue for="opinion" value="0.034117300050133324"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="8" label="Node 8">
+        <attvalues>
+          <attvalue for="opinion" value="-0.032331764461145544"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="9" label="Node 9">
+        <attvalues>
+          <attvalue for="opinion" value="-0.32265229942843254"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="10" label="Node 10">
+        <attvalues>
+          <attvalue for="opinion" value="0.9454718949512319"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="11" label="Node 11">
+        <attvalues>
+          <attvalue for="opinion" value="0.7824035517879749"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="12" label="Node 12">
+        <attvalues>
+          <attvalue for="opinion" value="-0.2867447071574168"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="13" label="Node 13">
+        <attvalues>
+          <attvalue for="opinion" value="0.5850336252504789"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="14" label="Node 14">
+        <attvalues>
+          <attvalue for="opinion" value="0.585151091346575"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="15" label="Node 15">
+        <attvalues>
+          <attvalue for="opinion" value="0.40501148391652375"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="16" label="Node 16">
+        <attvalues>
+          <attvalue for="opinion" value="-0.5196251804296715"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="17" label="Node 17">
+        <attvalues>
+          <attvalue for="opinion" value="0.16444140880280125"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="18" label="Node 18">
+        <attvalues>
+          <attvalue for="opinion" value="0.0227029518239574"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="19" label="Node 19">
+        <attvalues>
+          <attvalue for="opinion" value="-0.3710011337562911"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="20" label="Node 20">
+        <attvalues>
+          <attvalue for="opinion" value="-0.3358413635971638"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="21" label="Node 21">
+        <attvalues>
+          <attvalue for="opinion" value="-0.14721265267011013"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="22" label="Node 22">
+        <attvalues>
+          <attvalue for="opinion" value="-0.28122694816692484"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="23" label="Node 23">
+        <attvalues>
+          <attvalue for="opinion" value="0.46413898079830146"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="24" label="Node 24">
+        <attvalues>
+          <attvalue for="opinion" value="-0.6492919947329776"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="25" label="Node 25">
+        <attvalues>
+          <attvalue for="opinion" value="-0.3438753730935691"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="26" label="Node 26">
+        <attvalues>
+          <attvalue for="opinion" value="-0.6383037168394745"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="27" label="Node 27">
+        <attvalues>
+          <attvalue for="opinion" value="0.34259899208271677"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="28" label="Node 28">
+        <attvalues>
+          <attvalue for="opinion" value="-0.3687018124793918"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="29" label="Node 29">
+        <attvalues>
+          <attvalue for="opinion" value="-0.020957959061343196"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="30" label="Node 30">
+        <attvalues>
+          <attvalue for="opinion" value="0.3270607202135617"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="31" label="Node 31">
+        <attvalues>
+          <attvalue for="opinion" value="-3.1394505864788634E-4"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="32" label="Node 32">
+        <attvalues>
+          <attvalue for="opinion" value="-0.30984952480455064"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="33" label="Node 33">
+        <attvalues>
+          <attvalue for="opinion" value="-0.0012254563663194567"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="34" label="Node 34">
+        <attvalues>
+          <attvalue for="opinion" value="0.38040271636688994"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="35" label="Node 35">
+        <attvalues>
+          <attvalue for="opinion" value="0.20197852430932953"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="36" label="Node 36">
+        <attvalues>
+          <attvalue for="opinion" value="0.45671518918383647"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="37" label="Node 37">
+        <attvalues>
+          <attvalue for="opinion" value="0.5421246617499855"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="38" label="Node 38">
+        <attvalues>
+          <attvalue for="opinion" value="-0.235586510894869"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="39" label="Node 39">
+        <attvalues>
+          <attvalue for="opinion" value="-0.5711623110186226"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="40" label="Node 40">
+        <attvalues>
+          <attvalue for="opinion" value="-0.022175397207968513"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="41" label="Node 41">
+        <attvalues>
+          <attvalue for="opinion" value="-0.15116293531050984"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="42" label="Node 42">
+        <attvalues>
+          <attvalue for="opinion" value="0.6349431486195871"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="43" label="Node 43">
+        <attvalues>
+          <attvalue for="opinion" value="-0.22482071925290395"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="44" label="Node 44">
+        <attvalues>
+          <attvalue for="opinion" value="-0.1211865261995853"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="45" label="Node 45">
+        <attvalues>
+          <attvalue for="opinion" value="0.3589899888220756"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="46" label="Node 46">
+        <attvalues>
+          <attvalue for="opinion" value="0.7704306029791074"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="47" label="Node 47">
+        <attvalues>
+          <attvalue for="opinion" value="-0.5760210149522367"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="48" label="Node 48">
+        <attvalues>
+          <attvalue for="opinion" value="-0.24508825736710202"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="49" label="Node 49">
+        <attvalues>
+          <attvalue for="opinion" value="0.7857558838632738"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="50" label="Node 50">
+        <attvalues>
+          <attvalue for="opinion" value="-0.10350178319524744"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="51" label="Node 51">
+        <attvalues>
+          <attvalue for="opinion" value="-0.7584942272716362"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="52" label="Node 52">
+        <attvalues>
+          <attvalue for="opinion" value="0.9139060490224854"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="53" label="Node 53">
+        <attvalues>
+          <attvalue for="opinion" value="-0.6537142615177903"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="54" label="Node 54">
+        <attvalues>
+          <attvalue for="opinion" value="0.5362452639424621"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="55" label="Node 55">
+        <attvalues>
+          <attvalue for="opinion" value="-0.9764696406227215"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="56" label="Node 56">
+        <attvalues>
+          <attvalue for="opinion" value="-0.176123443004252"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="57" label="Node 57">
+        <attvalues>
+          <attvalue for="opinion" value="-0.498929171610284"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="58" label="Node 58">
+        <attvalues>
+          <attvalue for="opinion" value="0.21314811552748059"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="59" label="Node 59">
+        <attvalues>
+          <attvalue for="opinion" value="0.6927760920775812"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="60" label="Node 60">
+        <attvalues>
+          <attvalue for="opinion" value="-0.0912294348137959"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="61" label="Node 61">
+        <attvalues>
+          <attvalue for="opinion" value="0.16266148934731137"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="62" label="Node 62">
+        <attvalues>
+          <attvalue for="opinion" value="0.4031377938325776"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="63" label="Node 63">
+        <attvalues>
+          <attvalue for="opinion" value="-0.2078388816583484"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="64" label="Node 64">
+        <attvalues>
+          <attvalue for="opinion" value="0.7154749856352786"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="65" label="Node 65">
+        <attvalues>
+          <attvalue for="opinion" value="-0.33502474444523433"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="66" label="Node 66">
+        <attvalues>
+          <attvalue for="opinion" value="0.6826174553645923"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="67" label="Node 67">
+        <attvalues>
+          <attvalue for="opinion" value="0.23992963125863176"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="68" label="Node 68">
+        <attvalues>
+          <attvalue for="opinion" value="-0.05368470106725969"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="69" label="Node 69">
+        <attvalues>
+          <attvalue for="opinion" value="-0.7387535805013865"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="70" label="Node 70">
+        <attvalues>
+          <attvalue for="opinion" value="-0.3896571133244386"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="71" label="Node 71">
+        <attvalues>
+          <attvalue for="opinion" value="0.4057928484961964"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="72" label="Node 72">
+        <attvalues>
+          <attvalue for="opinion" value="-0.016250731044267455"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="73" label="Node 73">
+        <attvalues>
+          <attvalue for="opinion" value="0.03665103875920726"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="74" label="Node 74">
+        <attvalues>
+          <attvalue for="opinion" value="0.3272463725333679"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="75" label="Node 75">
+        <attvalues>
+          <attvalue for="opinion" value="-1.0"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="76" label="Node 76">
+        <attvalues>
+          <attvalue for="opinion" value="0.3249641653554128"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="77" label="Node 77">
+        <attvalues>
+          <attvalue for="opinion" value="-0.010341073758158978"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="78" label="Node 78">
+        <attvalues>
+          <attvalue for="opinion" value="-0.04632077492042426"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="79" label="Node 79">
+        <attvalues>
+          <attvalue for="opinion" value="-0.002435997699777433"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="80" label="Node 80">
+        <attvalues>
+          <attvalue for="opinion" value="0.5143877841979266"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="81" label="Node 81">
+        <attvalues>
+          <attvalue for="opinion" value="0.1360295931848213"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="82" label="Node 82">
+        <attvalues>
+          <attvalue for="opinion" value="1.0"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="83" label="Node 83">
+        <attvalues>
+          <attvalue for="opinion" value="-0.09213761269041074"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="84" label="Node 84">
+        <attvalues>
+          <attvalue for="opinion" value="-0.5318524071332784"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="85" label="Node 85">
+        <attvalues>
+          <attvalue for="opinion" value="-0.3771621404171169"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="86" label="Node 86">
+        <attvalues>
+          <attvalue for="opinion" value="0.8248189067011172"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="87" label="Node 87">
+        <attvalues>
+          <attvalue for="opinion" value="0.5326186462451384"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="88" label="Node 88">
+        <attvalues>
+          <attvalue for="opinion" value="-1.0"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="89" label="Node 89">
+        <attvalues>
+          <attvalue for="opinion" value="0.05498487099423564"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="90" label="Node 90">
+        <attvalues>
+          <attvalue for="opinion" value="0.9447510038115204"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="91" label="Node 91">
+        <attvalues>
+          <attvalue for="opinion" value="-0.07976387815460356"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="92" label="Node 92">
+        <attvalues>
+          <attvalue for="opinion" value="0.3377309839866775"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="93" label="Node 93">
+        <attvalues>
+          <attvalue for="opinion" value="-0.7689957335881137"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="94" label="Node 94">
+        <attvalues>
+          <attvalue for="opinion" value="-0.5886741902938927"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="95" label="Node 95">
+        <attvalues>
+          <attvalue for="opinion" value="-0.08202635314525043"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="96" label="Node 96">
+        <attvalues>
+          <attvalue for="opinion" value="-0.7286643047057113"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="97" label="Node 97">
+        <attvalues>
+          <attvalue for="opinion" value="-0.6516589866445104"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="98" label="Node 98">
+        <attvalues>
+          <attvalue for="opinion" value="0.5871570402397455"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+      <node id="99" label="Node 99">
+        <attvalues>
+          <attvalue for="opinion" value="-0.04257526481921497"/>
+          <attvalue for="community" value="-1"/>
+        </attvalues>
+      </node>
+    </nodes>
+    <edges/>
+  </graph>
+</gexf>

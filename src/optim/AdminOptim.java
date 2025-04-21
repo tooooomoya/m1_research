@@ -30,7 +30,7 @@ public class AdminOptim {
         System.out.println("the number of n: " + n);
 
         double[] opinion = new double[n];
-        for(int i = 0; i < n; i++){
+        for (int i = 0; i < n; i++) {
             opinion[i] = agentSet[i].getOpinion();
         }
         double[][] W0 = network.getAdjacencyMatrix();
@@ -61,16 +61,18 @@ public class AdminOptim {
         model.setObjective(objExpr, GRB.MINIMIZE);
 
         // 制約：各ノードの次数 <= degreeLimit（上限設定）
-        /*int degreeLimit = 10; // 適宜変更
-        for (int i = 0; i < n; i++) {
-            GRBLinExpr degreeExpr = new GRBLinExpr();
-            for (int j = 0; j < n; j++) {
-                if (i != j) {
-                    degreeExpr.addTerm(1.0, x[i][j]);
-                }
-            }
-            model.addConstr(degreeExpr, GRB.LESS_EQUAL, degreeLimit, "deg_limit_" + i);
-        }*/
+        /*
+         * int degreeLimit = 10; // 適宜変更
+         * for (int i = 0; i < n; i++) {
+         * GRBLinExpr degreeExpr = new GRBLinExpr();
+         * for (int j = 0; j < n; j++) {
+         * if (i != j) {
+         * degreeExpr.addTerm(1.0, x[i][j]);
+         * }
+         * }
+         * model.addConstr(degreeExpr, GRB.LESS_EQUAL, degreeLimit, "deg_limit_" + i);
+         * }
+         */
 
         // Add constraints sum_j x[i,j] = di : the degree of each vertex should not
         // change
@@ -82,6 +84,7 @@ public class AdminOptim {
                     d[i] += W0[i][j]; // W0の行ごとの総和を計算
                 }
             }
+            //System.out.println("d[i]" + d[i]);
         }
 
         // Add constraint
@@ -96,6 +99,18 @@ public class AdminOptim {
 
             // 制約: sum_j x[i,j] = d[i]
             model.addConstr(expr, GRB.EQUAL, d[i], "c_" + i);
+        }
+
+        // Add constraint
+        for (int i = 0; i < n; i++) {// 各ノードiに対して
+
+            for (int j = 0; j < n; j++) {
+                if (i != j && W0[i][j] == 0.0) {
+                    GRBLinExpr expr = new GRBLinExpr();
+                    expr.addTerm(1.0, x[i][j]);
+                    model.addConstr(expr, GRB.EQUAL, 0.0, "c_" + i + "_" + j);
+                }
+            }
         }
 
         // オプション: ||W - W0||^2 ≤ λ^2 * ||W0||^2 の制約を追加（存在ベース）
@@ -142,7 +157,24 @@ public class AdminOptim {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
                 if (i != j) {
-                    W[i][j] = (int) Math.round(x[i][j].get(GRB.DoubleAttr.X));
+                    W[i][j] = x[i][j].get(GRB.DoubleAttr.X);
+                }
+            }
+        }
+
+        // 各行の和で割って正規化
+        for (int i = 0; i < n; i++) {
+            double rowSum = 0.0;
+            for (int j = 0; j < n; j++) {
+                if (i != j) {
+                    rowSum += W[i][j];
+                }
+            }
+            if (rowSum > 0) {
+                for (int j = 0; j < n; j++) {
+                    if (i != j) {
+                        W[i][j] /= rowSum;
+                    }
                 }
             }
         }

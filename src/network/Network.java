@@ -3,7 +3,7 @@ package network;
 import agent.Agent;
 
 public abstract class Network {
-    private double[][] adjacencyMatrix;
+    double[][] adjacencyMatrix;
     private int size;
 
     // Constructor

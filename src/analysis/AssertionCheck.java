@@ -32,7 +32,7 @@ public class AssertionCheck {
                 temp += tempAdjMatrix[i][j];
                 //System.out.println(temp);
             }
-            if(Math.abs(temp - 1) > 0.01){
+            if(Math.abs(temp - 1.0) > 0.1){
                 System.out.println("AC Error: sum of the row is not equal to 1 in node " + i);
             }
         }

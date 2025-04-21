@@ -2,12 +2,12 @@ package constants;
 
 public class Const {
     public static final int MAX_SIMULATION_STEP = 100;
-    public static final double DYNAMIC_RATE_OF_ADMIN = 0.00;
+    public static final double DYNAMIC_RATE_OF_ADMIN = 0.05;
 
-    public static final int NUM_OF_USER = 100;
-    public static final int NUM_OF_SNS_USER = 100;
+    public static final int NUM_OF_USER = 500;
+    public static final int NUM_OF_SNS_USER = 500;
 
-    public static final double CONNECTION_PROB_OF_RANDOM_NW = 0.1;
+    public static final double CONNECTION_PROB_OF_RANDOM_NW = 0.02;
 
     // follow parameter
     public static final double FOLLOW_RATE = 0.5;

@@ -18,6 +18,7 @@ public class GraphVisualize {
     private Graph graph;
     private ExportController exportController;
 
+    // constructor
     public GraphVisualize(double lambda, Agent[] agents, Network network) {
         this.lambda = lambda;
 
@@ -55,6 +56,7 @@ public class GraphVisualize {
         for (int i = 0; i < W.length; i++) {
             for (int j = 0; j < W[i].length; j++) {
                 if (W[i][j] > 0) {
+                    //System.out.println("!!!!!!!!!!!!!!!!");
                     Edge edge = graphModel.factory().newEdge(
                             graph.getNode(String.valueOf(i)),
                             graph.getNode(String.valueOf(j)),
@@ -102,7 +104,7 @@ public class GraphVisualize {
                 Node target = graph.getNode(String.valueOf(j));
                 Edge edge = graph.getEdge(source, target);
 
-                if (newW[i][j] < 1) {
+                if (newW[i][j] == 0.0) {
                     if (edge != null) {
                         graph.removeEdge(edge);
                     }

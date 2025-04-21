@@ -4,7 +4,7 @@ import agent.Agent;
 import java.util.Random;
 
 public class RandomNetwork extends Network {
-    private double connectionProbability;  // エッジを張る確率
+    private double connectionProbability; // エッジを張る確率
 
     // Constructor
     public RandomNetwork(int size, double connectionProbability) {
@@ -29,7 +29,7 @@ public class RandomNetwork extends Network {
             }
         }
 
-        //正規化
+        // 正規化
         for (int i = 0; i < size; i++) {
             int rowSum = 0;
             for (int j = 0; j < size; j++) {
@@ -38,10 +38,13 @@ public class RandomNetwork extends Network {
             }
             if (rowSum > 0) {
                 for (int j = 0; j < size; j++) {
-                    setEdge(i, j, (double) tempMatrix[i][j] / rowSum);
+                    if (tempMatrix[i][j] > 0) {
+                        double value = (double) tempMatrix[i][j] / rowSum;
+                        setEdge(i, j, value);
+                    }
                 }
             }
         }
-        
+
     }
 }

@@ -1,5 +1,7 @@
 package writer;
 
+import agent.Agent;
+import constants.Const;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,6 +14,10 @@ public class Writer {
     private int unfollowActionNum;
     private String[] resultList;
     private int rewireActionNum;
+    private int[] postBins = new int[Const.NUM_OF_BINS_OF_POSTS];
+    private double postBinWidth;
+    private int[] opinionBins = new int[Const.NUM_OF_BINS_OF_OPINION];
+    private double opinionBinWidth;
 
     public Writer(String folderPath, String[] resultList) {
         this.simulationStep = -1;
@@ -21,6 +27,8 @@ public class Writer {
         this.unfollowActionNum = 0;
         this.rewireActionNum = 0;
         this.resultList = resultList;
+        this.postBinWidth = 2.0 / postBins.length;
+        this.opinionBinWidth = 2.0 / opinionBins.length;
     }
 
     // Setter
@@ -33,19 +41,39 @@ public class Writer {
         this.opinionVar = var;
     }
 
-    public void setRewireActionNum(int value){
+    public void setRewireActionNum(int value) {
         this.rewireActionNum = value;
     }
 
-    public void setFollowUnfollowActionNum(int followActionNum, int unfollowActionNum){
+    public void setFollowUnfollowActionNum(int followActionNum, int unfollowActionNum) {
         this.followActionNum = followActionNum;
         this.unfollowActionNum = unfollowActionNum;
+    }
+
+    public void setPostBins(Agent[] agentSet) {
+        for(int i = 0; i < postBins.length; i++){
+            postBins[i] = 0;
+        }
+        for (Agent agentSet1 : agentSet) {
+            double shiftedOpinion = agentSet1.getOpinion() + 1; // [-1,1] → [0,2]
+            int binIndex = (int) Math.min(shiftedOpinion / postBinWidth, postBins.length - 1);
+            postBins[binIndex] += agentSet1.getToPost();
+        }
+    }
+
+    public void setOpinionBins(Agent[] agentSet){
+        for(int i = 0; i < opinionBins.length; i++){
+            opinionBins[i] = 0;
+        }
+        for(Agent agent : agentSet){
+            this.opinionBins[agent.getOpinionClass()] += 1;
+        }
     }
 
     // 結果を書き出すメソッド
 
     public void write() {
-        String filePath = folderPath + "/metrics/result_" + simulationStep +".csv";
+        String filePath = folderPath + "/metrics/result_" + simulationStep + ".csv";
 
         try (PrintWriter pw = new PrintWriter(new FileWriter(filePath, false))) { // ← false で上書きモード
             // ヘッダーを書き込む
@@ -82,6 +110,62 @@ public class Writer {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        String postsFilePath = folderPath + "/posts/post_result_" + simulationStep + ".csv";
+
+        try (PrintWriter pw = new PrintWriter(new FileWriter(postsFilePath, false))) { // 上書きモード
+            // ヘッダーを書き込む
+            StringBuilder header = new StringBuilder();
+            header.append("step");
+            
+            for (int i = 0; i < postBins.length; i++) {
+                header.append(",bin_").append(i);
+            }
+            header.append(",sumOfPosts");
+            pw.println(header.toString());
+        
+            // データ行を書き込む
+            StringBuilder sb = new StringBuilder();
+            sb.append(simulationStep); // ステップ番号
+            int sumOfPosts = 0;
+        
+            for (int i = 0; i < postBins.length; i++) {
+                sb.append(",").append(postBins[i]);
+                sumOfPosts += postBins[i];
+            }
+            sb.append(",").append(sumOfPosts);
+        
+            pw.println(sb.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        String opinionFilePath = folderPath + "/opinion/opinion_result_" + simulationStep + ".csv";
+
+        try (PrintWriter pw = new PrintWriter(new FileWriter(opinionFilePath, false))) { // 上書きモード
+            // ヘッダーを書き込む
+            StringBuilder header = new StringBuilder();
+            header.append("step");
+            
+            for (int i = 0; i < opinionBins.length; i++) {
+                header.append(",bin_").append(i);
+            }
+            pw.println(header.toString());
+        
+            // データ行を書き込む
+            StringBuilder sb = new StringBuilder();
+            sb.append(simulationStep); // ステップ番号
+        
+            for (int i = 0; i < opinionBins.length; i++) {
+                sb.append(",").append(opinionBins[i]);
+            }
+        
+            pw.println(sb.toString());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+
     }
 
 }

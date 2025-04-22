@@ -81,6 +81,7 @@ public class OpinionDynamics {
         analyzer.computeVariance(agentSet);
         writer.setSimulationStep(0);
         writer.setOpinionVar(analyzer.getOpinionVar());
+        writer.setOpinionBins(agentSet);
         writer.write();
 
         for (int step = 1; step <= t; step++) {
@@ -194,6 +195,12 @@ public class OpinionDynamics {
             System.out.println("social rewiring finished.");
 
             
+            /// decide whether to post
+            for( int i = 0; i < agentNum; i++){
+                agentSet[i].decideToPost(agentSet);
+            }
+
+
             //// social influence
             for (int i = 0; i < agentNum; i++) {
                 agentSet[i].updateScreen(network.getAdjacencyMatrix());
@@ -215,6 +222,8 @@ public class OpinionDynamics {
             writer.setOpinionVar(analyzer.getOpinionVar());
             writer.setFollowUnfollowActionNum(followActionNum, unfollowActionNum);
             writer.setRewireActionNum(rewireActionNum);
+            writer.setPostBins(agentSet);
+            writer.setOpinionBins(agentSet);
             writer.write();
         }
     }

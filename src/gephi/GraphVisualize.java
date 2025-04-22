@@ -45,11 +45,17 @@ public class GraphVisualize {
             graphModel.getNodeTable().addColumn("community", Integer.class);
         }
 
+        Column opinionClass  = graphModel.getNodeTable().getColumn("opinionClass");
+        if(opinionClass == null){
+            graphModel.getNodeTable().addColumn("opinionClass", Integer.class);
+        }
+
         for (int i = 0; i < nodeCount; i++) {
             Node node = graphModel.factory().newNode(String.valueOf(i));
             node.setLabel("Node " + i);
             node.setAttribute("opinion", agents[i].getOpinion());
             node.setAttribute("community", -1);
+            node.setAttribute("opinionClass", agents[i].getOpinionClass());
             graph.addNode(node);
         }
 

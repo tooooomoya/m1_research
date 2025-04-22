@@ -1,4 +1,3 @@
-results/GEXF
-results/metrics
+results/
 bin/
 *.log

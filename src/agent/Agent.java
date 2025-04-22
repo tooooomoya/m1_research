@@ -18,20 +18,23 @@ public class Agent {
     private final double followProbThres = Const.FOLLOW_RATE;
     private final double unfollowProbThres = Const.UNFOLLOW_RATE;
     private double postDrive; // 投稿意欲を表現するパラメータ [0,1]
+    private int toPost; // ある時刻において何件の投稿をするか
     private int numOfPosts = rand.nextInt(100); // 毎時何件の投稿を閲覧できるか
     private final double rewireProbThres = Const.REWIRE_RATE;
+    private int opinionClass;
 
     // constructor
     public Agent(int agentID) {
         this.id = agentID;
         // this.tolerance = rand.nextDouble(); // 0〜1 の乱数
         this.tolerance = 0.3;
-        this.intrinsicOpinion = Math.max(-1.0, Math.min(1.0, rand.nextGaussian() * 0.5));
+        this.intrinsicOpinion = Math.max(-1.0, Math.min(1.0, rand.nextGaussian() * 0.25));
         this.opinion = this.intrinsicOpinion;
         this.screen = new int[NUM_OF_AGENTS]; // 全ユーザの中で、どのユーザの投稿を何件閲覧するかについての配列(隣接行列の行成分)
         this.bc = Const.BOUNDED_CONFIDENCE; // 動的にしてもよい。
-        this.postDrive = rand.nextDouble();
+        this.postDrive = 0.0;
         // this.numOfPosts = rand.nextInt(100);
+        setOpinionClass();
     }
 
     // getter methods
@@ -52,6 +55,14 @@ public class Agent {
         return this.numOfPosts;
     }
 
+    public int getToPost() {
+        return this.toPost;
+    }
+
+    public int getOpinionClass(){
+        return this.opinionClass;
+    }
+
     // setter methods
 
     public void setOpinion(double value) {
@@ -66,8 +77,18 @@ public class Agent {
         this.intrinsicOpinion = value;
     }
 
-    public void setNumOfPosts(int value){
+    public void setNumOfPosts(int value) {
         this.numOfPosts = value;
+    }
+
+    public void setToPost(int value) {
+        this.toPost = value;
+    }
+
+    public void setOpinionClass(){
+        double shiftedOpinion = this.opinion + 1; // [-1,1] → [0,2]
+        double opinionBinWidth = 2.0 / Const.NUM_OF_BINS_OF_OPINION;
+        this.opinionClass = (int) Math.min(shiftedOpinion / opinionBinWidth, Const.NUM_OF_BINS_OF_OPINION - 1);
     }
 
     // other methods
@@ -83,13 +104,15 @@ public class Agent {
         double[] weight = Network.getAdjacencyMatrix()[this.id].clone();
 
         for (int i = 0; i < NUM_OF_AGENTS; i++) {
-            temp += weight[i] * allAgents[i].getOpinion();
+            if (allAgents[i].getToPost() > 0) { // その人が投稿した場合だけ、投稿を見て影響を受ける。そもそも投稿しないなら影響０
+                temp += weight[i] * allAgents[i].getOpinion();
+            }
         }
 
         // 意見の加重平均（スクリーンに誰もいない場合は intrinsicOpinion のみ）
         if (temp == 0.0) {
             this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * this.opinion;
-            System.out.println("user " + this.id + " has not read any posts as he follows nobody.");
+            System.out.println("user " + this.id + " has not read any posts"); // 誰もフォローしてないか、それとも誰も投稿してないか
         } else {
             this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * temp;
             // System.out.println("\nupdated opinion: " + this.opinion);
@@ -100,6 +123,8 @@ public class Agent {
         } else if (this.opinion > 1) {
             this.opinion = 1;
         }
+
+        setOpinionClass();
 
         // System.out.println("clipped updated opinion" + this.opinion);
     }
@@ -198,7 +223,7 @@ public class Agent {
                 int increaseId = increaseCandidates.get(rand.nextInt(increaseCandidates.size()));
                 this.screen[increaseId] += result[2];
                 result[1] = increaseId;
-            }else{
+            } else {
                 result[0] = -1;
                 result[1] = -1;
             }
@@ -229,7 +254,7 @@ public class Agent {
                 if (diff >= this.bc) {
                     unfollowCandidates.add(i);
                 }
-            } else if(screen[i] == 0) { 
+            } else if (screen[i] == 0) {
                 for (int id : followList) {
                     double diff = Math.abs(this.opinion - agentSet[id].getOpinion());
                     if (diff <= this.bc) {
@@ -248,7 +273,7 @@ public class Agent {
             screen[followId] = screen[unfollowId];
             // アンフォロー
             screen[unfollowId] = 0;
-            
+
             result[0] = followId;
             result[1] = unfollowId;
         } else {
@@ -258,6 +283,34 @@ public class Agent {
         }
 
         return result;
+    }
+
+    public int decideToPost(Agent[] agentSet) { // 自身が見ているscreenの状況によって、投稿するかどうかを決定する
+        int n = screen.length;
+
+        // たまに周囲の状況とは無関係に投稿する
+        if (0.1 >= rand.nextDouble()) {
+            this.toPost = 1;
+            return this.toPost;
+        }
+
+        // 周りに同じ意見の人がどのくらいいるかで決定
+        int numOfComfortPost = 0;
+        for (int i = 0; i < n; i++) {
+            if (this.screen[i] > 0 && Math.abs(agentSet[i].getOpinion() - this.opinion) < 0.2) {
+                numOfComfortPost += this.screen[i];
+            }
+        }
+        double comfortRate = (double) numOfComfortPost / this.numOfPosts;
+        if (comfortRate > 0.2) {
+            this.postDrive += comfortRate * 0.1;
+        }
+        if (this.postDrive > 0.5) {
+            this.toPost = 1;
+        } else {
+            this.toPost = 0;
+        }
+        return this.toPost;
     }
 
 }

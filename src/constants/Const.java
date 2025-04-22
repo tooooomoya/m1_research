@@ -22,7 +22,7 @@ public class Const {
 
     // rewire parameter
     public static final double REWIRE_RATE = 0.1;
-    public static final double BOUNDED_CONFIDENCE = 0.5;
+    public static final double BOUNDED_CONFIDENCE = 0.7;
 
     // input data parameter
     public static final String EDGES_FILE_PATH = "Twitter/edgesTwitter.txt";

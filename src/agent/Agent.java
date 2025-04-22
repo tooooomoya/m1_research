@@ -27,8 +27,8 @@ public class Agent {
     public Agent(int agentID) {
         this.id = agentID;
         // this.tolerance = rand.nextDouble(); // 0〜1 の乱数
-        this.tolerance = 0.3;
-        this.intrinsicOpinion = Math.max(-1.0, Math.min(1.0, rand.nextGaussian() * 0.25));
+        this.tolerance = 0.4;
+        this.intrinsicOpinion = Math.max(-1.0, Math.min(1.0, rand.nextGaussian() * 0.5));
         this.opinion = this.intrinsicOpinion;
         this.screen = new int[NUM_OF_AGENTS]; // 全ユーザの中で、どのユーザの投稿を何件閲覧するかについての配列(隣接行列の行成分)
         this.bc = Const.BOUNDED_CONFIDENCE; // 動的にしてもよい。
@@ -112,7 +112,7 @@ public class Agent {
         // 意見の加重平均（スクリーンに誰もいない場合は intrinsicOpinion のみ）
         if (temp == 0.0) {
             this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * this.opinion;
-            System.out.println("user " + this.id + " has not read any posts"); // 誰もフォローしてないか、それとも誰も投稿してないか
+            //System.out.println("user " + this.id + " has not read any posts"); // 誰もフォローしてないか、それとも誰も投稿してないか
         } else {
             this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * temp;
             // System.out.println("\nupdated opinion: " + this.opinion);
@@ -303,10 +303,11 @@ public class Agent {
         }
         double comfortRate = (double) numOfComfortPost / this.numOfPosts;
         if (comfortRate > 0.2) {
-            this.postDrive += comfortRate * 0.1;
+            this.postDrive += comfortRate * 0.05;
         }
         if (this.postDrive > 0.5) {
             this.toPost = 1;
+            this.postDrive = 0;
         } else {
             this.toPost = 0;
         }

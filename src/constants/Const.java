@@ -2,7 +2,7 @@ package constants;
 
 public class Const {
     // simulation parameter
-    public static final int MAX_SIMULATION_STEP = 500;
+    public static final int MAX_SIMULATION_STEP = 1000;
     public static final double DYNAMIC_RATE_OF_ADMIN = 0.01;
     public static final int NUM_OF_USER = 200;
     public static final int NUM_OF_SNS_USER = 200;

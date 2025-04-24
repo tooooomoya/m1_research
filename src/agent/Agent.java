@@ -27,7 +27,7 @@ public class Agent {
     public Agent(int agentID) {
         this.id = agentID;
         // this.tolerance = rand.nextDouble(); // 0〜1 の乱数
-        this.tolerance = 0.8;
+        this.tolerance = 0.7;
         this.intrinsicOpinion = Math.max(-1.0, Math.min(1.0, rand.nextGaussian() * 0.5));
         // this.intrinsicOpinion = rand.nextDouble() * 2.0 - 1;
         this.opinion = this.intrinsicOpinion;

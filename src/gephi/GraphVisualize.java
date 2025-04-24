@@ -101,6 +101,7 @@ public class GraphVisualize {
             Node node = graph.getNode(String.valueOf(i));
             if (node != null) {
                 node.setAttribute("opinion", agents[i].getOpinion());
+                node.setAttribute("opinionClass", agents[i].getOpinionClass());
             }
         }
 

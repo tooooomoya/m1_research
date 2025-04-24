@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
-def read_and_accumulate_bins(data_dir, max_index=99):
+def read_and_accumulate_bins(data_dir, max_index=500):
     bins = ['bin_0', 'bin_1', 'bin_2', 'bin_3', 'bin_4']
     cumulative_counts = {bin_name: [] for bin_name in bins}
     current_cumulative = {bin_name: 0 for bin_name in bins}
@@ -25,7 +25,7 @@ def read_and_accumulate_bins(data_dir, max_index=99):
                 cumulative_counts[bin_name].append(current_cumulative[bin_name])
             
             x.append(i)
-            print(f"[{i:02d}] 読み込み完了: {filename}")
+            #print(f"[{i:02d}] 読み込み完了: {filename}")
         except Exception as e:
             print(f"[{i:02d}] エラー発生: {e}")
 
@@ -54,7 +54,7 @@ def plot_cumulative_bins(x, cumulative_counts):
     output_path = "cumulative_bins.png"
     plt.savefig(output_path)
     print(f"✅ プロット画像を保存しました: {output_path}")
-    plt.show()
+    #plt.show()
 
 def main():
     data_dir = "./results/posts"  # ← ディレクトリパスを修正

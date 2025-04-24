@@ -19,7 +19,7 @@ public class Agent {
     private final double unfollowProbThres = Const.UNFOLLOW_RATE;
     private double postDrive; // 投稿意欲を表現するパラメータ [0,1]
     private int toPost; // ある時刻において何件の投稿をするか
-    private int numOfPosts = rand.nextInt(100); // 毎時何件の投稿を閲覧できるか
+    private int numOfPosts = rand.nextInt(90) + 10; // 毎時何件の投稿を閲覧できるか
     private final double rewireProbThres = Const.REWIRE_RATE;
     private int opinionClass;
 
@@ -27,8 +27,9 @@ public class Agent {
     public Agent(int agentID) {
         this.id = agentID;
         // this.tolerance = rand.nextDouble(); // 0〜1 の乱数
-        this.tolerance = 0.4;
+        this.tolerance = 0.8;
         this.intrinsicOpinion = Math.max(-1.0, Math.min(1.0, rand.nextGaussian() * 0.5));
+        // this.intrinsicOpinion = rand.nextDouble() * 2.0 - 1;
         this.opinion = this.intrinsicOpinion;
         this.screen = new int[NUM_OF_AGENTS]; // 全ユーザの中で、どのユーザの投稿を何件閲覧するかについての配列(隣接行列の行成分)
         this.bc = Const.BOUNDED_CONFIDENCE; // 動的にしてもよい。
@@ -59,8 +60,12 @@ public class Agent {
         return this.toPost;
     }
 
-    public int getOpinionClass(){
+    public int getOpinionClass() {
         return this.opinionClass;
+    }
+
+    public double getBc(){
+        return this.bc;
     }
 
     // setter methods
@@ -85,7 +90,7 @@ public class Agent {
         this.toPost = value;
     }
 
-    public void setOpinionClass(){
+    public void setOpinionClass() {
         double shiftedOpinion = this.opinion + 1; // [-1,1] → [0,2]
         double opinionBinWidth = 2.0 / Const.NUM_OF_BINS_OF_OPINION;
         this.opinionClass = (int) Math.min(shiftedOpinion / opinionBinWidth, Const.NUM_OF_BINS_OF_OPINION - 1);
@@ -104,7 +109,7 @@ public class Agent {
         double[] weight = Network.getAdjacencyMatrix()[this.id].clone();
 
         for (int i = 0; i < NUM_OF_AGENTS; i++) {
-            if (allAgents[i].getToPost() > 0) { // その人が投稿した場合だけ、投稿を見て影響を受ける。そもそも投稿しないなら影響０
+            if (allAgents[i].getToPost() > 0 && screen[i] > 0) { // その人が投稿した場合だけ、投稿を見て影響を受ける。そもそも投稿しないなら影響０
                 temp += weight[i] * allAgents[i].getOpinion();
             }
         }
@@ -112,9 +117,11 @@ public class Agent {
         // 意見の加重平均（スクリーンに誰もいない場合は intrinsicOpinion のみ）
         if (temp == 0.0) {
             this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * this.opinion;
-            //System.out.println("user " + this.id + " has not read any posts"); // 誰もフォローしてないか、それとも誰も投稿してないか
+            // System.out.println("user " + this.id + " has not read any posts"); //
+            // 誰もフォローしてないか、それとも誰も投稿してないか
         } else {
             this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * temp;
+            // System.out.println("influencial opinion score : "+ temp);
             // System.out.println("\nupdated opinion: " + this.opinion);
         }
 
@@ -237,6 +244,7 @@ public class Agent {
 
         if (rewireProbThres <= rand.nextDouble()) {
             result[0] = -1;
+            result[1] = -1;
             return result;
         }
 
@@ -254,13 +262,13 @@ public class Agent {
                 if (diff >= this.bc) {
                     unfollowCandidates.add(i);
                 }
-            } else if (screen[i] == 0) {
-                for (int id : followList) {
-                    double diff = Math.abs(this.opinion - agentSet[id].getOpinion());
-                    if (diff <= this.bc) {
-                        followCandidates.add(id);
-                    }
-                }
+            }
+        }
+
+        for (int candidateId : followList) {
+            double diff = Math.abs(this.opinion - agentSet[candidateId].getOpinion());
+            if (diff <= this.bc) {
+                followCandidates.add(candidateId);
             }
         }
 
@@ -276,6 +284,11 @@ public class Agent {
 
             result[0] = followId;
             result[1] = unfollowId;
+            if (this.bc > Const.MINIMUM_BC + 0.01) {
+                this.bc -= 0.01;
+                // System.out.println("bc is reduced to : " + this.bc + ", whose opinion is " +
+                // this.opinion);
+            }
         } else {
             // どちらか一方の候補がいなければ、リワイヤリングできない
             result[0] = -1;
@@ -297,15 +310,15 @@ public class Agent {
         // 周りに同じ意見の人がどのくらいいるかで決定
         int numOfComfortPost = 0;
         for (int i = 0; i < n; i++) {
-            if (this.screen[i] > 0 && Math.abs(agentSet[i].getOpinion() - this.opinion) < 0.2) {
+            if (this.screen[i] > 0 && Math.abs(agentSet[i].getOpinion() - this.opinion) < Const.MINIMUM_BC) {
                 numOfComfortPost += this.screen[i];
             }
         }
         double comfortRate = (double) numOfComfortPost / this.numOfPosts;
-        if (comfortRate > 0.2) {
-            this.postDrive += comfortRate * 0.05;
+        if (comfortRate > 0.8) {
+            this.postDrive += comfortRate;
         }
-        if (this.postDrive > 0.5) {
+        if (this.postDrive > 0.8) {
             this.toPost = 1;
             this.postDrive = 0;
         } else {

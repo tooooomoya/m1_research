@@ -1,6 +1,6 @@
 package dynamics;
 
-import agent.Agent;
+import agent.*;
 import analysis.*;
 import constants.Const;
 import gephi.GraphVisualize;
@@ -216,10 +216,19 @@ public class OpinionDynamics {
 
             /// decide whether to post
             for (int i = 0; i < agentNum; i++) {
-                agentSet[i].decideToPost(agentSet);
+                Post post = agentSet[i].makePost(agentSet, step);
+                if(post == null){
+                    continue;
+                }
+                for(int j = 0 ; j < agentNum; j++){
+                    if(tempAdjacencyMatrix[i][j] > 0.0){
+                        agentSet[i].setPostCash(post);
+                    }
+                }
             }
 
             //// social influence
+            // screen[i]はAdminによって決められるiに対する投稿閲覧数上限
             for (int i = 0; i < agentNum; i++) {
                 agentSet[i].updateScreen(network.getAdjacencyMatrix(), agentSet);
             }

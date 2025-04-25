@@ -6,6 +6,7 @@ public class Const {
     public static final double DYNAMIC_RATE_OF_ADMIN = 0.01;
     public static final int NUM_OF_USER = 200;
     public static final int NUM_OF_SNS_USER = 200;
+    public static final int RANDOM_SEED = 1;
 
     // Admin feedback parameter
     public static final double FEEDBACK_INCREASE_WEIGHT = 0.1;

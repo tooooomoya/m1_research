@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import network.Network;
+import rand.randomGenerater;
 
 public class Agent {
     private int id;
@@ -14,14 +15,16 @@ public class Agent {
     private int[] screen;
     private double intrinsicOpinion;
     private final int NUM_OF_AGENTS = Const.NUM_OF_SNS_USER;
-    private static final Random rand = new Random();
+    private static final Random rand = randomGenerater.rand;
     private final double followProbThres = Const.FOLLOW_RATE;
     private final double unfollowProbThres = Const.UNFOLLOW_RATE;
     private double postDrive; // 投稿意欲を表現するパラメータ [0,1]
     private int toPost; // ある時刻において何件の投稿をするか
-    private int numOfPosts = rand.nextInt(90) + 10; // 毎時何件の投稿を閲覧できるか
+    private int numOfPosts = rand.nextInt(90) + 10; // 一度に何件の投稿を閲覧できるか
     private final double rewireProbThres = Const.REWIRE_RATE;
     private int opinionClass;
+    private PostCash postCash;
+    private double postProb;
 
     // constructor
     public Agent(int agentID) {
@@ -36,6 +39,8 @@ public class Agent {
         this.postDrive = 0.0;
         // this.numOfPosts = rand.nextInt(100);
         setOpinionClass();
+        this.postCash = new PostCash(numOfPosts);
+        this.postProb = 0.1;
     }
 
     // getter methods
@@ -96,6 +101,10 @@ public class Agent {
         this.opinionClass = (int) Math.min(shiftedOpinion / opinionBinWidth, Const.NUM_OF_BINS_OF_OPINION - 1);
     }
 
+    public void setPostCash(Post post) {
+        this.postCash.addPost(post);
+    }
+
     // other methods
 
     public void updateScreen(double[][] adjacencyMatrix, Agent[] agentSet) {
@@ -108,9 +117,49 @@ public class Agent {
         }
     }
 
-    public void updateOpinion(Agent[] allAgents, Network Network) {
+    public void pastupdateOpinion(Agent[] allAgents, Network Network) {
         double temp = 0.0;
         double[] weight = Network.getAdjacencyMatrix()[this.id].clone();
+
+        for (int i = 0; i < NUM_OF_AGENTS; i++) {
+            if (allAgents[i].getToPost() > 0 && screen[i] > 0) { // その人が投稿した場合だけ、投稿を見て影響を受ける。そもそも投稿しないなら影響０
+                temp += weight[i] * allAgents[i].getOpinion();
+            }
+        }
+
+        // 意見の加重平均（スクリーンに誰もいない場合は intrinsicOpinion のみ）
+        if (temp == 0.0) {
+            this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * this.opinion;
+            // System.out.println("user " + this.id + " has not read any posts"); //
+            // 誰もフォローしてないか、それとも誰も投稿してないか
+        } else {
+            this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * temp;
+            // System.out.println("influencial opinion score : "+ temp);
+            // System.out.println("\nupdated opinion: " + this.opinion);
+        }
+
+        if (this.opinion < -1) {
+            this.opinion = -1;
+        } else if (this.opinion > 1) {
+            this.opinion = 1;
+        }
+
+        setOpinionClass();
+
+        // System.out.println("clipped updated opinion" + this.opinion);
+    }
+
+    public void updateOpinion(Agent[] allAgents, Network Network) {
+        if(rand.nextDouble() > 0.1){
+            return;
+        }
+
+        double temp = 0.0;
+        double[] weight = Network.getAdjacencyMatrix()[this.id].clone(); 
+        // 隣接行列の値はあくまで閲覧度の上限である。投稿数が上限に満たない場合は、その投稿数に応じた影響しか受けない
+        // 実質的にはscreenの整数配列が閲覧投稿数の上限配列
+        int cashSize = this.postCash.getSize();
+
 
         for (int i = 0; i < NUM_OF_AGENTS; i++) {
             if (allAgents[i].getToPost() > 0 && screen[i] > 0) { // その人が投稿した場合だけ、投稿を見て影響を受ける。そもそも投稿しないなら影響０
@@ -302,25 +351,24 @@ public class Agent {
         return result;
     }
 
-    public int decideToPost(Agent[] agentSet) { // 自身が見ているscreenの状況によって、投稿するかどうかを決定する
+    public Post make(Agent[] agentSet, int step) { // 自身が見ているscreenの状況によって、投稿するかどうかを決定する
         int n = screen.length;
 
         // たまに周囲の状況とは無関係に投稿する
         if (0.1 >= rand.nextDouble()) {
-            this.toPost = 1;
-            return this.toPost;
+            return new Post(this.id, this.opinion, step);
         }
 
         // 周りに同じ意見の人がどのくらいいるかで決定
         int numOfComfortPost = 0;
         int numOfWatchedPost = 0;
         for (int i = 0; i < n; i++) {
-             if (this.screen[i] > 0 && Math.abs(agentSet[i].getOpinion() - this.opinion) <
-             Const.MINIMUM_BC) {
-            //if (this.screen[i] > 0 && Math.abs(agentSet[i].getOpinion() - this.opinion) < this.bc) {
+            if (this.screen[i] > 0 && Math.abs(agentSet[i].getOpinion() - this.opinion) < Const.MINIMUM_BC) {
+                // if (this.screen[i] > 0 && Math.abs(agentSet[i].getOpinion() - this.opinion) <
+                // this.bc) {
                 numOfComfortPost += this.screen[i];
             }
-            if(this.screen[i] > 0){
+            if (this.screen[i] > 0) {
                 numOfWatchedPost += this.screen[i];
             }
         }
@@ -335,18 +383,48 @@ public class Agent {
         } else {
             this.toPost = 0;
         }
-        return this.toPost;
+        return new Post(this.id, this.opinion, step);
+    }
+
+    public Post makePost(Agent[] agentSet, int step) { // 自身が見ているscreenの状況によって、投稿するかどうかを決定する
+        int n = screen.length;
+
+        // たまに周囲の状況とは無関係に投稿する
+        if (0.1 >= rand.nextDouble()) {
+            return new Post(this.id, this.opinion, step);
+        }
+
+        // 周りに同じ意見の人がどのくらいいるかで決定
+        int numOfComfortPost = 0;
+        int numOfWatchedPost = 0;
+        for (int i = 0; i < n; i++) {
+            if (this.screen[i] > 0 && Math.abs(agentSet[i].getOpinion() - this.opinion) < Const.MINIMUM_BC) {
+                // if (this.screen[i] > 0 && Math.abs(agentSet[i].getOpinion() - this.opinion) <
+                // this.bc) {
+                numOfComfortPost += this.screen[i];
+            }
+            if (this.screen[i] > 0) {
+                numOfWatchedPost += this.screen[i];
+            }
+        }
+        double comfortRate = (double) numOfComfortPost / numOfWatchedPost;
+        this.postProb += comfortRate;
+        if (this.postProb > rand.nextDouble()) {
+            return new Post(this.id, this.opinion, step);
+        } else {
+            return null;
+        }
     }
 
     public int decideToPostBasedVar(Agent[] agentSet) {
         int n = screen.length;
-    
+
         // 偶発的な投稿
         if (0.1 >= rand.nextDouble()) {
             this.toPost = 1;
             return this.toPost;
         }
-    
+
         // 意見分散に基づく判断
         int numOfWatchedPost = 0;
         double weightedSum = 0.0;
@@ -356,12 +434,12 @@ public class Agent {
                 weightedSum += this.screen[i] * agentSet[i].getOpinion();
             }
         }
-    
+
         if (numOfWatchedPost == 0) {
             this.toPost = 0;
             return this.toPost;
         }
-    
+
         double mean = weightedSum / numOfWatchedPost;
         double var = 0.0;
         for (int i = 0; i < n; i++) {
@@ -371,26 +449,25 @@ public class Agent {
             }
         }
         var /= numOfWatchedPost;
-    
-        //System.out.println("my var is " + var + ", opinion " + this.opinion);
-        if(var == 0.0){
-          //  System.out.println("num post " + numOfWatchedPost);
+
+        // System.out.println("my var is " + var + ", opinion " + this.opinion);
+        if (var == 0.0) {
+            // System.out.println("num post " + numOfWatchedPost);
         }
-    
+
         if (var < 0.01) {
             this.postDrive += 1;
         }
-    
+
         if (this.postDrive > 10.0) {
-            this.toPost = 10; // → 定数化してもよい
+            this.toPost = 3; // → 定数化してもよい
             this.postDrive = 0;
             System.out.println("comfort post !!!!!!!!!!!! : my opinion is " + this.opinion);
         } else {
             this.toPost = 0;
         }
-    
+
         return this.toPost;
     }
-    
 
 }

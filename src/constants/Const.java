@@ -13,7 +13,7 @@ public class Const {
     public static final double UNACCEPTABLE_BOUNDED_CONFIDENCE = 0.7;
 
     // network parameter
-    public static final double CONNECTION_PROB_OF_RANDOM_NW = 0.1;
+    public static final double CONNECTION_PROB_OF_RANDOM_NW = 0.2;
 
     // follow parameter
     public static final double FOLLOW_RATE = 0.5;

@@ -28,7 +28,7 @@ public class Agent {
         this.id = agentID;
         // this.tolerance = rand.nextDouble(); // 0〜1 の乱数
         this.tolerance = 0.8;
-        this.intrinsicOpinion = Math.max(-1.0, Math.min(1.0, rand.nextGaussian() * 0.5));
+        this.intrinsicOpinion = Math.max(-1.0, Math.min(1.0, rand.nextGaussian() * 0.6));
         // this.intrinsicOpinion = rand.nextDouble() * 2.0 - 1;
         this.opinion = this.intrinsicOpinion;
         this.screen = new int[NUM_OF_AGENTS]; // 全ユーザの中で、どのユーザの投稿を何件閲覧するかについての配列(隣接行列の行成分)
@@ -64,7 +64,7 @@ public class Agent {
         return this.opinionClass;
     }
 
-    public double getBc(){
+    public double getBc() {
         return this.bc;
     }
 
@@ -98,9 +98,13 @@ public class Agent {
 
     // other methods
 
-    public void updateScreen(double[][] adjacencyMatrix) {
+    public void updateScreen(double[][] adjacencyMatrix, Agent[] agentSet) {
         for (int i = 0; i < NUM_OF_AGENTS; i++) {
             this.screen[i] = (int) Math.round(this.numOfPosts * adjacencyMatrix[this.id][i]);
+            int posts = agentSet[i].getToPost();
+            if (this.screen[i] > posts) {
+                this.screen[i] = posts;
+            }
         }
     }
 
@@ -285,7 +289,7 @@ public class Agent {
             result[0] = followId;
             result[1] = unfollowId;
             if (this.bc > Const.MINIMUM_BC + 0.01) {
-                this.bc -= 0.01;
+                this.bc -= 0.05;
                 // System.out.println("bc is reduced to : " + this.bc + ", whose opinion is " +
                 // this.opinion);
             }
@@ -309,22 +313,84 @@ public class Agent {
 
         // 周りに同じ意見の人がどのくらいいるかで決定
         int numOfComfortPost = 0;
+        int numOfWatchedPost = 0;
         for (int i = 0; i < n; i++) {
-            if (this.screen[i] > 0 && Math.abs(agentSet[i].getOpinion() - this.opinion) < Const.MINIMUM_BC) {
+             if (this.screen[i] > 0 && Math.abs(agentSet[i].getOpinion() - this.opinion) <
+             Const.MINIMUM_BC) {
+            //if (this.screen[i] > 0 && Math.abs(agentSet[i].getOpinion() - this.opinion) < this.bc) {
                 numOfComfortPost += this.screen[i];
             }
+            if(this.screen[i] > 0){
+                numOfWatchedPost += this.screen[i];
+            }
         }
-        double comfortRate = (double) numOfComfortPost / this.numOfPosts;
+        double comfortRate = (double) numOfComfortPost / numOfWatchedPost;
         if (comfortRate > 0.8) {
-            this.postDrive += comfortRate;
+            this.postDrive += 1;
         }
-        if (this.postDrive > 0.8) {
-            this.toPost = 1;
+        if (this.postDrive > 10.0) {
+            this.toPost = 10;
             this.postDrive = 0;
+            System.out.println("comfort post !!!!!!!!!!!! : my opinion is " + this.opinion);
         } else {
             this.toPost = 0;
         }
         return this.toPost;
     }
+
+    public int decideToPostBasedVar(Agent[] agentSet) {
+        int n = screen.length;
+    
+        // 偶発的な投稿
+        if (0.1 >= rand.nextDouble()) {
+            this.toPost = 1;
+            return this.toPost;
+        }
+    
+        // 意見分散に基づく判断
+        int numOfWatchedPost = 0;
+        double weightedSum = 0.0;
+        for (int i = 0; i < n; i++) {
+            if (this.screen[i] > 0) {
+                numOfWatchedPost += this.screen[i];
+                weightedSum += this.screen[i] * agentSet[i].getOpinion();
+            }
+        }
+    
+        if (numOfWatchedPost == 0) {
+            this.toPost = 0;
+            return this.toPost;
+        }
+    
+        double mean = weightedSum / numOfWatchedPost;
+        double var = 0.0;
+        for (int i = 0; i < n; i++) {
+            if (this.screen[i] > 0) {
+                double opinion_i = agentSet[i].getOpinion();
+                var += this.screen[i] * Math.pow(opinion_i - mean, 2);
+            }
+        }
+        var /= numOfWatchedPost;
+    
+        //System.out.println("my var is " + var + ", opinion " + this.opinion);
+        if(var == 0.0){
+          //  System.out.println("num post " + numOfWatchedPost);
+        }
+    
+        if (var < 0.01) {
+            this.postDrive += 1;
+        }
+    
+        if (this.postDrive > 10.0) {
+            this.toPost = 10; // → 定数化してもよい
+            this.postDrive = 0;
+            System.out.println("comfort post !!!!!!!!!!!! : my opinion is " + this.opinion);
+        } else {
+            this.toPost = 0;
+        }
+    
+        return this.toPost;
+    }
+    
 
 }

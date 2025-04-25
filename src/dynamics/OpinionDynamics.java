@@ -106,9 +106,11 @@ public class OpinionDynamics {
 
             network.setAdjacencyMatrix(AdminSlimOptimizer.AdminFeedback(agentSet, network, agentNum));
 
-            for (int i = 0; i < agentNum; i++) {
-                agentSet[i].updateScreen(network.getAdjacencyMatrix());
-            }
+            /*
+             * for (int i = 0; i < agentNum; i++) {
+             * agentSet[i].updateScreen(network.getAdjacencyMatrix());
+             * }
+             */
 
             ASChecker.assertionChecker(agentSet, network, agentNum, step);
             System.out.println("SNS Admin feedback finished. ");
@@ -200,7 +202,8 @@ public class OpinionDynamics {
                     network.setEdge(i, result[1], tempAdjacencyMatrix[i][result[1]]);
                     network.setEdge(i, result[0], 0);
                     // System.out.println(i + " unfollows " + result[0] + ", follows " + result[1]);
-                    agentSet[i].updateScreen(tempAdjacencyMatrix); // just for consistence
+                    // agentSet[i].updateScreen(tempAdjacencyMatrix, agentSet); // just for
+                    // consistence
                     rewireBc += agentSet[i].getBc();
                     rewireOpinionStrength += Math.abs(agentSet[i].getOpinion());
                     rewireActionNum++;
@@ -218,7 +221,7 @@ public class OpinionDynamics {
 
             //// social influence
             for (int i = 0; i < agentNum; i++) {
-                agentSet[i].updateScreen(network.getAdjacencyMatrix());
+                agentSet[i].updateScreen(network.getAdjacencyMatrix(), agentSet);
             }
 
             Agent[] pastAgentSet = agentSet.clone();
@@ -228,10 +231,13 @@ public class OpinionDynamics {
             ASChecker.assertionChecker(agentSet, network, agentNum, step);
             System.out.println("social influence finished. ");
 
-            // export gexf
-            gephi.updateGraph(agentSet, network);
-            gephi.exportGraph(step, folerPath);
+            if (step % 10 == 0) {
 
+                // export gexf
+                gephi.updateGraph(agentSet, network);
+                gephi.exportGraph(step, folerPath);
+
+            }
             // export metrics
             analyzer.computeVariance(agentSet);
             writer.setOpinionVar(analyzer.getOpinionVar());

@@ -9,7 +9,10 @@ public class Const {
     public static final int RANDOM_SEED = 1;
 
     // Admin feedback parameter
-    public static final double FEEDBACK_INCREASE_WEIGHT = 0.1;
+    // public static final double FEEDBACK_INCREASE_WEIGHT = 0.1;
+    public static final double LIKE_INCREASE_WEIGHT = 0.1;
+    public static final double FOLLOW_INCREASE_WEIGHT = 0.1;
+    
 
     public static final double UNACCEPTABLE_BOUNDED_CONFIDENCE = 0.7;
 

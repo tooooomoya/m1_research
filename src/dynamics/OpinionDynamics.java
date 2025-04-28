@@ -22,7 +22,6 @@ import rand.randomGenerater;
 public class OpinionDynamics {
     private final int t = Const.MAX_SIMULATION_STEP;
     private final int agentNum = Const.NUM_OF_SNS_USER;
-    private final double lambda = Const.DYNAMIC_RATE_OF_ADMIN;
     private Network network;
     private final Agent[] agentSet = new Agent[agentNum];
     private Writer writer;
@@ -41,7 +40,7 @@ public class OpinionDynamics {
         setNetwork();
         this.analyzer = new Analysis();
         this.writer = new Writer(folerPath, resultList);
-        this.gephi = new GraphVisualize(lambda, agentSet, network);
+        this.gephi = new GraphVisualize(0.00, agentSet, network);
         this.admin = new AdminOptim(agentNum, network.getAdjacencyMatrix());
     }
 
@@ -90,7 +89,7 @@ public class OpinionDynamics {
             for(Agent agent : agentSet){
                 int agentId = agent.getId();
                 // このstepでSNSを利用するか決定する
-                if(rand.nextDouble() > 0.1){
+                if(rand.nextDouble() > agent.getMediaUseRate()){
                     continue;
                 }
 
@@ -135,7 +134,7 @@ public class OpinionDynamics {
                 }
             }
 
-            if (step % 10 == 0) {
+            if (step % 50 == 0) {
                 // export gexf
                 network.setAdjacencyMatrix(admin.getAdjacencyMatrix());
                 gephi.updateGraph(agentSet, network);

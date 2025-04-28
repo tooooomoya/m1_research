@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
-def read_and_accumulate_bins(data_dir, bins, max_index=1000):
+def read_and_accumulate_bins(data_dir, bins, max_index=10000):
     cumulative_counts = {bin_name: [] for bin_name in bins}
     current_cumulative = {bin_name: 0 for bin_name in bins}
     x = []

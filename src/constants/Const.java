@@ -2,11 +2,10 @@ package constants;
 
 public class Const {
     // simulation parameter
-    public static final int MAX_SIMULATION_STEP = 1000;
-    public static final double DYNAMIC_RATE_OF_ADMIN = 0.01;
+    public static final int MAX_SIMULATION_STEP = 10000;
     public static final int NUM_OF_USER = 200;
-    public static final int NUM_OF_SNS_USER = 200;
-    public static final int RANDOM_SEED = 1;
+    public static final int NUM_OF_SNS_USER = NUM_OF_USER;
+    public static final int RANDOM_SEED = 5;
 
     // Admin feedback parameter
     // public static final double FEEDBACK_INCREASE_WEIGHT = 0.1;
@@ -26,15 +25,11 @@ public class Const {
     public static final double UNFOLLOW_RATE = 0.1;
     //public static final double MIN_OPINION_DIFF_TO_UNFOLLOW = 0.4;
 
-    // rewire parameter
-    public static final double REWIRE_RATE = 1.0;
-    public static final double BOUNDED_CONFIDENCE = 1.2;
-    public static final double MINIMUM_BC = 0.1;
-    // BC 0.8　は全体分極は起こる
-    // Bc 1.0, tol 0.6 
-
     // agent parameter
-    public static final double INITIAL_POST_PROB = 0.5;
+    public static final double INITIAL_POST_PROB = 0.1;
+    public static final double BOUNDED_CONFIDENCE = 1.5;
+    public static final double MINIMUM_BC = 0.1;
+    public static final double INITIAL_MEDIA_USER_RATE = 0.1;
 
     // input data parameter
     public static final String EDGES_FILE_PATH = "Twitter/edgesTwitter.txt";

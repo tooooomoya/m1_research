@@ -13,15 +13,13 @@ public class Agent {
     private double intrinsicOpinion;
     private final int NUM_OF_AGENTS = Const.NUM_OF_SNS_USER;
     private static final Random rand = randomGenerater.rand;
-    private final double followProbThres = Const.FOLLOW_RATE;
-    private final double unfollowProbThres = Const.UNFOLLOW_RATE;
     private int toPost; // ある時刻において何件の投稿をするか
     private int numOfPosts; // 一度に何件の投稿を閲覧するか
-    private final double rewireProbThres = Const.REWIRE_RATE;
     private int opinionClass;
     private PostCash postCash;
     private double postProb;
     private int[] feed; // ユーザjの投稿を何件閲覧できるか(タイムラインのモデル)、Adminによって操作される
+    private double mediaUseRate = Const.INITIAL_MEDIA_USER_RATE;
 
     // constructor
     public Agent(int agentID) {
@@ -77,6 +75,10 @@ public class Agent {
         return this.feed;
     }
 
+    public double getMediaUseRate(){
+        return this.mediaUseRate;
+    }
+
     // setter methods
 
     public void setOpinion(double value) {
@@ -123,7 +125,7 @@ public class Agent {
         // feedには誰の投稿を何件閲覧するかが書かれている
         int[] tempFeed = this.feed.clone();
         double temp = 0.0;
-
+        
         int postNum = 0;
         int comfortPostNum = 0;
         // feedに表示される投稿は全て閲覧する
@@ -143,7 +145,8 @@ public class Agent {
 
         double comfortPostRate = (double) comfortPostNum / postNum;
         if(comfortPostRate > 0.8){
-            postProb += 0.1;
+            this.postProb += 0.05;
+            this.mediaUseRate += 0.05;
         }
 
         this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
@@ -152,6 +155,16 @@ public class Agent {
             this.opinion = -1;
         } else if (this.opinion > 1) {
             this.opinion = 1;
+        }
+        if(this.postProb > 1.0){
+            this.postProb = 1.0;
+        }else if(this.postProb < 0.0){
+            this.postProb = 0.0;
+        }
+        if(this.mediaUseRate > 1.0){
+            this.mediaUseRate = 1.0;
+        }else if(this.mediaUseRate < 0.0){
+            this.mediaUseRate = 0.0;
         }
 
         setOpinionClass();
@@ -178,6 +191,9 @@ public class Agent {
     public int follow(List<Integer> followList, Agent[] agentSet) {
         int followId;
         int attempts = 0;
+        if(followList.size() <= 0){
+            return -1;
+        }
 
         while (attempts < 100) {
             int tempId = followList.get(rand.nextInt(followList.size()));

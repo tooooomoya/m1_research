@@ -12,7 +12,7 @@ public class AdminOptim {
         this.W = W;
     }
 
-    public double[][] getAdjacencyMatrix(){
+    public double[][] getAdjacencyMatrix() {
         return this.W;
     }
 
@@ -21,12 +21,21 @@ public class AdminOptim {
     }
 
     public void updateAdjacencyMatrix(int userId, int likedId, int followedId, int unfollowedId) {
-        this.W[userId][likedId] += Const.LIKE_INCREASE_WEIGHT;
-        this.W[userId][followedId] = Const.FOLLOW_INCREASE_WEIGHT;
-        this.W[userId][unfollowedId] = 0.0;
+        if (likedId > 0) {
+            this.W[userId][likedId] += Const.LIKE_INCREASE_WEIGHT;
+        }
+        if (followedId > 0) {
+            this.W[userId][followedId] = Const.FOLLOW_INCREASE_WEIGHT;
+        }
+        if (unfollowedId > 0) {
+            this.W[userId][unfollowedId] = 0.0;
+        }
 
         double rowSum = 0.0;
         for (int j = 0; j < n; j++) {
+            if(this.W[userId][j] > 0.5){
+                this.W[userId][j] = 0.5;
+            }
             rowSum += this.W[userId][j];
         }
         if (rowSum > 0.0) {

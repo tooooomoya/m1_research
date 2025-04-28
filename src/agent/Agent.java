@@ -16,7 +16,7 @@ public class Agent {
     private final double followProbThres = Const.FOLLOW_RATE;
     private final double unfollowProbThres = Const.UNFOLLOW_RATE;
     private int toPost; // ある時刻において何件の投稿をするか
-    private int numOfPosts; // 一度に何件の投稿を閲覧できるか
+    private int numOfPosts; // 一度に何件の投稿を閲覧するか
     private final double rewireProbThres = Const.REWIRE_RATE;
     private int opinionClass;
     private PostCash postCash;
@@ -35,7 +35,7 @@ public class Agent {
         this.numOfPosts = rand.nextInt(90) + 10;
         setOpinionClass();
         this.postCash = new PostCash(numOfPosts);
-        this.postProb = 0.1;
+        this.postProb = Const.INITIAL_POST_PROB;
         this.feed = new int[NUM_OF_AGENTS];
     }
 
@@ -116,13 +116,11 @@ public class Agent {
     // other methods
     public void resetPostCash() {
         this.postCash.reset();
+        this.toPost = 0;
     }
 
     public void updateMyself() {
-        if (rand.nextDouble() > 0.1) {
-            return;
-        }
-
+        // feedには誰の投稿を何件閲覧するかが書かれている
         int[] tempFeed = this.feed.clone();
         double temp = 0.0;
 
@@ -163,6 +161,9 @@ public class Agent {
 
     public int like() {
         int attemps = 0;
+        if (this.postCash.getSize() <= 0.0) {
+            return -1;
+        }
         while (attemps < 100) {
             Post likedPost = this.postCash.getAllPosts()[rand.nextInt(postCash.getSize())];
             if (Math.abs(likedPost.getPostOpinion() - this.opinion) < this.bc) {
@@ -193,6 +194,9 @@ public class Agent {
     // 閲覧した投稿の中でBC以上の意見の差があったらunfollowする
     public int unfollow() {
         int attemps = 0;
+        if (this.postCash.getSize() <= 0.0) {
+            return -1;
+        }
         while (attemps < 100) {
             Post unfollowPost = this.postCash.getAllPosts()[rand.nextInt(postCash.getSize())];
             if (Math.abs(unfollowPost.getPostOpinion() - this.opinion) > this.bc) {
@@ -207,6 +211,7 @@ public class Agent {
 
     public Post makePost(int step){
         Post post = new Post(this.id, this.opinion, step);
+        this.toPost = 1;
         return post;
     }
 

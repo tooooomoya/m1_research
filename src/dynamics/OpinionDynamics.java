@@ -80,9 +80,10 @@ public class OpinionDynamics {
         for (int step = 1; step <= t; step++) {
             int followActionNum = 0;
             int unfollowActionNum = 0;
-            int rewireActionNum = 0;
             System.out.println("step = " + step);
 
+
+            writer.clearPostBins();
             writer.setSimulationStep(step);
             double[][] W = admin.getAdjacencyMatrix();
 
@@ -105,6 +106,7 @@ public class OpinionDynamics {
                 // 重複を削除 (フォローしているユーザがフォローしているユーザは被る可能性がある)
                 followList = new ArrayList<>(new HashSet<>(followList));
                 int followedId = agent.follow(followList, agentSet);
+                
 
                 // unfollow
                 int unfollowedId = agent.unfollow();
@@ -113,10 +115,11 @@ public class OpinionDynamics {
                 if(rand.nextDouble() < agent.getPostProb()){
                     Post post = agent.makePost(step);
                     for(Agent otherAgent : agentSet){
-                        if(otherAgent.getId() != agentId && W[agentId][otherAgent.getId()] > 0){
+                        if(otherAgent.getId() != agentId && W[agentId][otherAgent.getId()] > 0){ // follower全員のpostCashに追加
                             otherAgent.addToPostCash(post);
                         }
                     }
+                    writer.setPostBins(post);
                 }
 
                 agent.updateMyself();
@@ -124,10 +127,17 @@ public class OpinionDynamics {
                 agent.setFeed(admin.AdminFeedback(agentId, agentSet));
                 agent.resetPostCash();
                 ASChecker.assertionChecker(agentSet, network, agentNum, step);
+                if(followedId > 0){
+                    followActionNum++;
+                }
+                if(unfollowedId > 0){
+                    unfollowActionNum++;
+                }
             }
 
             if (step % 10 == 0) {
                 // export gexf
+                network.setAdjacencyMatrix(admin.getAdjacencyMatrix());
                 gephi.updateGraph(agentSet, network);
                 gephi.exportGraph(step, folerPath);
             }
@@ -135,8 +145,6 @@ public class OpinionDynamics {
             analyzer.computeVariance(agentSet);
             writer.setOpinionVar(analyzer.getOpinionVar());
             writer.setFollowUnfollowActionNum(followActionNum, unfollowActionNum);
-            writer.setRewireActionNum(rewireActionNum);
-            writer.setPostBins(agentSet);
             writer.setOpinionBins(agentSet);
             writer.write();
         }

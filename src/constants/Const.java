@@ -33,6 +33,9 @@ public class Const {
     // BC 0.8　は全体分極は起こる
     // Bc 1.0, tol 0.6 
 
+    // agent parameter
+    public static final double INITIAL_POST_PROB = 0.5;
+
     // input data parameter
     public static final String EDGES_FILE_PATH = "Twitter/edgesTwitter.txt";
     public static final String OPINION_FILE_PATH = "Twitter/Twitter_opinion.txt";

@@ -2,26 +2,33 @@ package agent;
 
 public class PostCash {
     private int maxNumOfPostCash;
-    private Post[] postCash;
+    private Post[] postQueue;
     private int size;
 
     public PostCash(int maxNumOfPostCash){
         this.maxNumOfPostCash = maxNumOfPostCash;
-        this.postCash = new Post[maxNumOfPostCash];
+        this.postQueue = new Post[maxNumOfPostCash];
         this.size = 0;
+    }
+
+    public void reset() {
+        for (int i = 0; i < size; i++) {
+            postQueue[i] = null;
+        }
+        size = 0;
     }
 
     // 投稿を追加（古いものから押し出す）
     public void addPost(Post post) {
         if (size < maxNumOfPostCash) {
-            postCash[size] = post;
+            postQueue[size] = post;
             size++;
         } else {
             // FIFO: 先頭を削除して後ろに詰める
             for (int i = 1; i < maxNumOfPostCash; i++) {
-                postCash[i - 1] = postCash[i];
+                postQueue[i - 1] = postQueue[i];
             }
-            postCash[maxNumOfPostCash - 1] = post;
+            postQueue[maxNumOfPostCash - 1] = post;
         }
     }
 
@@ -29,7 +36,7 @@ public class PostCash {
         if (index < 0 || index >= size) {
             throw new IndexOutOfBoundsException("Index out of range.");
         }
-        return postCash[index];
+        return postQueue[index];
     }
 
     public int getSize() {
@@ -38,7 +45,7 @@ public class PostCash {
 
     public Post[] getAllPosts() {
         Post[] currentPosts = new Post[size];
-        System.arraycopy(postCash, 0, currentPosts, 0, size);
+        System.arraycopy(postQueue, 0, currentPosts, 0, size);
         return currentPosts;
     }
 }

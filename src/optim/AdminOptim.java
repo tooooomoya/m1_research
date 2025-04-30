@@ -23,6 +23,7 @@ public class AdminOptim {
     public void updateAdjacencyMatrix(int userId, int likedId, int followedId, int unfollowedId) {
         if (likedId > 0) {
             this.W[userId][likedId] += Const.LIKE_INCREASE_WEIGHT;
+            //System.out.println("increased weight : " + this.W[userId][likedId]);
         }
         if (followedId > 0) {
             this.W[userId][followedId] = Const.FOLLOW_INCREASE_WEIGHT;
@@ -51,10 +52,13 @@ public class AdminOptim {
         // これをW行列から算出する
         int[] feed = new int[n];
         int maxPostNum = agentSet[userId].getNumOfPosts(); // ユーザが一度の閲覧で消費できる投稿数の上限
+        int temp = 0;
 
         for (int i = 0; i < n; i++) {
             feed[i] = (int) Math.round(this.W[userId][i] * maxPostNum);
+            temp += feed[i];
         }
+        // System.out.println("max post num : " + temp);
 
         return feed;
     }

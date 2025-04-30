@@ -1,6 +1,8 @@
 package agent;
 
 import constants.Const;
+
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import rand.randomGenerater;
@@ -30,9 +32,9 @@ public class Agent {
         // this.intrinsicOpinion = rand.nextDouble() * 2.0 - 1;
         this.opinion = this.intrinsicOpinion;
         this.bc = Const.BOUNDED_CONFIDENCE; // 動的
-        this.numOfPosts = rand.nextInt(90) + 10;
+        // this.numOfPosts = rand.nextInt(80) + 20;
+        //this.numOfPosts = 10;
         setOpinionClass();
-        this.postCash = new PostCash(numOfPosts);
         this.postProb = Const.INITIAL_POST_PROB;
         this.feed = new int[NUM_OF_AGENTS];
     }
@@ -95,6 +97,11 @@ public class Agent {
 
     public void setNumOfPosts(int value) {
         this.numOfPosts = value;
+        setPostCash(this.numOfPosts);
+    }
+
+    public void setPostCash(int value){
+        this.postCash = new PostCash(value);
     }
 
     public void setToPost(int value) {
@@ -145,8 +152,9 @@ public class Agent {
 
         double comfortPostRate = (double) comfortPostNum / postNum;
         if(comfortPostRate > 0.8){
-            this.postProb += 0.05;
-            this.mediaUseRate += 0.05;
+            // System.out.println("I'm comfort !! having opinion of " + this.opinion);
+            this.postProb += 0.01;
+            this.mediaUseRate += 0.01;
         }
 
         this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
@@ -172,7 +180,7 @@ public class Agent {
         // System.out.println("clipped updated opinion" + this.opinion);
     }
 
-    public int like() {
+    /*public int like() {
         int attemps = 0;
         if (this.postCash.getSize() <= 0.0) {
             return -1;
@@ -186,14 +194,38 @@ public class Agent {
             attemps++;
         }
         return -1;
+    }*/
+    public int like() {
+    List<Post> candidates = new ArrayList<>();
+    if (this.postCash.getSize() <= 0) {
+        return -1;
     }
+
+    // 条件に合う投稿をすべてリストアップ
+    for (Post post : this.postCash.getAllPosts()) {
+        if (Math.abs(post.getPostOpinion() - this.opinion) < this.bc) {
+            candidates.add(post);
+        }
+    }
+
+    // 条件に合う投稿が存在すればランダムに1つ選ぶ
+    if (!candidates.isEmpty()) {
+        Post likedPost = candidates.get(rand.nextInt(candidates.size()));
+        return likedPost.getPostUserId();
+    } else {
+        return -1;
+    }
+}
+
 
     public int follow(List<Integer> followList, Agent[] agentSet) {
         int followId;
         int attempts = 0;
         if(followList.size() <= 0){
+            // System.out.println("the size of followList is zero ");
             return -1;
         }
+        // System.out.println("the size of followList is " + followList.size());
 
         while (attempts < 100) {
             int tempId = followList.get(rand.nextInt(followList.size()));
@@ -218,6 +250,9 @@ public class Agent {
             if (Math.abs(unfollowPost.getPostOpinion() - this.opinion) > this.bc) {
                 int unfollowId = unfollowPost.getPostUserId();
                 this.bc -= 0.05;
+                if(this.bc < Const.MINIMUM_BC){
+                    this.bc = Const.MINIMUM_BC;
+                }
                 return unfollowId;
             }
             attemps++;

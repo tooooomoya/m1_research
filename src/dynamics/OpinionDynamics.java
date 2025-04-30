@@ -10,8 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-
-import com.gurobi.gurobi.GRBException;
+import java.util.Set;
 
 import network.Network;
 import network.RandomNetwork;
@@ -76,45 +75,65 @@ public class OpinionDynamics {
         writer.setOpinionBins(agentSet);
         writer.write();
 
-        for (int step = 1; step <= t; step++) {
-            int followActionNum = 0;
-            int unfollowActionNum = 0;
-            System.out.println("step = " + step);
+        int followActionNum;
+        int unfollowActionNum;
 
+        for (int step = 1; step <= t; step++) {
+            System.out.println("step = " + step);
+            followActionNum = 0;
+            unfollowActionNum = 0;
 
             writer.clearPostBins();
             writer.setSimulationStep(step);
             double[][] W = admin.getAdjacencyMatrix();
 
-            for(Agent agent : agentSet){
+            for (Agent agent : agentSet) {
                 int agentId = agent.getId();
                 // このstepでSNSを利用するか決定する
-                if(rand.nextDouble() > agent.getMediaUseRate()){
+                if (rand.nextDouble() > agent.getMediaUseRate()) {
                     continue;
                 }
 
                 int likedId = agent.like();
+                //int likedId = -1;
 
                 // follow
-                List<Integer> followList = new ArrayList<>();
+                /*List<Integer> followList = new ArrayList<>();
                 for (int j = 0; j < agentNum; j++) {
                     if (agentId != j && W[agentId][j] == 0.0) {
                         followList.add(j);
                     }
                 }
                 // 重複を削除 (フォローしているユーザがフォローしているユーザは被る可能性がある)
-                followList = new ArrayList<>(new HashSet<>(followList));
+                followList = new ArrayList<>(new HashSet<>(followList));*/
+                List<Integer> followList = new ArrayList<>();
+                Set<Integer> candidates = new HashSet<>();
+
+                // 自分のフォロー相手（1次近傍）を取得
+                for (int j = 0; j < agentNum; j++) {
+                    if (agentId != j && W[agentId][j] > 0.0) {
+                        // フォロー中のエージェント j のフォロー相手を候補に追加（2次近傍）
+                        for (int k = 0; k < agentNum; k++) {
+                            if (k != agentId && W[j][k] > 0.0 && W[agentId][k] == 0.0) {
+                                candidates.add(k);
+                            }
+                        }
+                    }
+                }
+
+                followList = new ArrayList<>(candidates);
+
                 int followedId = agent.follow(followList, agentSet);
-                
+                //int followedId = -1;
 
                 // unfollow
                 int unfollowedId = agent.unfollow();
 
                 // post
-                if(rand.nextDouble() < agent.getPostProb()){
+                if (rand.nextDouble() < agent.getPostProb()) {
                     Post post = agent.makePost(step);
-                    for(Agent otherAgent : agentSet){
-                        if(otherAgent.getId() != agentId && W[agentId][otherAgent.getId()] > 0){ // follower全員のpostCashに追加
+                    for (Agent otherAgent : agentSet) {
+                        if (otherAgent.getId() != agentId && W[agentId][otherAgent.getId()] > 0.01) { // follower全員のpostCashに追加
                             otherAgent.addToPostCash(post);
                         }
                     }
@@ -126,15 +145,15 @@ public class OpinionDynamics {
                 agent.setFeed(admin.AdminFeedback(agentId, agentSet));
                 agent.resetPostCash();
                 ASChecker.assertionChecker(agentSet, network, agentNum, step);
-                if(followedId > 0){
+                if (followedId > 0) {
                     followActionNum++;
                 }
-                if(unfollowedId > 0){
+                if (unfollowedId > 0) {
                     unfollowActionNum++;
                 }
             }
 
-            if (step % 50 == 0) {
+            if (step % 100 == 0) {
                 // export gexf
                 network.setAdjacencyMatrix(admin.getAdjacencyMatrix());
                 gephi.updateGraph(agentSet, network);

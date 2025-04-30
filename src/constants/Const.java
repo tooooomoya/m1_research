@@ -2,14 +2,14 @@ package constants;
 
 public class Const {
     // simulation parameter
-    public static final int MAX_SIMULATION_STEP = 10000;
+    public static final int MAX_SIMULATION_STEP = 5000;
     public static final int NUM_OF_USER = 200;
     public static final int NUM_OF_SNS_USER = NUM_OF_USER;
-    public static final int RANDOM_SEED = 5;
+    public static final int RANDOM_SEED = 1;
 
     // Admin feedback parameter
     // public static final double FEEDBACK_INCREASE_WEIGHT = 0.1;
-    public static final double LIKE_INCREASE_WEIGHT = 0.1;
+    public static final double LIKE_INCREASE_WEIGHT = 0.001;
     public static final double FOLLOW_INCREASE_WEIGHT = 0.1;
     
 
@@ -19,10 +19,10 @@ public class Const {
     public static final double CONNECTION_PROB_OF_RANDOM_NW = 0.2;
 
     // follow parameter
-    public static final double FOLLOW_RATE = 0.5;
+    //public static final double FOLLOW_RATE = 0.5;
 
     // unfollow parameter
-    public static final double UNFOLLOW_RATE = 0.1;
+    //public static final double UNFOLLOW_RATE = 0.1;
     //public static final double MIN_OPINION_DIFF_TO_UNFOLLOW = 0.4;
 
     // agent parameter

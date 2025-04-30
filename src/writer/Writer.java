@@ -93,15 +93,17 @@ public class Writer {
                 sb.append(",");
                 switch (key) {
                     case "opinionVar":
-                        sb.append(opinionVar);
+                        sb.append(this.opinionVar);
                         break;
                     case "follow":
-                        sb.append(followActionNum);
+                        sb.append(this.followActionNum);
                         break;
                     case "unfollow":
-                        sb.append(unfollowActionNum);
+                        sb.append(this.unfollowActionNum);
+                        break;
                     case "rewire":
-                        sb.append(rewireActionNum);
+                        sb.append(this.rewireActionNum);
+                        break;
                     default:
                         sb.append(""); // 未定義の項目は空
                 }

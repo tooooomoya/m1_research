@@ -50,19 +50,24 @@ public class GraphVisualize {
             graphModel.getNodeTable().addColumn("opinionClass", Integer.class);
         }
 
+        Column boundedConfidence = graphModel.getNodeTable().getColumn("boundedConfidence");
+        if(boundedConfidence == null){
+            graphModel.getNodeTable().addColumn("boundedConfidence", Double.class);
+        }
+
         for (int i = 0; i < nodeCount; i++) {
             Node node = graphModel.factory().newNode(String.valueOf(i));
             node.setLabel("Node " + i);
             node.setAttribute("opinion", agents[i].getOpinion());
             node.setAttribute("community", -1);
             node.setAttribute("opinionClass", agents[i].getOpinionClass());
+            node.setAttribute("boundedConfidence", agents[i].getBc());
             graph.addNode(node);
         }
 
         for (int i = 0; i < W.length; i++) {
             for (int j = 0; j < W[i].length; j++) {
                 if (W[i][j] > 0) {
-                    //System.out.println("!!!!!!!!!!!!!!!!");
                     Edge edge = graphModel.factory().newEdge(
                             graph.getNode(String.valueOf(i)),
                             graph.getNode(String.valueOf(j)),
@@ -102,6 +107,7 @@ public class GraphVisualize {
             if (node != null) {
                 node.setAttribute("opinion", agents[i].getOpinion());
                 node.setAttribute("opinionClass", agents[i].getOpinionClass());
+                node.setAttribute("boundedConfidence", agents[i].getBc());
             }
         }
 

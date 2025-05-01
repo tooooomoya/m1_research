@@ -1,7 +1,6 @@
 package agent;
 
 import constants.Const;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -151,10 +150,13 @@ public class Agent {
             return;
 
         double comfortPostRate = (double) comfortPostNum / postNum;
-        if(comfortPostRate > 0.8){
+        if(comfortPostRate > Const.COMFORT_RATE){
             // System.out.println("I'm comfort !! having opinion of " + this.opinion);
             this.postProb += 0.01;
             this.mediaUseRate += 0.01;
+        }else{
+            this.postProb -= 0.001;
+            this.mediaUseRate -= 0.001;
         }
 
         this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
@@ -177,7 +179,7 @@ public class Agent {
 
         setOpinionClass();
 
-        // System.out.println("clipped updated opinion" + this.opinion);
+        //System.out.println("updated opinion" + this.opinion + ", class : " + this.opinionClass);
     }
 
     /*public int like() {

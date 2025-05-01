@@ -23,6 +23,10 @@ public abstract class Network {
         return copy;
     }
 
+    public double getEdge(int from, int to) {
+        return this.adjacencyMatrix[from][to];
+    }
+
     // protected getter（継承クラスから使えるように）
     protected int getSize() {
         return this.size;

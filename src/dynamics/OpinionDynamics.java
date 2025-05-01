@@ -10,13 +10,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
-
-import network.Network;
-import network.RandomNetwork;
+import network.*;
 import optim.*;
-import writer.Writer;
 import rand.randomGenerater;
+import writer.Writer;
 
 public class OpinionDynamics {
     private final int t = Const.MAX_SIMULATION_STEP;
@@ -51,7 +48,8 @@ public class OpinionDynamics {
 
     private void setNetwork() {
         ///// you can change the initial network bellow
-        this.network = new RandomNetwork(agentNum, connectionProbability);
+        // this.network = new RandomNetwork(agentNum, connectionProbability);
+        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.9);
         /////
 
         this.network.makeNetwork(agentSet);
@@ -97,18 +95,20 @@ public class OpinionDynamics {
                 int likedId = agent.like();
                 //int likedId = -1;
 
-                // follow
-                /*List<Integer> followList = new ArrayList<>();
+                /// follow
+                // 全体からフォローできる
+                List<Integer> followList = new ArrayList<>();
                 for (int j = 0; j < agentNum; j++) {
                     if (agentId != j && W[agentId][j] == 0.0) {
                         followList.add(j);
                     }
                 }
                 // 重複を削除 (フォローしているユーザがフォローしているユーザは被る可能性がある)
-                followList = new ArrayList<>(new HashSet<>(followList));*/
-                List<Integer> followList = new ArrayList<>();
+                followList = new ArrayList<>(new HashSet<>(followList));
+                
+                // 友達の友達からフォローできる
+                /*List<Integer> followList = new ArrayList<>();
                 Set<Integer> candidates = new HashSet<>();
-
                 // 自分のフォロー相手（1次近傍）を取得
                 for (int j = 0; j < agentNum; j++) {
                     if (agentId != j && W[agentId][j] > 0.0) {
@@ -120,8 +120,7 @@ public class OpinionDynamics {
                         }
                     }
                 }
-
-                followList = new ArrayList<>(candidates);
+                followList = new ArrayList<>(candidates);*/
 
                 int followedId = agent.follow(followList, agentSet);
                 //int followedId = -1;

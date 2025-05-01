@@ -11,9 +11,8 @@ public class Const {
     // public static final double FEEDBACK_INCREASE_WEIGHT = 0.1;
     public static final double LIKE_INCREASE_WEIGHT = 0.001;
     public static final double FOLLOW_INCREASE_WEIGHT = 0.1;
-    
 
-    public static final double UNACCEPTABLE_BOUNDED_CONFIDENCE = 0.7;
+    // public static final double UNACCEPTABLE_BOUNDED_CONFIDENCE = 0.7;
 
     // network parameter
     public static final double CONNECTION_PROB_OF_RANDOM_NW = 0.2;
@@ -30,6 +29,7 @@ public class Const {
     public static final double BOUNDED_CONFIDENCE = 1.5;
     public static final double MINIMUM_BC = 0.1;
     public static final double INITIAL_MEDIA_USER_RATE = 0.1;
+    public static final double COMFORT_RATE = 0.5;
 
     // input data parameter
     public static final String EDGES_FILE_PATH = "Twitter/edgesTwitter.txt";

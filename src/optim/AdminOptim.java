@@ -22,7 +22,8 @@ public class AdminOptim {
 
     public void updateAdjacencyMatrix(int userId, int likedId, int followedId, int unfollowedId) {
         if (likedId > 0) {
-            this.W[userId][likedId] += Const.LIKE_INCREASE_WEIGHT;
+            //this.W[userId][likedId] += Const.LIKE_INCREASE_WEIGHT;
+            this.W[userId][likedId] = 1.01 * this.W[userId][likedId];
             //System.out.println("increased weight : " + this.W[userId][likedId]);
         }
         if (followedId > 0) {

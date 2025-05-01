@@ -55,6 +55,11 @@ public class GraphVisualize {
             graphModel.getNodeTable().addColumn("boundedConfidence", Double.class);
         }
 
+        Column postProb = graphModel.getNodeTable().getColumn("postProb");
+        if(postProb == null){
+            graphModel.getNodeTable().addColumn("postProb", Double.class);
+        }
+
         for (int i = 0; i < nodeCount; i++) {
             Node node = graphModel.factory().newNode(String.valueOf(i));
             node.setLabel("Node " + i);
@@ -62,6 +67,7 @@ public class GraphVisualize {
             node.setAttribute("community", -1);
             node.setAttribute("opinionClass", agents[i].getOpinionClass());
             node.setAttribute("boundedConfidence", agents[i].getBc());
+            node.setAttribute("postProb", agents[i].getPostProb());
             graph.addNode(node);
         }
 
@@ -108,6 +114,7 @@ public class GraphVisualize {
                 node.setAttribute("opinion", agents[i].getOpinion());
                 node.setAttribute("opinionClass", agents[i].getOpinionClass());
                 node.setAttribute("boundedConfidence", agents[i].getBc());
+                node.setAttribute("postProb", agents[i].getPostProb());
             }
         }
 

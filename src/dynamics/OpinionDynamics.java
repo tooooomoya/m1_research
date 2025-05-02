@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import network.*;
 import optim.*;
 import rand.randomGenerater;
@@ -96,6 +97,7 @@ public class OpinionDynamics {
                 //int likedId = -1;
 
                 /// follow
+                
                 // 全体からフォローできる
                 List<Integer> followList = new ArrayList<>();
                 for (int j = 0; j < agentNum; j++) {
@@ -105,6 +107,7 @@ public class OpinionDynamics {
                 }
                 // 重複を削除 (フォローしているユーザがフォローしているユーザは被る可能性がある)
                 followList = new ArrayList<>(new HashSet<>(followList));
+                
                 
                 // 友達の友達からフォローできる
                 /*List<Integer> followList = new ArrayList<>();

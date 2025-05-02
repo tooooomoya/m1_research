@@ -21,6 +21,9 @@ public class Agent {
     private double postProb;
     private int[] feed; // ユーザjの投稿を何件閲覧できるか(タイムラインのモデル)、Adminによって操作される
     private double mediaUseRate = Const.INITIAL_MEDIA_USER_RATE;
+    private double followRate;
+    private double unfollowRate;
+    private boolean traitor = false;
 
     // constructor
     public Agent(int agentID) {
@@ -36,6 +39,12 @@ public class Agent {
         setOpinionClass();
         this.postProb = Const.INITIAL_POST_PROB;
         this.feed = new int[NUM_OF_AGENTS];
+        this.followRate = Const.INITIAL_FOLLOW_RATE;
+        this.unfollowRate = Const.INITIAL_UNFOLLOW_RATE;
+        if(0.1 > rand.nextDouble()){
+            this.traitor = true;
+            this.intrinsicOpinion = 0.0;
+        }
     }
 
     // getter methods
@@ -78,6 +87,14 @@ public class Agent {
 
     public double getMediaUseRate(){
         return this.mediaUseRate;
+    }
+
+    public double getFollowRate(){
+        return this.followRate;
+    }
+
+    public double getUnfollowRate(){
+        return this.unfollowRate;
     }
 
     // setter methods
@@ -160,6 +177,9 @@ public class Agent {
         }
 
         this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
+        if(this.traitor){
+            this.opinion = (temp / postNum) - 0.5;
+        }
 
         if (this.opinion < -1) {
             this.opinion = -1;
@@ -223,7 +243,7 @@ public class Agent {
     public int follow(List<Integer> followList, Agent[] agentSet) {
         int followId;
         int attempts = 0;
-        if(followList.size() <= 0){
+        if(followList.size() <= 0 || this.followRate < rand.nextDouble()){
             // System.out.println("the size of followList is zero ");
             return -1;
         }

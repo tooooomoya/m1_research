@@ -31,7 +31,7 @@ public class Agent {
         // this.tolerance = rand.nextDouble(); // 0〜1 の乱数
         this.tolerance = 0.8;
         this.intrinsicOpinion = Math.max(-1.0, Math.min(1.0, rand.nextGaussian() * 0.6));
-        // this.intrinsicOpinion = rand.nextDouble() * 2.0 - 1;
+        //this.intrinsicOpinion = rand.nextDouble() * 2.0 - 1;
         this.opinion = this.intrinsicOpinion;
         this.bc = Const.BOUNDED_CONFIDENCE; // 動的
         // this.numOfPosts = rand.nextInt(80) + 20;
@@ -41,10 +41,10 @@ public class Agent {
         this.feed = new int[NUM_OF_AGENTS];
         this.followRate = Const.INITIAL_FOLLOW_RATE;
         this.unfollowRate = Const.INITIAL_UNFOLLOW_RATE;
-        if(0.1 > rand.nextDouble()){
+        /*if(0.1 > rand.nextDouble()){
             this.traitor = true;
             this.intrinsicOpinion = 0.0;
-        }
+        }*/
     }
 
     // getter methods
@@ -55,6 +55,10 @@ public class Agent {
 
     public double getOpinion() {
         return this.opinion;
+    }
+
+    public double getIntrinsicOpinion(){
+        return this.intrinsicOpinion;
     }
 
     public double getTolerance() {
@@ -177,8 +181,9 @@ public class Agent {
         }
 
         this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
+        //this.opinion = this.tolerance * this.opinion + (1 - this.tolerance) * (temp / postNum);
         if(this.traitor){
-            this.opinion = (temp / postNum) - 0.5;
+            //this.opinion = (temp / postNum) - 0.5;
         }
 
         if (this.opinion < -1) {

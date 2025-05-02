@@ -60,6 +60,11 @@ public class GraphVisualize {
             graphModel.getNodeTable().addColumn("postProb", Double.class);
         }
 
+        Column shiftedOpinion = graphModel.getNodeTable().getColumn("shiftedOpinion");
+        if(shiftedOpinion == null){
+            graphModel.getNodeTable().addColumn("shiftedOpinion", Double.class);
+        }
+
         for (int i = 0; i < nodeCount; i++) {
             Node node = graphModel.factory().newNode(String.valueOf(i));
             node.setLabel("Node " + i);
@@ -68,6 +73,7 @@ public class GraphVisualize {
             node.setAttribute("opinionClass", agents[i].getOpinionClass());
             node.setAttribute("boundedConfidence", agents[i].getBc());
             node.setAttribute("postProb", agents[i].getPostProb());
+            node.setAttribute("shiftedOpinion", agents[i].getOpinion() - agents[i].getIntrinsicOpinion());
             graph.addNode(node);
         }
 
@@ -115,6 +121,7 @@ public class GraphVisualize {
                 node.setAttribute("opinionClass", agents[i].getOpinionClass());
                 node.setAttribute("boundedConfidence", agents[i].getBc());
                 node.setAttribute("postProb", agents[i].getPostProb());
+                node.setAttribute("shiftedOpinion", agents[i].getOpinion() - agents[i].getIntrinsicOpinion());
             }
         }
 

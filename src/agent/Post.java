@@ -36,4 +36,10 @@ public class Post {
     public void setPostedStep(int postedStep) {
         this.postedStep = postedStep;
     }
+
+    // other
+    public Post copyPost(){
+        Post copiedPost = new Post(this.postUserId, this.postOpinion, this.postedStep);
+        return copiedPost;
+    }
 }

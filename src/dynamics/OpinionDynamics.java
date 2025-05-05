@@ -82,6 +82,7 @@ public class OpinionDynamics {
             followActionNum = 0;
             unfollowActionNum = 0;
 
+            analyzer.clearPostCash();
             writer.clearPostBins();
             writer.setSimulationStep(step);
             double[][] W = admin.getAdjacencyMatrix();
@@ -140,6 +141,7 @@ public class OpinionDynamics {
                         }
                     }
                     writer.setPostBins(post);
+                    analyzer.setPostCash(post);
                 }
 
                 agent.updateMyself();
@@ -164,6 +166,8 @@ public class OpinionDynamics {
             // export metrics
             analyzer.computeVariance(agentSet);
             writer.setOpinionVar(analyzer.getOpinionVar());
+            analyzer.computePostVariance();
+            writer.setPostOpinionVar(analyzer.getPostOpinionVar());
             writer.setFollowUnfollowActionNum(followActionNum, unfollowActionNum);
             writer.setOpinionBins(agentSet);
             writer.write();

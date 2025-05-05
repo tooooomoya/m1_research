@@ -10,6 +10,7 @@ public class Writer {
     private int simulationStep;
     private String folderPath;
     private double opinionVar;
+    private double postOpinionVar;
     private int followActionNum;
     private int unfollowActionNum;
     private String[] resultList;
@@ -23,6 +24,7 @@ public class Writer {
         this.simulationStep = -1;
         this.folderPath = folderPath;
         this.opinionVar = -1;
+        this.postOpinionVar = -1;
         this.followActionNum = 0;
         this.unfollowActionNum = 0;
         this.rewireActionNum = 0;
@@ -39,6 +41,10 @@ public class Writer {
 
     public void setOpinionVar(double var) {
         this.opinionVar = var;
+    }
+
+    public void setPostOpinionVar(double var){
+        this.postOpinionVar = var;
     }
 
     public void setRewireActionNum(int value) {
@@ -94,6 +100,9 @@ public class Writer {
                 switch (key) {
                     case "opinionVar":
                         sb.append(this.opinionVar);
+                        break;
+                    case "postOpinionVar":
+                        sb.append(this.postOpinionVar);
                         break;
                     case "follow":
                         sb.append(this.followActionNum);

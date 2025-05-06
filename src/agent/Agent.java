@@ -252,6 +252,10 @@ public class Agent {
     }
 
     public int follow(List<Integer> followList, Agent[] agentSet) {
+        if(this.followRate < rand.nextDouble()){
+            return -1;
+        }
+
         int followId;
         int attempts = 0;
         if (followList.size() <= 0 || this.followRate < rand.nextDouble()) {

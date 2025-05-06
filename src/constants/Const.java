@@ -18,7 +18,7 @@ public class Const {
     public static final double CONNECTION_PROB_OF_RANDOM_NW = 0.2;
 
     // follow parameter
-    public static final double INITIAL_FOLLOW_RATE = 0.1;
+    public static final double INITIAL_FOLLOW_RATE = 0.5;
 
     // unfollow parameter
     public static final double INITIAL_UNFOLLOW_RATE = 0.1;

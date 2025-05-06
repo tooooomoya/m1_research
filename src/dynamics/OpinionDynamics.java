@@ -6,10 +6,7 @@ import constants.Const;
 import gephi.GraphVisualize;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import network.*;
 import optim.*;
 import rand.randomGenerater;
@@ -49,7 +46,7 @@ public class OpinionDynamics {
     private void setNetwork() {
         ///// you can change the initial network bellow
         // this.network = new RandomNetwork(agentNum, connectionProbability);
-        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.9);
+        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.5);
         /////
 
         this.network.makeNetwork(agentSet);
@@ -97,23 +94,25 @@ public class OpinionDynamics {
                 agent.setFeed(admin.AdminFeedback(agentId, agentSet));
 
                 int likedId = agent.like();
-                //int likedId = -1;
+                if(likedId != -1){
+                    agentSet[likedId].setPostProb(agentSet[likedId].getPostProb() + 0.01);
+                    agentSet[likedId].setMediaUseRate(agentSet[likedId].getMediaUseRate() + 0.00);
+                }
 
                 /// follow
                 
                 // 全体からフォローできる
-                List<Integer> followList = new ArrayList<>();
+                /*List<Integer> followList = new ArrayList<>();
                 for (int j = 0; j < agentNum; j++) {
                     if (agentId != j && W[agentId][j] == 0.0) {
                         followList.add(j);
                     }
                 }
                 // 重複を削除 (フォローしているユーザがフォローしているユーザは被る可能性がある)
-                followList = new ArrayList<>(new HashSet<>(followList));
+                followList = new ArrayList<>(new HashSet<>(followList));*/
                 
                 
                 // 友達の友達からフォローできる
-                /*List<Integer> followList = new ArrayList<>();
                 Set<Integer> candidates = new HashSet<>();
                 // 自分のフォロー相手（1次近傍）を取得
                 for (int j = 0; j < agentNum; j++) {
@@ -126,7 +125,7 @@ public class OpinionDynamics {
                         }
                     }
                 }
-                followList = new ArrayList<>(candidates);*/
+                List<Integer> followList = new ArrayList<>(candidates);
 
                 int followedId = agent.follow(followList, agentSet);
                 //int followedId = -1;
@@ -149,7 +148,7 @@ public class OpinionDynamics {
                 agent.updateMyself();
                 admin.updateAdjacencyMatrix(agentId, likedId, followedId, unfollowedId);
                 agent.resetPostCash();
-                ASChecker.assertionChecker(agentSet, network, agentNum, step);
+                ASChecker.assertionChecker(agentSet, admin.getAdjacencyMatrix(), agentNum, step);
                 if (followedId > 0) {
                     followActionNum++;
                 }

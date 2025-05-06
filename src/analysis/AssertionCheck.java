@@ -18,8 +18,8 @@ public class AssertionCheck {
         this.maxStep = maxStep;
     }
 
-    public void assertionChecker(Agent[] agentSet, Network network, int agentNum, int step) {
-        double[][] tempAdjMatrix = network.getAdjacencyMatrix();
+    public void assertionChecker(Agent[] agentSet, double[][] W, int agentNum, int step) {
+        double[][] tempAdjMatrix = W.clone();
         // w行列の行方向の和は常に1.0
         for (int i = 0; i < n; i++) {
             double temp = 0;

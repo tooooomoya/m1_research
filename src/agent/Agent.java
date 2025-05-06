@@ -40,6 +40,7 @@ public class Agent {
         this.postProb = Const.INITIAL_POST_PROB;
         this.followRate = Const.INITIAL_FOLLOW_RATE;
         this.unfollowRate = Const.INITIAL_UNFOLLOW_RATE;
+        setNumOfPosts(rand.nextInt(90) + 10);
         /*
          * if(0.1 > rand.nextDouble()){
          * this.traitor = true;
@@ -86,7 +87,7 @@ public class Agent {
         return this.postProb;
     }
 
-    public PostCash getPostCash(){
+    public PostCash getPostCash() {
         return this.postCash;
     }
 
@@ -147,6 +148,14 @@ public class Agent {
         this.feed = feed.clone();
     }
 
+    public void setPostProb(double value){
+        this.postProb = value;
+    }
+
+    public void setMediaUseRate(double value){
+        this.mediaUseRate = value;
+    }
+
     // other methods
     public void resetPostCash() {
         this.postCash.reset();
@@ -155,7 +164,7 @@ public class Agent {
 
     public void updateMyself() {
         // feedには誰の投稿を何件閲覧するかが書かれている
-        if(this.feed == null){
+        if (this.feed == null) {
             return;
         }
         Post[] tempFeed = this.feed.clone();
@@ -165,14 +174,14 @@ public class Agent {
         int comfortPostNum = 0;
         // feedに表示される投稿は全て閲覧する
         for (Post post : tempFeed) {
-                temp += post.getPostOpinion();
-                postNum++;
-                if (Math.abs(post.getPostOpinion() - this.opinion) < Const.MINIMUM_BC) {
-                    comfortPostNum++;
-                }
-                if(postNum > this.numOfPosts){
-                    break;
-                }
+            temp += post.getPostOpinion();
+            postNum++;
+            if (Math.abs(post.getPostOpinion() - this.opinion) < Const.MINIMUM_BC) {
+                comfortPostNum++;
+            }
+            if (postNum >= this.numOfPosts) {
+                break;
+            }
         }
 
         if (postNum == 0)
@@ -185,7 +194,7 @@ public class Agent {
             this.mediaUseRate += 0.01;
         } else {
             this.postProb -= 0.001;
-            this.mediaUseRate -= 0.001;
+            this.mediaUseRate -= 0.00;
         }
 
         this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
@@ -240,6 +249,36 @@ public class Agent {
     }
 
     public int follow(List<Integer> followList, Agent[] agentSet) {
+        if(this.followRate < rand.nextDouble()){
+            return -1;
+        }
+        List<Post> candidates = new ArrayList<>();
+        if (this.postCash.getSize() <= 0) {
+            return -1;
+        }
+
+        // 条件に合う投稿をすべてリストアップ
+        for (Agent agent : agentSet) {
+            if (!followList.contains(agent.getId()) || this.id == agent.getId()) {
+                continue;
+            }
+            for (Post post : agent.getPostCash().getAllPosts()) {
+                if (Math.abs(post.getPostOpinion() - this.opinion) < this.bc && post.getPostUserId() != this.id) {
+                    candidates.add(post);
+                }
+            }
+        }
+
+        // 条件に合う投稿が存在すればランダムに1つ選ぶ
+        if (!candidates.isEmpty()) {
+            Post followedPost = candidates.get(rand.nextInt(candidates.size()));
+            return followedPost.getPostUserId();
+        } else {
+            return -1;
+        }
+    }
+
+    public int followPast(List<Integer> followList, Agent[] agentSet) {
         int followId;
         int attempts = 0;
         if (followList.size() <= 0 || this.followRate < rand.nextDouble()) {

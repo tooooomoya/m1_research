@@ -36,8 +36,8 @@ public class AdminOptim {
 
     public void updateAdjacencyMatrix(int userId, int likedId, int followedId, int unfollowedId) {
         if (likedId > 0) {
-            // this.W[userId][likedId] += Const.LIKE_INCREASE_WEIGHT;
-            this.W[userId][likedId] = 1.01 * this.W[userId][likedId];
+            this.W[userId][likedId] += Const.LIKE_INCREASE_WEIGHT;
+            // this.W[userId][likedId] = 1.01 * this.W[userId][likedId];
             // System.out.println("increased weight : " + this.W[userId][likedId]);
         }
         if (followedId > 0) {
@@ -83,23 +83,28 @@ public class AdminOptim {
     public Post[] AdminFeedback(int userId, Agent[] agentSet) {
         int maxPostNum = Const.MAX_READABLE_POSTS_NUM; // このユーザーが閲覧できる最大投稿数
         PostCash postCash = agentSet[userId].getPostCash(); // このユーザーが使うPostCashオブジェクト
-        Post[] allPosts = postCash.getAllPosts();           // 投稿の配列（仮にキュー的な構造になっている）
-    
+        Post[] allPosts = postCash.getAllPosts(); // 投稿の配列（仮にキュー的な構造になっている）
+
         // 投稿元ユーザーのfollower数に基づいて投稿を並び替えるためのComparator
         Arrays.sort(allPosts, (a, b) -> {
             int idA = a.getPostUserId();
             int idB = b.getPostUserId();
-            return Integer.compare(followerNumArray[idB], followerNumArray[idA]); // 降順（多い順）
+            double alpha = 10.0; // W の影響を強めたいなら α > 1
+            //double scoreA = followerNumArray[idA] * Math.pow(this.W[userId][idA], alpha);
+            //double scoreB = followerNumArray[idB] * Math.pow(this.W[userId][idB], alpha);
+            double scoreA = Math.pow(this.W[userId][idA], alpha);
+            double scoreB = Math.pow(this.W[userId][idB], alpha);
+            return Double.compare(scoreB, scoreA);
         });
-    
+
         // フィードとして投稿を最大maxPostNum個まで抽出
         int num = Math.min(maxPostNum, allPosts.length);
         Post[] feedQueue = new Post[num];
         for (int i = 0; i < num; i++) {
             feedQueue[i] = allPosts[i];
         }
-    
+
         return feedQueue;
     }
-    
+
 }

@@ -2,14 +2,17 @@ package optim;
 
 import agent.*;
 import constants.Const;
+import java.util.Arrays;
 
 public class AdminOptim {
     private int n;
     private double[][] W; // Adminは隣接行列Wを操作する
+    private int[] followerNumArray; // ユーザ i のフォロワー数(影響力とする)を記録
 
     public AdminOptim(int userNum, double[][] W) {
         this.n = userNum;
         this.W = W;
+        this.followerNumArray = new int[n];
     }
 
     public double[][] getAdjacencyMatrix() {
@@ -20,11 +23,22 @@ public class AdminOptim {
         this.W = W.clone();
     }
 
+    public void setFollowerNumArray(double[][] adjacencyMatrix) {
+        Arrays.fill(this.followerNumArray, 0);
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                if (adjacencyMatrix[i][j] > 0.0) {
+                    this.followerNumArray[j]++;
+                }
+            }
+        }
+    }
+
     public void updateAdjacencyMatrix(int userId, int likedId, int followedId, int unfollowedId) {
         if (likedId > 0) {
-            //this.W[userId][likedId] += Const.LIKE_INCREASE_WEIGHT;
+            // this.W[userId][likedId] += Const.LIKE_INCREASE_WEIGHT;
             this.W[userId][likedId] = 1.01 * this.W[userId][likedId];
-            //System.out.println("increased weight : " + this.W[userId][likedId]);
+            // System.out.println("increased weight : " + this.W[userId][likedId]);
         }
         if (followedId > 0) {
             this.W[userId][followedId] = Const.FOLLOW_INCREASE_WEIGHT;
@@ -35,7 +49,7 @@ public class AdminOptim {
 
         double rowSum = 0.0;
         for (int j = 0; j < n; j++) {
-            if(this.W[userId][j] > 0.5){
+            if (this.W[userId][j] > 0.5) {
                 this.W[userId][j] = 0.5;
             }
             rowSum += this.W[userId][j];
@@ -45,10 +59,12 @@ public class AdminOptim {
                 this.W[userId][j] /= rowSum;
             }
         }
+
+        setFollowerNumArray(this.W);
     }
 
     // あるユーザのfeed配列(閲覧投稿数の上限)を決定する関数
-    public int[] AdminFeedback(int userId, Agent[] agentSet) {
+    public int[] AdminFeedbackPast(int userId, Agent[] agentSet) {
         // iにとってfeed[j]はjの投稿を閲覧できる上限
         // これをW行列から算出する
         int[] feed = new int[n];
@@ -63,4 +79,27 @@ public class AdminOptim {
 
         return feed;
     }
+
+    public Post[] AdminFeedback(int userId, Agent[] agentSet) {
+        int maxPostNum = Const.MAX_READABLE_POSTS_NUM; // このユーザーが閲覧できる最大投稿数
+        PostCash postCash = agentSet[userId].getPostCash(); // このユーザーが使うPostCashオブジェクト
+        Post[] allPosts = postCash.getAllPosts();           // 投稿の配列（仮にキュー的な構造になっている）
+    
+        // 投稿元ユーザーのfollower数に基づいて投稿を並び替えるためのComparator
+        Arrays.sort(allPosts, (a, b) -> {
+            int idA = a.getPostUserId();
+            int idB = b.getPostUserId();
+            return Integer.compare(followerNumArray[idB], followerNumArray[idA]); // 降順（多い順）
+        });
+    
+        // フィードとして投稿を最大maxPostNum個まで抽出
+        int num = Math.min(maxPostNum, allPosts.length);
+        Post[] feedQueue = new Post[num];
+        for (int i = 0; i < num; i++) {
+            feedQueue[i] = allPosts[i];
+        }
+    
+        return feedQueue;
+    }
+    
 }

@@ -1,13 +1,15 @@
 package agent;
 
+import constants.Const;
+
 public class PostCash {
-    private int maxNumOfPostCash;
     private Post[] postQueue;
     private int size;
+    private int maxNumOfPostCash;
 
-    public PostCash(int maxNumOfPostCash){
-        this.maxNumOfPostCash = maxNumOfPostCash;
-        this.postQueue = new Post[maxNumOfPostCash];
+    public PostCash(){
+        this.maxNumOfPostCash = Const.MAX_READABLE_POSTS_NUM;
+        this.postQueue = new Post[Const.MAX_READABLE_POSTS_NUM];
         this.size = 0;
     }
 

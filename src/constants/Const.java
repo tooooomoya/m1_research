@@ -31,6 +31,7 @@ public class Const {
     public static final double INITIAL_MEDIA_USER_RATE = 0.1;
     public static final double COMFORT_RATE = 0.5;
     public static final double INITIAL_TOLERANCE = 0.8; // 決してunrealisticではない
+    public static final int MAX_READABLE_POSTS_NUM = 100;
 
     // input data parameter
     public static final String EDGES_FILE_PATH = "Twitter/edgesTwitter.txt";

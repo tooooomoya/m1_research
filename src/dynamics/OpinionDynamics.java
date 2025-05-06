@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import network.*;
 import optim.*;
 import rand.randomGenerater;
@@ -94,6 +93,9 @@ public class OpinionDynamics {
                     continue;
                 }
 
+                // AdminがFeedを提供する
+                agent.setFeed(admin.AdminFeedback(agentId, agentSet));
+
                 int likedId = agent.like();
                 //int likedId = -1;
 
@@ -146,7 +148,6 @@ public class OpinionDynamics {
 
                 agent.updateMyself();
                 admin.updateAdjacencyMatrix(agentId, likedId, followedId, unfollowedId);
-                agent.setFeed(admin.AdminFeedback(agentId, agentSet));
                 agent.resetPostCash();
                 ASChecker.assertionChecker(agentSet, network, agentNum, step);
                 if (followedId > 0) {

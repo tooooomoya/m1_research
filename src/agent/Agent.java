@@ -19,7 +19,7 @@ public class Agent {
     private int opinionClass;
     private PostCash postCash;
     private double postProb;
-    private int[] feed; // ユーザjの投稿を何件閲覧できるか(タイムラインのモデル)、Adminによって操作される
+    private Post[] feed; // ユーザjの投稿を何件閲覧できるか(タイムラインのモデル)、Adminによって操作される
     private double mediaUseRate = Const.INITIAL_MEDIA_USER_RATE;
     private double followRate;
     private double unfollowRate;
@@ -38,7 +38,6 @@ public class Agent {
         // this.numOfPosts = 10;
         setOpinionClass();
         this.postProb = Const.INITIAL_POST_PROB;
-        this.feed = new int[NUM_OF_AGENTS];
         this.followRate = Const.INITIAL_FOLLOW_RATE;
         this.unfollowRate = Const.INITIAL_UNFOLLOW_RATE;
         /*
@@ -87,7 +86,11 @@ public class Agent {
         return this.postProb;
     }
 
-    public int[] getFeed() {
+    public PostCash getPostCash(){
+        return this.postCash;
+    }
+
+    public Post[] getFeed() {
         return this.feed;
     }
 
@@ -119,11 +122,11 @@ public class Agent {
 
     public void setNumOfPosts(int value) {
         this.numOfPosts = value;
-        setPostCash(this.numOfPosts);
+        setPostCash();
     }
 
-    public void setPostCash(int value) {
-        this.postCash = new PostCash(value);
+    public void setPostCash() {
+        this.postCash = new PostCash();
     }
 
     public void setToPost(int value) {
@@ -140,7 +143,7 @@ public class Agent {
         this.postCash.addPost(post);
     }
 
-    public void setFeed(int[] feed) {
+    public void setFeed(Post[] feed) {
         this.feed = feed.clone();
     }
 
@@ -152,21 +155,24 @@ public class Agent {
 
     public void updateMyself() {
         // feedには誰の投稿を何件閲覧するかが書かれている
-        int[] tempFeed = this.feed.clone();
+        if(this.feed == null){
+            return;
+        }
+        Post[] tempFeed = this.feed.clone();
         double temp = 0.0;
 
         int postNum = 0;
         int comfortPostNum = 0;
         // feedに表示される投稿は全て閲覧する
-        for (Post post : postCash.getAllPosts()) {
-            if (tempFeed[post.getPostUserId()] > 0) {
+        for (Post post : tempFeed) {
                 temp += post.getPostOpinion();
-                tempFeed[post.getPostUserId()]--;
                 postNum++;
                 if (Math.abs(post.getPostOpinion() - this.opinion) < Const.MINIMUM_BC) {
                     comfortPostNum++;
                 }
-            }
+                if(postNum > this.numOfPosts){
+                    break;
+                }
         }
 
         if (postNum == 0)
@@ -211,24 +217,6 @@ public class Agent {
         // this.opinionClass);
     }
 
-    /*
-     * public int like() {
-     * int attemps = 0;
-     * if (this.postCash.getSize() <= 0.0) {
-     * return -1;
-     * }
-     * while (attemps < 100) {
-     * Post likedPost =
-     * this.postCash.getAllPosts()[rand.nextInt(postCash.getSize())];
-     * if (Math.abs(likedPost.getPostOpinion() - this.opinion) < this.bc) {
-     * int likeId = likedPost.getPostUserId();
-     * return likeId;
-     * }
-     * attemps++;
-     * }
-     * return -1;
-     * }
-     */
     public int like() {
         List<Post> candidates = new ArrayList<>();
         if (this.postCash.getSize() <= 0) {

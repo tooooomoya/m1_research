@@ -51,7 +51,7 @@ public class OpinionDynamics {
     private void setNetwork() {
         ///// you can change the initial network bellow
         // this.network = new RandomNetwork(agentNum, connectionProbability);
-        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.9);
+        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.5);
         /////
 
         this.network.makeNetwork(agentSet);
@@ -77,6 +77,8 @@ public class OpinionDynamics {
 
         int followActionNum;
         int unfollowActionNum;
+        List<Post> latestPostList = new ArrayList<>();
+        int latestListSize = Const.LATEST_POST_LIST_LENGTH;
 
         for (int step = 1; step <= t; step++) {
             System.out.println("step = " + step);
@@ -87,6 +89,7 @@ public class OpinionDynamics {
             writer.clearPostBins();
             writer.setSimulationStep(step);
             double[][] W = admin.getAdjacencyMatrix();
+            List<Post> postList = new ArrayList<>();
 
             for (Agent agent : agentSet) {
                 int agentId = agent.getId();
@@ -95,6 +98,7 @@ public class OpinionDynamics {
                 if (rand.nextDouble() > agent.getMediaUseRate()) {
                     continue;
                 }
+                admin.AdminFeedback(agentId, agentSet);
 
                 int likedId = agent.like();
                 //int likedId = -1;
@@ -128,7 +132,7 @@ public class OpinionDynamics {
                 }
                 followList = new ArrayList<>(candidates);
 
-                int followedId = agent.follow(followList, agentSet);
+                int followedId = agent.follow(latestPostList);
                 //int followedId = -1;
 
                 // unfollow
@@ -144,12 +148,18 @@ public class OpinionDynamics {
                     }
                     writer.setPostBins(post);
                     analyzer.setPostCash(post);
+                    postList.add(post);
+                    if(latestPostList.size() > latestListSize){
+                        latestPostList.remove(0);
+                    }
+                    latestPostList.add(post);
                 }
 
                 agent.updateMyself();
                 admin.updateAdjacencyMatrix(agentId, likedId, followedId, unfollowedId);
-                agent.setFeed(admin.AdminFeedback(agentId, agentSet));
+                agent.updateFollowList(admin.getAdjacencyMatrix());
                 agent.resetPostCash();
+                agent.resetFeed();
                 ASChecker.assertionChecker(agentSet, network, agentNum, step);
                 if (followedId > 0) {
                     followActionNum++;
@@ -158,6 +168,8 @@ public class OpinionDynamics {
                     unfollowActionNum++;
                 }
             }
+            // adminがrecommend post を決める
+            admin.updateRecommendPostQueue(postList);
 
             if (step % 100 == 0) {
                 // export gexf

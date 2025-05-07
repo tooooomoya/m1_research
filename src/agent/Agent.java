@@ -19,12 +19,13 @@ public class Agent {
     private int opinionClass;
     private PostCash postCash;
     private double postProb;
-    private int[] feed; // ユーザjの投稿を何件閲覧できるか(タイムラインのモデル)、Adminによって操作される
+    private List<Post> feed = new ArrayList<>(); // ユーザjの投稿を何件閲覧できるか(タイムラインのモデル)、Adminによって操作される
     private double mediaUseRate = Const.INITIAL_MEDIA_USER_RATE;
     private double followRate;
     private double unfollowRate;
     private boolean traitor = false;
     private int timeStep;
+    private boolean[] followList = new boolean[NUM_OF_AGENTS];
 
     // constructor
     public Agent(int agentID) {
@@ -39,10 +40,10 @@ public class Agent {
         // this.numOfPosts = 10;
         setOpinionClass();
         this.postProb = Const.INITIAL_POST_PROB;
-        this.feed = new int[NUM_OF_AGENTS];
         this.followRate = Const.INITIAL_FOLLOW_RATE;
         this.unfollowRate = Const.INITIAL_UNFOLLOW_RATE;
         this.timeStep = 0;
+        setNumOfPosts(rand.nextInt(70)+30);
         /*
          * if(0.1 > rand.nextDouble()){
          * this.traitor = true;
@@ -89,7 +90,7 @@ public class Agent {
         return this.postProb;
     }
 
-    public int[] getFeed() {
+    public List<Post> getFeed() {
         return this.feed;
     }
 
@@ -103,6 +104,10 @@ public class Agent {
 
     public double getUnfollowRate() {
         return this.unfollowRate;
+    }
+
+    public PostCash getPostCash(){
+        return this.postCash;
     }
 
     // setter methods
@@ -146,33 +151,44 @@ public class Agent {
         this.postCash.addPost(post);
     }
 
-    public void setFeed(int[] feed) {
-        this.feed = feed.clone();
-    }
-
     // other methods
     public void resetPostCash() {
         this.postCash.reset();
         this.toPost = 0;
     }
 
+    public void addPostToFeed(Post post){
+        this.feed.add(post);
+    }
+
+    public void resetFeed(){
+        this.feed.clear();
+    }
+
+    public void updateFollowList(double[][] adjacencyMatrix){
+        for(int i = 0; i < adjacencyMatrix.length; i++){
+            for(int j = 0; j < adjacencyMatrix.length; j++){
+                if(adjacencyMatrix[i][j] > 0.0){
+                    this.followList[j] = true;
+                }else{
+                    this.followList[j] = false;
+                }
+            }
+        }
+    }
+
     public void updateMyself() {
-        // feedには誰の投稿を何件閲覧するかが書かれている
-        int[] tempFeed = this.feed.clone();
         double temp = 0.0;
 
         int postNum = 0;
         int comfortPostNum = 0;
         // feedに表示される投稿は全て閲覧する
-        for (Post post : postCash.getAllPosts()) {
-            if (tempFeed[post.getPostUserId()] > 0) {
+        for (Post post : this.feed) {
                 temp += post.getPostOpinion();
-                tempFeed[post.getPostUserId()]--;
                 postNum++;
                 if (Math.abs(post.getPostOpinion() - this.opinion) < Const.MINIMUM_BC) {
                     comfortPostNum++;
                 }
-            }
         }
 
         if (postNum == 0)
@@ -180,7 +196,6 @@ public class Agent {
 
         double comfortPostRate = (double) comfortPostNum / postNum;
         if (comfortPostRate > Const.COMFORT_RATE) {
-            // System.out.println("I'm comfort !! having opinion of " + this.opinion);
             this.postProb += 0.01 * decayFunc(this.timeStep);
             this.mediaUseRate += 0.01 * decayFunc(this.timeStep);
         } else {
@@ -212,37 +227,16 @@ public class Agent {
         }
 
         setOpinionClass();
-
-        // System.out.println("updated opinion" + this.opinion + ", class : " +
-        // this.opinionClass);
     }
 
-    /*
-     * public int like() {
-     * int attemps = 0;
-     * if (this.postCash.getSize() <= 0.0) {
-     * return -1;
-     * }
-     * while (attemps < 100) {
-     * Post likedPost =
-     * this.postCash.getAllPosts()[rand.nextInt(postCash.getSize())];
-     * if (Math.abs(likedPost.getPostOpinion() - this.opinion) < this.bc) {
-     * int likeId = likedPost.getPostUserId();
-     * return likeId;
-     * }
-     * attemps++;
-     * }
-     * return -1;
-     * }
-     */
     public int like() {
         List<Post> candidates = new ArrayList<>();
-        if (this.postCash.getSize() <= 0) {
+        if (this.feed.size() <= 0) {
             return -1;
         }
 
         // 条件に合う投稿をすべてリストアップ
-        for (Post post : this.postCash.getAllPosts()) {
+        for (Post post : this.feed) {
             if (Math.abs(post.getPostOpinion() - this.opinion) < this.bc) {
                 candidates.add(post);
             }
@@ -251,45 +245,39 @@ public class Agent {
         // 条件に合う投稿が存在すればランダムに1つ選ぶ
         if (!candidates.isEmpty()) {
             Post likedPost = candidates.get(rand.nextInt(candidates.size()));
+            likedPost.receiveLike();
             return likedPost.getPostUserId();
         } else {
             return -1;
         }
     }
 
-    public int follow(List<Integer> followList, Agent[] agentSet) {
+    public int follow(List<Post> latestPostList) {
         if(this.followRate < rand.nextDouble()){
             return -1;
         }
 
-        int followId;
-        int attempts = 0;
-        if (followList.size() <= 0 || this.followRate < rand.nextDouble()) {
-            // System.out.println("the size of followList is zero ");
+        List<Integer> candidates = new ArrayList<>();
+        for(Post post : latestPostList){
+            if(Math.abs(post.getPostOpinion() - this.opinion) < Const.MINIMUM_BC && this.id != post.getPostUserId() && !followList[post.getPostUserId()]){
+                candidates.add(post.getPostUserId());
+            }
+        }
+        if(!candidates.isEmpty()){
+            return candidates.get(rand.nextInt(candidates.size()));
+        }else{
             return -1;
         }
-        // System.out.println("the size of followList is " + followList.size());
-
-        while (attempts < 100) {
-            int tempId = followList.get(rand.nextInt(followList.size()));
-            if (Math.abs(this.opinion - agentSet[tempId].getOpinion()) < this.bc) {
-                followId = tempId;
-                return followId;
-            }
-            attempts++;
-        }
-
-        return -1; // 100回試しても条件を満たすエージェントが見つからなかった場合
     }
 
     // 閲覧した投稿の中でBC以上の意見の差があったらunfollowする
     public int unfollow() {
         int attemps = 0;
-        if (this.postCash.getSize() <= 0.0) {
+        if (this.feed.size() <= 0.0) {
             return -1;
         }
         while (attemps < 100) {
-            Post unfollowPost = this.postCash.getAllPosts()[rand.nextInt(postCash.getSize())];
+            Post unfollowPost = this.feed.get(rand.nextInt(this.feed.size()));
             if (Math.abs(unfollowPost.getPostOpinion() - this.opinion) > this.bc) {
                 int unfollowId = unfollowPost.getPostUserId();
                 this.bc -= 0.05 * decayFunc(this.timeStep);
@@ -318,8 +306,9 @@ public class Agent {
     }
 
     public double decayFunc(double time){
-        double lambda = 0.1;
+        double lambda = 0.001;
         return Math.exp(-lambda * time);
+        //return 1;
     }
 
 }

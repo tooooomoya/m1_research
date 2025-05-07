@@ -82,7 +82,7 @@ public class ConnectingNearestNeighborNetwork extends Network {
             for (int j = 0; j < getSize(); j++) {
                 rowSum += this.adjacencyMatrix[i][j];
             }
-            agentSet[i].setNumOfPosts(rowSum);
+            //agentSet[i].setNumOfPosts(rowSum);
             if (rowSum > 0) {
                 for (int j = 0; j < getSize(); j++) {
                     if (this.adjacencyMatrix[i][j] > 0) {

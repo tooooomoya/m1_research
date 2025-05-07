@@ -11,8 +11,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
+
+import admin.*;
 import network.*;
-import optim.*;
 import rand.randomGenerater;
 import writer.Writer;
 
@@ -89,6 +90,7 @@ public class OpinionDynamics {
 
             for (Agent agent : agentSet) {
                 int agentId = agent.getId();
+                agent.setTimeStep(step);
                 // このstepでSNSを利用するか決定する
                 if (rand.nextDouble() > agent.getMediaUseRate()) {
                     continue;
@@ -100,18 +102,18 @@ public class OpinionDynamics {
                 /// follow
                 
                 // 全体からフォローできる
-                List<Integer> followList = new ArrayList<>();
+                /*List<Integer> followList = new ArrayList<>();
                 for (int j = 0; j < agentNum; j++) {
                     if (agentId != j && W[agentId][j] == 0.0) {
                         followList.add(j);
                     }
                 }
                 // 重複を削除 (フォローしているユーザがフォローしているユーザは被る可能性がある)
-                followList = new ArrayList<>(new HashSet<>(followList));
+                followList = new ArrayList<>(new HashSet<>(followList));*/
                 
                 
                 // 友達の友達からフォローできる
-                /*List<Integer> followList = new ArrayList<>();
+                List<Integer> followList = new ArrayList<>();
                 Set<Integer> candidates = new HashSet<>();
                 // 自分のフォロー相手（1次近傍）を取得
                 for (int j = 0; j < agentNum; j++) {
@@ -124,7 +126,7 @@ public class OpinionDynamics {
                         }
                     }
                 }
-                followList = new ArrayList<>(candidates);*/
+                followList = new ArrayList<>(candidates);
 
                 int followedId = agent.follow(followList, agentSet);
                 //int followedId = -1;

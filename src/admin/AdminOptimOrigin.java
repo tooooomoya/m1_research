@@ -1,4 +1,4 @@
-package optim;
+package admin;
 
 import com.gurobi.gurobi.GRB;
 import com.gurobi.gurobi.GRBEnv;

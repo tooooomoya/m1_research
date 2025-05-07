@@ -30,7 +30,7 @@ public class Const {
     public static final double MINIMUM_BC = 0.1;
     public static final double INITIAL_MEDIA_USER_RATE = 0.1;
     public static final double COMFORT_RATE = 0.5;
-    public static final double INITIAL_TOLERANCE = 0.8; // 決してunrealisticではない
+    public static final double INITIAL_TOLERANCE = 0.8; // 0.8は決してunrealisticではない
 
     // input data parameter
     public static final String EDGES_FILE_PATH = "Twitter/edgesTwitter.txt";

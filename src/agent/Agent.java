@@ -24,6 +24,7 @@ public class Agent {
     private double followRate;
     private double unfollowRate;
     private boolean traitor = false;
+    private int timeStep;
 
     // constructor
     public Agent(int agentID) {
@@ -41,6 +42,7 @@ public class Agent {
         this.feed = new int[NUM_OF_AGENTS];
         this.followRate = Const.INITIAL_FOLLOW_RATE;
         this.unfollowRate = Const.INITIAL_UNFOLLOW_RATE;
+        this.timeStep = 0;
         /*
          * if(0.1 > rand.nextDouble()){
          * this.traitor = true;
@@ -109,6 +111,10 @@ public class Agent {
         this.opinion = value;
     }
 
+    public void setTimeStep(int time){
+        this.timeStep = time;
+    }
+
     public void setTolerance(double value) {
         this.tolerance = value;
     }
@@ -175,11 +181,11 @@ public class Agent {
         double comfortPostRate = (double) comfortPostNum / postNum;
         if (comfortPostRate > Const.COMFORT_RATE) {
             // System.out.println("I'm comfort !! having opinion of " + this.opinion);
-            this.postProb += 0.01;
-            this.mediaUseRate += 0.01;
+            this.postProb += 0.01 * decayFunc(this.timeStep);
+            this.mediaUseRate += 0.01 * decayFunc(this.timeStep);
         } else {
-            this.postProb -= 0.001;
-            this.mediaUseRate -= 0.001;
+            this.postProb -= 0.001 * decayFunc(this.timeStep);
+            this.mediaUseRate -= 0.001 * decayFunc(this.timeStep);
         }
 
         this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
@@ -286,7 +292,7 @@ public class Agent {
             Post unfollowPost = this.postCash.getAllPosts()[rand.nextInt(postCash.getSize())];
             if (Math.abs(unfollowPost.getPostOpinion() - this.opinion) > this.bc) {
                 int unfollowId = unfollowPost.getPostUserId();
-                this.bc -= 0.05;
+                this.bc -= 0.05 * decayFunc(this.timeStep);
                 if (this.bc < Const.MINIMUM_BC) {
                     this.bc = Const.MINIMUM_BC;
                 }
@@ -300,15 +306,20 @@ public class Agent {
     public Post makePost(int step) {
         // 極端な投稿を自重するようにmoderate
         Post post;
-        if (this.opinion > 0.7 && rand.nextDouble() < 0.0) {
-            post = new Post(this.id, this.opinion - 0.2, step);
-        } else if (this.opinion < -0.7 && rand.nextDouble() < 0.0) {
-            post = new Post(this.id, this.opinion + 0.2, step);
+        if (this.opinion > 0.8 && rand.nextDouble() < 0.0) {
+            post = new Post(this.id, this.opinion - 0.1, step);
+        } else if (this.opinion < -0.8 && rand.nextDouble() < 0.0) {
+            post = new Post(this.id, this.opinion + 0.1, step);
         } else {
             post = new Post(this.id, this.opinion, step);
         }
         this.toPost = 1;
         return post;
+    }
+
+    public double decayFunc(double time){
+        double lambda = 0.1;
+        return Math.exp(-lambda * time);
     }
 
 }

@@ -318,7 +318,7 @@ public class Agent {
     }
 
     public double decayFunc(double time){
-        double lambda = 0.1;
+        double lambda = 0.0001;
         return Math.exp(-lambda * time);
     }
 

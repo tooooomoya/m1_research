@@ -50,7 +50,7 @@ public class OpinionDynamics {
     private void setNetwork() {
         ///// you can change the initial network bellow
         // this.network = new RandomNetwork(agentNum, connectionProbability);
-        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.5);
+        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.8);
         /////
 
         this.network.makeNetwork(agentSet);
@@ -131,7 +131,7 @@ public class OpinionDynamics {
                 }
                 followList = new ArrayList<>(candidates);
 
-                int followedId = agent.follow(latestPostList, admin.getFollowerList());
+                int followedId = agent.follow(latestPostList);
                 //int followedId = -1;
 
                 // unfollow
@@ -156,7 +156,6 @@ public class OpinionDynamics {
 
                 agent.updateMyself();
                 admin.updateAdjacencyMatrix(agentId, likedId, followedId, unfollowedId);
-                agent.updateFollowList(admin.getAdjacencyMatrix());
                 agent.resetPostCash();
                 agent.resetFeed();
                 ASChecker.assertionChecker(agentSet, admin, agentNum, step);

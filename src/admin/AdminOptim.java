@@ -102,6 +102,11 @@ public class AdminOptim {
                 this.W[userId][j] /= rowSum;
             }
         }
+       /*if(userId == 10){
+            for(int i = 0; i < n ; i++){
+                System.out.println(this.W[userId][i]);
+            }
+        }*/
         setFollowerNumArray();
     }
 
@@ -121,11 +126,9 @@ public class AdminOptim {
         int[] maxPostNumArray = new int[this.n];
         for (int i = 0; i < n; i++) {
             maxPostNumArray[i] = (int) Math.round(this.W[userId][i] * friendPostNum);
-            if(userId == 80){
-                for (int j = 0; j < this.n; j++) {
-                    //System.out.println("max post array : " + maxPostNumArray[j]);
-                }
-                //System.out.println("W and friedn num " + W[userId][136] + ", "+ friendPostNum);
+            if(userId == 182){
+               // System.out.println("max post array : " + maxPostNumArray[i] + ", W[i][j] " + this.W[userId][i]);
+            //System.out.println("W and friedn num " + W[userId][136] + ", "+ friendPostNum);
             }
         }
         for (Post post : agentSet[userId].getPostCash().getAllPosts()) {
@@ -151,8 +154,8 @@ public class AdminOptim {
             temp++;
         }
 
-        if(postNum - agentSet[userId].getFeed().size() > 10){
-            for (int i = recommendPostQueue.size() - recommended - 1; i >= 0; i--) {
+        /*if(postNum - agentSet[userId].getFeed().size() > 10){
+            for (int i = recommendPostQueue.size() - recommended - 1; i >= 0 && agentSet[userId].getFeed().size() <= postNum; i--) {
                 if(recommendPostQueue.get(i).getPostUserId() == userId){
                     continue;
                 }
@@ -161,6 +164,6 @@ public class AdminOptim {
         }
         if(postNum - agentSet[userId].getFeed().size() > 10){
             System.out.println("size underflow !!");
-        }
+        }*/
     }
 }

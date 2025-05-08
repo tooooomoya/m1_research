@@ -21,7 +21,7 @@ public class Const {
 
     // agent parameter
     public static final double INITIAL_POST_PROB = 0.1;
-    public static final double BOUNDED_CONFIDENCE = 1.5;
+    public static final double BOUNDED_CONFIDENCE = 1.0;
     public static final double MINIMUM_BC = 0.1;
     public static final double INITIAL_MEDIA_USER_RATE = 0.1;
     public static final double COMFORT_RATE = 0.5;

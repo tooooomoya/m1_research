@@ -131,7 +131,7 @@ public class OpinionDynamics {
                 }
                 followList = new ArrayList<>(candidates);
 
-                int followedId = agent.follow(latestPostList);
+                int followedId = agent.follow(latestPostList, admin.getFollowerList());
                 //int followedId = -1;
 
                 // unfollow

@@ -21,6 +21,10 @@ public class AdminOptim {
         return this.W.clone();
     }
 
+    public int[] getFollowerList(){
+        return this.followerNumArray.clone();
+    }
+
     public void setW(double[][] W) {
         this.W = W.clone();
         setFollowerNumArray();

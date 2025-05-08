@@ -200,11 +200,11 @@ public class Agent {
         double comfortPostRate = (double) comfortPostNum / postNum;
 
         if (comfortPostRate > Const.COMFORT_RATE) {
-            this.postProb += 0.01 * decayFunc(this.timeStep);
-            this.mediaUseRate += 0.01 * decayFunc(this.timeStep);
+            this.postProb += 0.05 * decayFunc(this.timeStep);
+            this.mediaUseRate += 0.05 * decayFunc(this.timeStep);
         } else {
-            //this.postProb -= 0.0001 * decayFunc(this.timeStep);
-            //this.mediaUseRate -= 0.0001 * decayFunc(this.timeStep);
+            this.postProb -= 0.01 * decayFunc(this.timeStep);
+            this.mediaUseRate -= 0.01 * decayFunc(this.timeStep);
         }
 
         this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
@@ -256,7 +256,7 @@ public class Agent {
         }
     }
 
-    public int follow(List<Post> latestPostList) {
+    /*public int follow(List<Post> latestPostList, int[] followerNumArray) {
         if(this.followList.length == 0){
             return rand.nextInt(NUM_OF_AGENTS);
         }
@@ -266,7 +266,7 @@ public class Agent {
 
         List<Integer> candidates = new ArrayList<>();
         for (Post post : latestPostList) {
-            if (Math.abs(post.getPostOpinion() - this.opinion) < Const.MINIMUM_BC && this.id != post.getPostUserId()
+            if (Math.abs(post.getPostOpinion() - this.opinion) < this.bc && this.id != post.getPostUserId()
                     && !followList[post.getPostUserId()]) {
                 candidates.add(post.getPostUserId());
             }
@@ -276,7 +276,45 @@ public class Agent {
         } else {
             return -1;
         }
+    }*/
+
+    public int follow(List<Post> latestPostList, int[] followerNumArray) {
+        if (this.followList.length == 0) {
+            return rand.nextInt(NUM_OF_AGENTS);
+        }
+        if (this.followRate < rand.nextDouble()) {
+            return -1;
+        }
+    
+        int bestCandidate = -1;
+        double bestScore = -1.0;
+    
+        for (Post post : latestPostList) {
+            int candidateId = post.getPostUserId();
+    
+            if (candidateId == this.id || followList[candidateId]) {
+                continue;
+            }
+    
+            double opinionDiff = Math.abs(post.getPostOpinion() - this.opinion);
+            if (opinionDiff >= this.bc) {
+                continue;
+            }
+    
+            int followerCount = followerNumArray[candidateId];
+    
+            // スコア計算: フォロワー数が多く、意見が近い人ほどスコアが高い
+            double score = followerCount / (0.001 + opinionDiff);
+    
+            if (score > bestScore) {
+                bestScore = score;
+                bestCandidate = candidateId;
+            }
+        }
+    
+        return bestCandidate;
     }
+    
 
     // 閲覧した投稿の中でBC以上の意見の差があったらunfollowする
     public int unfollow() {
@@ -314,7 +352,7 @@ public class Agent {
     }
 
     public double decayFunc(double time) {
-        double lambda = 0.001;
+        double lambda = 0.0001;
         return Math.exp(-lambda * time);
         //return 1;
     }

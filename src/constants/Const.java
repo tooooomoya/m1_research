@@ -5,7 +5,7 @@ public class Const {
     public static final int MAX_SIMULATION_STEP = 10000;
     public static final int NUM_OF_USER = 200;
     public static final int NUM_OF_SNS_USER = NUM_OF_USER;
-    public static final int RANDOM_SEED = 1;
+    public static final int RANDOM_SEED = 914;
 
     // Admin feedback parameter
     // public static final double FEEDBACK_INCREASE_WEIGHT = 0.1;

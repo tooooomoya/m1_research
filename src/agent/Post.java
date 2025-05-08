@@ -5,12 +5,15 @@ public class Post {
     private double postOpinion;
     private int postedStep;
     private int receivedLike;
+    private final int postId;
+    private static int postIdCounter = 0;
 
     public Post(int postUserId, double postOpinion, int postedStep){
         this.postUserId = postUserId;
         this.postOpinion = postOpinion;
         this.postedStep = postedStep;
         this.receivedLike = 0;
+        this.postId = postIdCounter++;
     }
 
     // Getter
@@ -28,6 +31,10 @@ public class Post {
 
     public int getReceivedLike(){
         return this.receivedLike;
+    }
+
+    public int getPostId(){
+        return this.postId;
     }
 
     // Setter

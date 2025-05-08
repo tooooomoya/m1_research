@@ -1,5 +1,6 @@
 package dynamics;
 
+import admin.*;
 import agent.*;
 import analysis.*;
 import constants.Const;
@@ -11,8 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
-import admin.*;
 import network.*;
 import rand.randomGenerater;
 import writer.Writer;
@@ -160,7 +159,7 @@ public class OpinionDynamics {
                 agent.updateFollowList(admin.getAdjacencyMatrix());
                 agent.resetPostCash();
                 agent.resetFeed();
-                ASChecker.assertionChecker(agentSet, network, agentNum, step);
+                ASChecker.assertionChecker(agentSet, admin, agentNum, step);
                 if (followedId > 0) {
                     followActionNum++;
                 }

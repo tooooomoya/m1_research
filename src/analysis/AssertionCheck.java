@@ -1,5 +1,6 @@
 package analysis;
 
+import admin.*;
 import agent.Agent;
 import network.*;
 
@@ -18,8 +19,8 @@ public class AssertionCheck {
         this.maxStep = maxStep;
     }
 
-    public void assertionChecker(Agent[] agentSet, Network network, int agentNum, int step) {
-        double[][] tempAdjMatrix = network.getAdjacencyMatrix();
+    public void assertionChecker(Agent[] agentSet, AdminOptim admin, int agentNum, int step) {
+        double[][] tempAdjMatrix = admin.getAdjacencyMatrix();
         // w行列の行方向の和は常に1.0
         for (int i = 0; i < n; i++) {
             double temp = 0;
@@ -32,7 +33,7 @@ public class AssertionCheck {
                 temp += tempAdjMatrix[i][j];
                 //System.out.println(temp);
             }
-            if(Math.abs(temp - 1.0) > 0.1){
+            if(Math.abs(temp - 1.0) > 0.1 && Math.abs(temp - 0.0 ) > 0.1){
                 System.out.println("AC Error: sum of the row is not equal to 1 in node " + i);
             }
         }

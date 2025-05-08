@@ -18,12 +18,12 @@ public class AdminOptim {
     }
 
     public double[][] getAdjacencyMatrix() {
-        return this.W;
+        return this.W.clone();
     }
 
     public void setW(double[][] W) {
         this.W = W.clone();
-        setFollowerNumArray(W);
+        setFollowerNumArray();
     }
 
     public void addRecommendPost(Post post) {
@@ -33,11 +33,11 @@ public class AdminOptim {
         recommendPostQueue.add(post); // 新しい投稿を追加
     }
 
-    public void setFollowerNumArray(double[][] adjacencyMatrix) {
+    public void setFollowerNumArray() {
         Arrays.fill(this.followerNumArray, 0);
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
-                if (adjacencyMatrix[i][j] > 0.0) {
+                if (this.W[i][j] > 0.0) {
                     this.followerNumArray[j]++;
                 }
             }
@@ -70,7 +70,10 @@ public class AdminOptim {
 
     public void updateAdjacencyMatrix(int userId, int likedId, int followedId, int unfollowedId) {
         if (likedId > 0) {
-            this.W[userId][likedId] += Const.LIKE_INCREASE_WEIGHT;
+            // フォローしていないユーザに対するいいねは無視
+            if(this.W[userId][likedId] > 0.0){
+                this.W[userId][likedId] += Const.LIKE_INCREASE_WEIGHT;
+            }
             // this.W[userId][likedId] = 1.01 * this.W[userId][likedId];
             // System.out.println("increased weight : " + this.W[userId][likedId]);
         }
@@ -81,32 +84,12 @@ public class AdminOptim {
             this.W[userId][unfollowedId] = 0.0;
         }
 
-        // preferenciality algorithm
-        // follower数が多い人についてwの値を水増し
-        /*
-         * List<Integer> followedUsers = new ArrayList<>();
-         * for (int j = 0; j < n; j++) {
-         * if (this.W[userId][j] > 0.1) {
-         * followedUsers.add(j);
-         * }
-         * 
-         * // フォロワー数に基づいて降順にソート
-         * followedUsers.sort((a, b) -> Integer.compare(followerNumArray[b],
-         * followerNumArray[a]));
-         * 
-         * // 上位3人に対してWを増加
-         * int topK = Math.min(1, followedUsers.size());
-         * for (int i = 0; i < topK; i++) {
-         * int targetId = followedUsers.get(i);
-         * this.W[userId][targetId] = 1.001 * this.W[userId][targetId];
-         * }
-         * }
-         */
-
         double rowSum = 0.0;
         for (int j = 0; j < n; j++) {
             if (this.W[userId][j] > 0.5) {
                 this.W[userId][j] = 0.5;
+            }else if(this.W[userId][j] < 0.0){
+                this.W[userId][j] = 0.0;
             }
             rowSum += this.W[userId][j];
         }
@@ -115,7 +98,7 @@ public class AdminOptim {
                 this.W[userId][j] /= rowSum;
             }
         }
-        setFollowerNumArray(W);
+        setFollowerNumArray();
     }
 
     // あるユーザのfeed配列(閲覧投稿数の上限)を決定する関数
@@ -123,7 +106,7 @@ public class AdminOptim {
         // iにとってfeed[j]はjの投稿を閲覧できる上限
         // これをW行列から算出する
         int postNum = agentSet[userId].getNumOfPosts(); // ユーザが一度の閲覧で消費する投稿数の上限
-        int friendPostNum = (int) Math.round(postNum * Const.FEED_PREFERENTIALITY_RATE);
+        int friendPostNum = (int) Math.round(postNum * (1 - Const.FEED_PREFERENTIALITY_RATE));
         int recommendPostNum = postNum - friendPostNum;
         if (recommendPostQueue.size() < recommendPostNum) {
             friendPostNum = friendPostNum + recommendPostNum;
@@ -134,6 +117,12 @@ public class AdminOptim {
         int[] maxPostNumArray = new int[this.n];
         for (int i = 0; i < n; i++) {
             maxPostNumArray[i] = (int) Math.round(this.W[userId][i] * friendPostNum);
+            if(userId == 80){
+                for (int j = 0; j < this.n; j++) {
+                    //System.out.println("max post array : " + maxPostNumArray[j]);
+                }
+                //System.out.println("W and friedn num " + W[userId][136] + ", "+ friendPostNum);
+            }
         }
         for (Post post : agentSet[userId].getPostCash().getAllPosts()) {
             if (maxPostNumArray[post.getPostUserId()] > 0) {
@@ -145,7 +134,8 @@ public class AdminOptim {
         // add recommendation posts to user's feeds
         // いいねが集まってるやつとか、フォロワーが多い人のとか
         int temp = 0;
-        if (recommendPostQueue.size() == 0) {
+        int recommended = 0;
+        if (recommendPostQueue.isEmpty()) {
             return;
         }
         for (int i = recommendPostQueue.size() - 1; i >= 0 && temp < recommendPostNum; i--) {
@@ -153,12 +143,20 @@ public class AdminOptim {
                 continue;
             }
             agentSet[userId].addPostToFeed(recommendPostQueue.get(i));
+            recommended++;
             temp++;
         }
 
         if(postNum - agentSet[userId].getFeed().size() > 10){
+            for (int i = recommendPostQueue.size() - recommended - 1; i >= 0; i--) {
+                if(recommendPostQueue.get(i).getPostUserId() == userId){
+                    continue;
+                }
+                agentSet[userId].addPostToFeed(recommendPostQueue.get(i));
+            }
+        }
+        if(postNum - agentSet[userId].getFeed().size() > 10){
             System.out.println("size underflow !!");
         }
-
     }
 }

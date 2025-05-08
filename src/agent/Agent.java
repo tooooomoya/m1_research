@@ -1,9 +1,7 @@
 package agent;
 
 import constants.Const;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import rand.randomGenerater;
 
 public class Agent {
@@ -26,6 +24,7 @@ public class Agent {
     private boolean traitor = false;
     private int timeStep;
     private boolean[] followList = new boolean[NUM_OF_AGENTS];
+    private Set<Integer> alreadyAddedPostIds = new HashSet<>();
 
     // constructor
     public Agent(int agentID) {
@@ -43,7 +42,7 @@ public class Agent {
         this.followRate = Const.INITIAL_FOLLOW_RATE;
         this.unfollowRate = Const.INITIAL_UNFOLLOW_RATE;
         this.timeStep = 0;
-        setNumOfPosts(rand.nextInt(70)+30);
+        setNumOfPosts(rand.nextInt(10) + 10);
         /*
          * if(0.1 > rand.nextDouble()){
          * this.traitor = true;
@@ -106,7 +105,7 @@ public class Agent {
         return this.unfollowRate;
     }
 
-    public PostCash getPostCash(){
+    public PostCash getPostCash() {
         return this.postCash;
     }
 
@@ -116,7 +115,7 @@ public class Agent {
         this.opinion = value;
     }
 
-    public void setTimeStep(int time){
+    public void setTimeStep(int time) {
         this.timeStep = time;
     }
 
@@ -148,7 +147,9 @@ public class Agent {
     }
 
     public void addToPostCash(Post post) {
-        this.postCash.addPost(post);
+        if (!this.alreadyAddedPostIds.contains(post.getPostId())) {
+            this.postCash.addPost(post);
+        }
     }
 
     // other methods
@@ -157,20 +158,22 @@ public class Agent {
         this.toPost = 0;
     }
 
-    public void addPostToFeed(Post post){
-        this.feed.add(post);
+    public void addPostToFeed(Post post) {
+        if (!this.alreadyAddedPostIds.contains(post.getPostId())) {
+            this.feed.add(post);
+        }
     }
 
-    public void resetFeed(){
+    public void resetFeed() {
         this.feed.clear();
     }
 
-    public void updateFollowList(double[][] adjacencyMatrix){
-        for(int i = 0; i < adjacencyMatrix.length; i++){
-            for(int j = 0; j < adjacencyMatrix.length; j++){
-                if(adjacencyMatrix[i][j] > 0.0){
+    public void updateFollowList(double[][] adjacencyMatrix) {
+        for (int i = 0; i < adjacencyMatrix.length; i++) {
+            for (int j = 0; j < adjacencyMatrix.length; j++) {
+                if (adjacencyMatrix[i][j] > 0.0) {
                     this.followList[j] = true;
-                }else{
+                } else {
                     this.followList[j] = false;
                 }
             }
@@ -184,23 +187,24 @@ public class Agent {
         int comfortPostNum = 0;
         // feedに表示される投稿は全て閲覧する
         for (Post post : this.feed) {
-                temp += post.getPostOpinion();
-                postNum++;
-                if (Math.abs(post.getPostOpinion() - this.opinion) < Const.MINIMUM_BC) {
-                    comfortPostNum++;
-                }
+            temp += post.getPostOpinion();
+            postNum++;
+            if (Math.abs(post.getPostOpinion() - this.opinion) < Const.MINIMUM_BC) {
+                comfortPostNum++;
+            }
         }
 
         if (postNum == 0)
             return;
 
         double comfortPostRate = (double) comfortPostNum / postNum;
+
         if (comfortPostRate > Const.COMFORT_RATE) {
             this.postProb += 0.01 * decayFunc(this.timeStep);
             this.mediaUseRate += 0.01 * decayFunc(this.timeStep);
         } else {
-            this.postProb -= 0.001 * decayFunc(this.timeStep);
-            this.mediaUseRate -= 0.001 * decayFunc(this.timeStep);
+            //this.postProb -= 0.0001 * decayFunc(this.timeStep);
+            //this.mediaUseRate -= 0.0001 * decayFunc(this.timeStep);
         }
 
         this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
@@ -253,19 +257,23 @@ public class Agent {
     }
 
     public int follow(List<Post> latestPostList) {
-        if(this.followRate < rand.nextDouble()){
+        if(this.followList.length == 0){
+            return rand.nextInt(NUM_OF_AGENTS);
+        }
+        if (this.followRate < rand.nextDouble()) {
             return -1;
         }
 
         List<Integer> candidates = new ArrayList<>();
-        for(Post post : latestPostList){
-            if(Math.abs(post.getPostOpinion() - this.opinion) < Const.MINIMUM_BC && this.id != post.getPostUserId() && !followList[post.getPostUserId()]){
+        for (Post post : latestPostList) {
+            if (Math.abs(post.getPostOpinion() - this.opinion) < Const.MINIMUM_BC && this.id != post.getPostUserId()
+                    && !followList[post.getPostUserId()]) {
                 candidates.add(post.getPostUserId());
             }
         }
-        if(!candidates.isEmpty()){
+        if (!candidates.isEmpty()) {
             return candidates.get(rand.nextInt(candidates.size()));
-        }else{
+        } else {
             return -1;
         }
     }
@@ -305,7 +313,7 @@ public class Agent {
         return post;
     }
 
-    public double decayFunc(double time){
+    public double decayFunc(double time) {
         double lambda = 0.001;
         return Math.exp(-lambda * time);
         //return 1;

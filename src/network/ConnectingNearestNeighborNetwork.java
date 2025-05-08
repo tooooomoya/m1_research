@@ -38,7 +38,7 @@ public class ConnectingNearestNeighborNetwork extends Network {
 
     @Override
     public void makeNetwork(Agent[] agentSet) {
-        int seedNodes = Math.min(10, getSize()); // 最初に作るノード数
+        int seedNodes = Math.min(50, getSize()); // 最初に作るノード数
         int currentSize = seedNodes;
 
         // 初期ノード間をランダムに接続

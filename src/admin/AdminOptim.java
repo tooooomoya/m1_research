@@ -73,7 +73,7 @@ public class AdminOptim {
     }
 
     public void updateAdjacencyMatrix(int userId, int likedId, int followedId, int unfollowedId) {
-        if (likedId > 0) {
+        if (likedId >= 0) {
             // フォローしていないユーザに対するいいねは無視
             if(this.W[userId][likedId] > 0.0){
                 this.W[userId][likedId] += Const.LIKE_INCREASE_WEIGHT;
@@ -81,10 +81,10 @@ public class AdminOptim {
             // this.W[userId][likedId] = 1.01 * this.W[userId][likedId];
             // System.out.println("increased weight : " + this.W[userId][likedId]);
         }
-        if (followedId > 0) {
+        if (followedId >= 0) {
             this.W[userId][followedId] = Const.FOLLOW_INCREASE_WEIGHT;
         }
-        if (unfollowedId > 0) {
+        if (unfollowedId >= 0) {
             this.W[userId][unfollowedId] = 0.0;
         }
 
@@ -131,16 +131,24 @@ public class AdminOptim {
             //System.out.println("W and friedn num " + W[userId][136] + ", "+ friendPostNum);
             }
         }
-        for (Post post : agentSet[userId].getPostCash().getAllPosts()) {
+        /*for (Post post : agentSet[userId].getPostCash().getAllPosts()) {
             if (maxPostNumArray[post.getPostUserId()] > 0) {
+                if(userId % 100 == 0){
+                    //System.out.println("max post num array is " + maxPostNumArray[post.getPostUserId()]);
+                }
                 agentSet[userId].addPostToFeed(post);
                 maxPostNumArray[post.getPostUserId()]--;
             }
+        }*/
+        for (Post post : agentSet[userId].getPostCash().getAllPosts()) {
+            //if(this.W[userId][post.getPostUserId()] > 0.0){
+                agentSet[userId].addPostToFeed(post);
+            //}      
         }
 
         // add recommendation posts to user's feeds
         // いいねが集まってるやつとか、フォロワーが多い人のとか
-        int temp = 0;
+        /*int temp = 0;
         int recommended = 0;
         if (recommendPostQueue.isEmpty()) {
             return;
@@ -154,8 +162,8 @@ public class AdminOptim {
             temp++;
         }
 
-        /*if(postNum - agentSet[userId].getFeed().size() > 10){
-            for (int i = recommendPostQueue.size() - recommended - 1; i >= 0 && agentSet[userId].getFeed().size() <= postNum; i--) {
+        if(postNum - agentSet[userId].getFeed().size() > 10){
+            for (int i = recommendPostQueue.size() - recommended - 1; i >= 0 && agentSet[userId].getFeed().size() + 1 <= postNum; i--) {
                 if(recommendPostQueue.get(i).getPostUserId() == userId){
                     continue;
                 }

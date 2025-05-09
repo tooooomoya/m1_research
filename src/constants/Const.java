@@ -2,8 +2,8 @@ package constants;
 
 public class Const {
     // simulation parameter
-    public static final int MAX_SIMULATION_STEP = 10000;
-    public static final int NUM_OF_USER = 200;
+    public static final int MAX_SIMULATION_STEP = 5000;
+    public static final int NUM_OF_USER = 1000;
     public static final int NUM_OF_SNS_USER = NUM_OF_USER;
     public static final int RANDOM_SEED = 914;
 
@@ -17,11 +17,11 @@ public class Const {
     // public static final double UNACCEPTABLE_BOUNDED_CONFIDENCE = 0.7;
 
     // network parameter
-    public static final double CONNECTION_PROB_OF_RANDOM_NW = 0.2;
+    public static final double CONNECTION_PROB_OF_RANDOM_NW = 0.04;
 
     // agent parameter
     public static final double INITIAL_POST_PROB = 0.1;
-    public static final double BOUNDED_CONFIDENCE = 1.0;
+    public static final double BOUNDED_CONFIDENCE = 1.5;
     public static final double MINIMUM_BC = 0.1;
     public static final double INITIAL_MEDIA_USER_RATE = 0.1;
     public static final double COMFORT_RATE = 0.5;
@@ -29,7 +29,7 @@ public class Const {
     public static final double FEED_PREFERENTIALITY_RATE = 0.0;
 
     // follow parameter
-    public static final double INITIAL_FOLLOW_RATE = 0.01;
+    public static final double INITIAL_FOLLOW_RATE = 0.1;
 
     // unfollow parameter
     public static final double INITIAL_UNFOLLOW_RATE = 0.1;

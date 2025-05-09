@@ -24,6 +24,7 @@ public class Agent {
     private boolean traitor = false;
     private int timeStep;
     private boolean[] followList = new boolean[NUM_OF_AGENTS];
+    private boolean[] unfollowList = new boolean[NUM_OF_AGENTS];
     private Set<Integer> alreadyAddedPostIds = new HashSet<>();
 
     // constructor
@@ -42,7 +43,7 @@ public class Agent {
         this.followRate = Const.INITIAL_FOLLOW_RATE;
         this.unfollowRate = Const.INITIAL_UNFOLLOW_RATE;
         this.timeStep = 0;
-        setNumOfPosts(100); // 10件はないと0.1をかけても残らない
+        setNumOfPosts(20); // 10件はないと0.1をかけても残らない
         /*
          * if(0.1 > rand.nextDouble()){
          * this.traitor = true;
@@ -109,6 +110,14 @@ public class Agent {
         return this.postCash;
     }
 
+    public boolean[] getFollowList(){
+        return this.followList;
+    }
+
+    public boolean[] getUnfollowList(){
+        return this.unfollowList;
+    }
+
     // setter methods
 
     public void setOpinion(double value) {
@@ -153,13 +162,18 @@ public class Agent {
     }
 
     // other methods
+    public void receiveLike(){
+        this.postProb += 0.1;
+        //this.mediaUseRate += 0.01;
+    }
+
     public void resetPostCash() {
         this.postCash.reset();
         this.toPost = 0;
     }
 
     public void addPostToFeed(Post post) {
-        if (!this.alreadyAddedPostIds.contains(post.getPostId())) {
+        if (!this.alreadyAddedPostIds.contains(post.getPostId()) || !this.unfollowList[post.getPostUserId()]) {
             this.feed.add(post);
         }
     }
@@ -189,21 +203,21 @@ public class Agent {
             return;
 
         if(this.id % 100 == 0){
-            System.out.println("num of read post " + postNum);
+           // System.out.println("num of read post " + postNum);
         }
 
         double comfortPostRate = (double) comfortPostNum / postNum;
 
         if (comfortPostRate > Const.COMFORT_RATE) {
             //this.postProb += 0.01 * decayFunc(this.timeStep);
-            this.postProb += 0.01;
+            this.postProb += 0.001;
             //this.mediaUseRate += 0.01 * decayFunc(this.timeStep);
-            this.mediaUseRate += 0.01;
+           // this.mediaUseRate += 0.01;
         } else {
             //this.postProb -= 0.0001 * decayFunc(this.timeStep);
-            //this.postProb -= 0.0001;
+            this.postProb -= 0.001;
             //this.mediaUseRate -= 0.0001 * decayFunc(this.timeStep);
-            //this.mediaUseRate -= 0.0001;
+            this.mediaUseRate -= 0.0001;
         }
 
         this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
@@ -261,9 +275,10 @@ public class Agent {
         }
 
         List<Integer> candidates = new ArrayList<>();
+    
         for (Post post : latestPostList) {
             if (Math.abs(post.getPostOpinion() - this.opinion) < this.bc && this.id != post.getPostUserId()
-                    && !followList[post.getPostUserId()]) {
+                    && !this.followList[post.getPostUserId()] && !this.unfollowList[post.getPostUserId()]) {
                 candidates.add(post.getPostUserId());
             }
         }
@@ -285,11 +300,27 @@ public class Agent {
                 followeeNum++;
             }
         }
-        if (this.feed.size() <= 0.0 || followeeNum <= 3) {
+        if (this.feed.size() <= 0.0 || followeeNum <= 2) {
             return -1;
         }
-        while (attemps < 100) {
+        List<Post> candidates = new ArrayList<>();
+        for(Post post : this.feed){
+            if(Math.abs(post.getPostOpinion() - this.opinion) > this.bc && this.followList[post.getPostUserId()]){
+                this.unfollowList[post.getPostUserId()] = true;
+                this.bc -= 0.01;
+                if(this.bc < Const.MINIMUM_BC){
+                    this.bc = Const.MINIMUM_BC;
+                }
+                candidates.add(post);
+            }
+        }
+        if(!candidates.isEmpty()){
+            return candidates.get(rand.nextInt(candidates.size())).getPostUserId();
+        }
+
+        /*while (attemps < 100) {
             Post unfollowPost = this.feed.get(rand.nextInt(this.feed.size()));
+
             if (Math.abs(unfollowPost.getPostOpinion() - this.opinion) > this.bc) {
                 int unfollowId = unfollowPost.getPostUserId();
                 //this.bc -= 0.05 * decayFunc(this.timeStep);
@@ -301,7 +332,8 @@ public class Agent {
                 return unfollowId;
             }
             attemps++;
-        }
+        }*/
+
         return -1;
     }
 

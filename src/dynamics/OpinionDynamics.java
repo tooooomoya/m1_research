@@ -49,7 +49,7 @@ public class OpinionDynamics {
 
     private void setNetwork() {
         ///// you can change the initial network bellow
-        // this.network = new RandomNetwork(agentNum, connectionProbability);
+        //this.network = new RandomNetwork(agentNum, connectionProbability);
         this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.8);
         /////
 
@@ -97,9 +97,17 @@ public class OpinionDynamics {
                 if (rand.nextDouble() > agent.getMediaUseRate()) {
                     continue;
                 }
+    
                 admin.AdminFeedback(agentId, agentSet);
+                if(agent.getId() % 100 == 0){
+                   // System.out.println("post cash length is " + agent.getPostCash().getSize());
+                    //System.out.println("feed length is " + agent.getFeed().size());
+                }
 
                 int likedId = agent.like();
+                if(likedId >= 0){
+                    agentSet[likedId].receiveLike();
+                }
                 //int likedId = -1;
 
                 /// follow
@@ -141,14 +149,14 @@ public class OpinionDynamics {
                 if (rand.nextDouble() < agent.getPostProb()) {
                     Post post = agent.makePost(step);
                     for (Agent otherAgent : agentSet) {
-                        if (otherAgent.getId() != agentId && W[agentId][otherAgent.getId()] > 0.01) { // follower全員のpostCashに追加
+                        if (otherAgent.getId() != agentId && W[agentId][otherAgent.getId()] > 0.00) { // follower全員のpostCashに追加
                             otherAgent.addToPostCash(post);
                         }
                     }
                     writer.setPostBins(post);
                     analyzer.setPostCash(post);
                     postList.add(post);
-                    if(latestPostList.size() > latestListSize){
+                    if(latestPostList.size() > latestListSize - 1){
                         latestPostList.remove(0);
                     }
                     latestPostList.add(post);
@@ -159,10 +167,10 @@ public class OpinionDynamics {
                 agent.resetPostCash();
                 agent.resetFeed();
                 ASChecker.assertionChecker(agentSet, admin, agentNum, step);
-                if (followedId > 0) {
+                if (followedId >= 0) {
                     followActionNum++;
                 }
-                if (unfollowedId > 0) {
+                if (unfollowedId >= 0) {
                     unfollowActionNum++;
                 }
             }

@@ -40,6 +40,7 @@ public class ConnectingNearestNeighborNetwork extends Network {
     public void makeNetwork(Agent[] agentSet) {
         int seedNodes = Math.min(10, getSize()); // 最初に作るノード数
         int currentSize = seedNodes;
+        System.out.println("start making network");
 
         // 初期ノード間をランダムに接続
         for (int i = 0; i < seedNodes; i++) {

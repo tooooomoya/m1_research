@@ -31,7 +31,12 @@ public class AssertionCheck {
                     }
                 }
                 temp += tempAdjMatrix[i][j];
-                //System.out.println(temp);
+                if(agentSet[i].getFollowList()[j] && tempAdjMatrix[i][j] == 0.0){
+                    //System.out.println("follow list is not equal to the W matrix in node : " + i +" , " + j);
+                }
+                if(agentSet[i].getUnfollowList()[j] && tempAdjMatrix[i][j] > 0.0){
+                    //System.out.println("unfollow list is not equal to the W matrix in node : " + i +" , " + j);
+                }
             }
             if(Math.abs(temp - 1.0) > 0.1){
                 System.out.println("AC Error: sum of the row is not equal to 1 in node " + i + " because sum is " + temp);

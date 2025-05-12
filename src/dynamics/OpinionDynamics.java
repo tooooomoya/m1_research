@@ -33,8 +33,8 @@ public class OpinionDynamics {
 
     // constructor
     public OpinionDynamics() {
-        setAgents();
         setNetwork();
+        setAgents();
         this.analyzer = new Analysis();
         this.writer = new Writer(folerPath, resultList);
         this.gephi = new GraphVisualize(0.00, agentSet, network);
@@ -42,18 +42,21 @@ public class OpinionDynamics {
     }
 
     private void setAgents() {
+        double[][] tempAdjacencyMatrix = this.network.getAdjacencyMatrix();
         for (int i = 0; i < agentNum; i++) {
             agentSet[i] = new Agent(i);
+            agentSet[i].setFollowList(tempAdjacencyMatrix);
         }
     }
 
     private void setNetwork() {
         ///// you can change the initial network bellow
         //this.network = new RandomNetwork(agentNum, connectionProbability);
-        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.8);
+        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.5);
         /////
 
         this.network.makeNetwork(agentSet);
+        System.out.println("finish making network");
     }
 
     private void errorReport() {
@@ -98,7 +101,7 @@ public class OpinionDynamics {
                     continue;
                 }
     
-                admin.AdminFeedback(agentId, agentSet);
+                admin.AdminFeedback(agentId, agentSet, latestPostList);
                 if(agent.getId() % 100 == 0){
                    // System.out.println("post cash length is " + agent.getPostCash().getSize());
                     //System.out.println("feed length is " + agent.getFeed().size());

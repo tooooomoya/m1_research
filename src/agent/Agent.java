@@ -155,6 +155,16 @@ public class Agent {
         this.opinionClass = (int) Math.min(shiftedOpinion / opinionBinWidth, Const.NUM_OF_BINS_OF_OPINION - 1);
     }
 
+    public void setFollowList(double[][] W){
+        for(int i = 0 ; i < W.length ; i++){
+            for(int j = 0 ; j < W.length; j++){
+                if(W[i][j] > 0.0){
+                    this.followList[j] = true;
+                }
+            }
+        }
+    }
+
     public void addToPostCash(Post post) {
         if (!this.alreadyAddedPostIds.contains(post.getPostId())) {
             this.postCash.addPost(post);
@@ -163,8 +173,8 @@ public class Agent {
 
     // other methods
     public void receiveLike(){
-        this.postProb += 0.1;
-        //this.mediaUseRate += 0.01;
+        this.postProb += 0.001;
+        //this.mediaUseRate += 0.001;
     }
 
     public void resetPostCash() {
@@ -210,14 +220,17 @@ public class Agent {
 
         if (comfortPostRate > Const.COMFORT_RATE) {
             //this.postProb += 0.01 * decayFunc(this.timeStep);
-            this.postProb += 0.001;
+            this.postProb += 0.01;
             //this.mediaUseRate += 0.01 * decayFunc(this.timeStep);
-           // this.mediaUseRate += 0.01;
+           //this.mediaUseRate += 0.01;
         } else {
             //this.postProb -= 0.0001 * decayFunc(this.timeStep);
             this.postProb -= 0.001;
+            if(this.postProb < 0.01){
+                this.postProb = 0.01;
+            }
             //this.mediaUseRate -= 0.0001 * decayFunc(this.timeStep);
-            this.mediaUseRate -= 0.0001;
+            //this.mediaUseRate -= 0.00;
         }
 
         this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
@@ -276,7 +289,7 @@ public class Agent {
 
         List<Integer> candidates = new ArrayList<>();
     
-        for (Post post : latestPostList) {
+        for (Post post : this.feed) {
             if (Math.abs(post.getPostOpinion() - this.opinion) < this.bc && this.id != post.getPostUserId()
                     && !this.followList[post.getPostUserId()] && !this.unfollowList[post.getPostUserId()]) {
                 candidates.add(post.getPostUserId());
@@ -301,17 +314,29 @@ public class Agent {
             }
         }
         if (this.feed.size() <= 0.0 || followeeNum <= 2) {
+            if(this.id % 10 == 0){
+              //  System.out.println("feed size " + this.feed.size() + ", followee num " + followeeNum);
+            }
             return -1;
         }
         List<Post> candidates = new ArrayList<>();
         for(Post post : this.feed){
-            if(Math.abs(post.getPostOpinion() - this.opinion) > this.bc && this.followList[post.getPostUserId()]){
+            if(this.id % 10 ==0){
+               // System.out.println("opinion diff : " + Math.abs(post.getPostOpinion() - this.opinion));
+            }
+            if(Math.abs(post.getPostOpinion() - this.opinion) > this.bc){
                 this.unfollowList[post.getPostUserId()] = true;
                 this.bc -= 0.01;
+                if(this.id % 10 == 0){
+                //    System.out.println("disagg posts");
+                }
                 if(this.bc < Const.MINIMUM_BC){
                     this.bc = Const.MINIMUM_BC;
                 }
+                if(this.followList[post.getPostUserId()]){
                 candidates.add(post);
+                }
+
             }
         }
         if(!candidates.isEmpty()){

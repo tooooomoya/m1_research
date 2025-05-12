@@ -78,7 +78,7 @@ public class ConnectingNearestNeighborNetwork extends Network {
         }
 
         // 正規化処理
-        for (int i = 0; i < getSize(); i++) {
+        /*for (int i = 0; i < getSize(); i++) {
             int rowSum = 0;
             for (int j = 0; j < getSize(); j++) {
                 rowSum += this.adjacencyMatrix[i][j];
@@ -92,6 +92,6 @@ public class ConnectingNearestNeighborNetwork extends Network {
                     }
                 }
             }
-        }
+        }*/
     }
 }

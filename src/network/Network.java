@@ -37,7 +37,7 @@ public abstract class Network {
     // change the num of posts from user j that user i can see
     public void setEdge(int i, int j, double weight) {
         if (i >= 0 && i < size && j >= 0 && j < size) { // 不正検知
-            adjacencyMatrix[i][j] = weight; // weightはユーザiがユーザjの投稿を何件閲覧するか
+            adjacencyMatrix[i][j] = 1.0; // weightはユーザiがユーザjの投稿を何件閲覧するか
         }
     }
 

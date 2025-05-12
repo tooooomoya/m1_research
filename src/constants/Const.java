@@ -2,7 +2,7 @@ package constants;
 
 public class Const {
     // simulation parameter
-    public static final int MAX_SIMULATION_STEP = 5000;
+    public static final int MAX_SIMULATION_STEP = 10000;
     public static final int NUM_OF_USER = 1000;
     public static final int NUM_OF_SNS_USER = NUM_OF_USER;
     public static final int RANDOM_SEED = 914;
@@ -29,7 +29,7 @@ public class Const {
     public static final double FEED_PREFERENTIALITY_RATE = 0.0;
 
     // follow parameter
-    public static final double INITIAL_FOLLOW_RATE = 0.1;
+    public static final double INITIAL_FOLLOW_RATE = 0.01;
 
     // unfollow parameter
     public static final double INITIAL_UNFOLLOW_RATE = 0.1;

@@ -21,7 +21,7 @@ public class AdminOptim {
         return this.W.clone();
     }
 
-    public int[] getFollowerList(){
+    public int[] getFollowerList() {
         return this.followerNumArray.clone();
     }
 
@@ -75,43 +75,47 @@ public class AdminOptim {
     public void updateAdjacencyMatrix(int userId, int likedId, int followedId, int unfollowedId) {
         if (likedId >= 0) {
             // フォローしていないユーザに対するいいねは無視
-            if(this.W[userId][likedId] > 0.0){
-                this.W[userId][likedId] += Const.LIKE_INCREASE_WEIGHT;
-            }
+            /*
+             * if(this.W[userId][likedId] > 0.0){
+             * this.W[userId][likedId] += Const.LIKE_INCREASE_WEIGHT;
+             * }
+             */
             // this.W[userId][likedId] = 1.01 * this.W[userId][likedId];
             // System.out.println("increased weight : " + this.W[userId][likedId]);
         }
         if (followedId >= 0) {
-            this.W[userId][followedId] = Const.FOLLOW_INCREASE_WEIGHT;
+            // this.W[userId][followedId] = Const.FOLLOW_INCREASE_WEIGHT;
+            this.W[userId][followedId] = 1.0;
         }
         if (unfollowedId >= 0) {
             this.W[userId][unfollowedId] = 0.0;
         }
 
-        double rowSum = 0.0;
-        for (int j = 0; j < n; j++) {
-            if (this.W[userId][j] > 0.5) {
-                this.W[userId][j] = 0.5;
-            }else if(this.W[userId][j] < 0.0){
-                this.W[userId][j] = 0.0;
-            }
-            rowSum += this.W[userId][j];
-        }
-        if (rowSum > 0.0) {
-            for (int j = 0; j < n; j++) {
-                this.W[userId][j] /= rowSum;
-            }
-        }
-       /*if(userId == 10){
-            for(int i = 0; i < n ; i++){
-                System.out.println(this.W[userId][i]);
-            }
-        }*/
+        /*
+         * double rowSum = 0.0;
+         * for (int j = 0; j < n; j++) {
+         * if (this.W[userId][j] > 0.5) {
+         * this.W[userId][j] = 0.5;
+         * }else if(this.W[userId][j] < 0.0){
+         * this.W[userId][j] = 0.0;
+         * }
+         * rowSum += this.W[userId][j];
+         * }
+         * if (rowSum > 0.0) {
+         * for (int j = 0; j < n; j++) {
+         * this.W[userId][j] /= rowSum;
+         * }
+         * }
+         * if(userId == 10){
+         * for(int i = 0; i < n ; i++){
+         * System.out.println(this.W[userId][i]);
+         * }
+         * }
+         */
         setFollowerNumArray();
     }
 
-    // あるユーザのfeed配列(閲覧投稿数の上限)を決定する関数
-    public void AdminFeedback(int userId, Agent[] agentSet) {
+    public void AdminFeedback(int userId, Agent[] agentSet, List<Post> latestPostList) {
         // iにとってfeed[j]はjの投稿を閲覧できる上限
         // これをW行列から算出する
         int postNum = agentSet[userId].getNumOfPosts(); // ユーザが一度の閲覧で消費する投稿数の上限
@@ -123,55 +127,75 @@ public class AdminOptim {
         }
 
         // add posts from user's postCash to user's feed depending on W matrix
-        int[] maxPostNumArray = new int[this.n];
-        for (int i = 0; i < n; i++) {
-            maxPostNumArray[i] = (int) Math.round(this.W[userId][i] * friendPostNum);
-            if(userId == 182){
-               // System.out.println("max post array : " + maxPostNumArray[i] + ", W[i][j] " + this.W[userId][i]);
-            //System.out.println("W and friedn num " + W[userId][136] + ", "+ friendPostNum);
-            }
+        /*
+         * int[] maxPostNumArray = new int[this.n];
+         * for (int i = 0; i < n; i++) {
+         * maxPostNumArray[i] = (int) Math.round(this.W[userId][i] * friendPostNum);
+         * if(userId == 182){
+         * // System.out.println("max post array : " + maxPostNumArray[i] + ", W[i][j] "
+         * + this.W[userId][i]);
+         * //System.out.println("W and friedn num " + W[userId][136] + ", "+
+         * friendPostNum);
+         * }
+         * }
+         * for (Post post : agentSet[userId].getPostCash().getAllPosts()) {
+         * if (maxPostNumArray[post.getPostUserId()] > 0) {
+         * if(userId % 100 == 0){
+         * //System.out.println("max post num array is " +
+         * maxPostNumArray[post.getPostUserId()]);
+         * }
+         * agentSet[userId].addPostToFeed(post);
+         * maxPostNumArray[post.getPostUserId()]--;
+         * }
+         * }
+         */
+        int addedPost = 0;
+        if(agentSet[userId].getId() % 100 == 0){
+            //System.out.println("post cash size : " + agentSet[userId].getPostCash().getSize());
         }
-        /*for (Post post : agentSet[userId].getPostCash().getAllPosts()) {
-            if (maxPostNumArray[post.getPostUserId()] > 0) {
-                if(userId % 100 == 0){
-                    //System.out.println("max post num array is " + maxPostNumArray[post.getPostUserId()]);
-                }
-                agentSet[userId].addPostToFeed(post);
-                maxPostNumArray[post.getPostUserId()]--;
-            }
-        }*/
         for (Post post : agentSet[userId].getPostCash().getAllPosts()) {
-            //if(this.W[userId][post.getPostUserId()] > 0.0){
-                agentSet[userId].addPostToFeed(post);
-            //}      
+            // if(this.W[userId][post.getPostUserId()] > 0.0){
+            agentSet[userId].addPostToFeed(post);
+            addedPost++;
+            // }
+        }
+        int l = 1;
+        while (addedPost < postNum && l <= latestPostList.size()) {
+            agentSet[userId].addPostToFeed(latestPostList.get(latestPostList.size() - l));
+            l++;
+            addedPost++;
         }
 
         // add recommendation posts to user's feeds
         // いいねが集まってるやつとか、フォロワーが多い人のとか
-        /*int temp = 0;
-        int recommended = 0;
-        if (recommendPostQueue.isEmpty()) {
-            return;
-        }
-        for (int i = recommendPostQueue.size() - 1; i >= 0 && temp < recommendPostNum; i--) {
-            if(recommendPostQueue.get(i).getPostUserId() == userId){
-                continue;
-            }
-            agentSet[userId].addPostToFeed(recommendPostQueue.get(i));
-            recommended++;
-            temp++;
-        }
-
-        if(postNum - agentSet[userId].getFeed().size() > 10){
-            for (int i = recommendPostQueue.size() - recommended - 1; i >= 0 && agentSet[userId].getFeed().size() + 1 <= postNum; i--) {
-                if(recommendPostQueue.get(i).getPostUserId() == userId){
-                    continue;
-                }
-                agentSet[userId].addPostToFeed(recommendPostQueue.get(i));
-            }
-        }
-        if(postNum - agentSet[userId].getFeed().size() > 10){
-            System.out.println("size underflow !!");
-        }*/
+        /*
+         * int temp = 0;
+         * int recommended = 0;
+         * if (recommendPostQueue.isEmpty()) {
+         * return;
+         * }
+         * for (int i = recommendPostQueue.size() - 1; i >= 0 && temp <
+         * recommendPostNum; i--) {
+         * if(recommendPostQueue.get(i).getPostUserId() == userId){
+         * continue;
+         * }
+         * agentSet[userId].addPostToFeed(recommendPostQueue.get(i));
+         * recommended++;
+         * temp++;
+         * }
+         * 
+         * if(postNum - agentSet[userId].getFeed().size() > 10){
+         * for (int i = recommendPostQueue.size() - recommended - 1; i >= 0 &&
+         * agentSet[userId].getFeed().size() + 1 <= postNum; i--) {
+         * if(recommendPostQueue.get(i).getPostUserId() == userId){
+         * continue;
+         * }
+         * agentSet[userId].addPostToFeed(recommendPostQueue.get(i));
+         * }
+         * }
+         * if(postNum - agentSet[userId].getFeed().size() > 10){
+         * System.out.println("size underflow !!");
+         * }
+         */
     }
 }

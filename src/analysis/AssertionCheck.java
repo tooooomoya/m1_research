@@ -22,7 +22,7 @@ public class AssertionCheck {
     public void assertionChecker(Agent[] agentSet, AdminOptim admin, int agentNum, int step) {
         double[][] tempAdjMatrix = admin.getAdjacencyMatrix();
         // w行列の行方向の和は常に1.0
-        for (int i = 0; i < n; i++) {
+        /*for (int i = 0; i < n; i++) {
             double temp = 0;
             for(int j = 0; j < n; j++){
                 if(i == j){
@@ -41,7 +41,7 @@ public class AssertionCheck {
             if(Math.abs(temp - 1.0) > 0.1){
                 System.out.println("AC Error: sum of the row is not equal to 1 in node " + i + " because sum is " + temp);
             }
-        }
+        }*/
 
         // opinion should be in [-1, 1]
         for(int i = 0 ; i < n ; i++){

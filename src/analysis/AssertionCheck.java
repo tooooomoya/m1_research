@@ -42,6 +42,16 @@ public class AssertionCheck {
                 System.out.println("AC Error: sum of the row is not equal to 1 in node " + i + " because sum is " + temp);
             }
         }*/
+        for(int i = 0 ; i < n ; i ++){
+            for(int j = 0; j < n ; j ++){
+                if(tempAdjMatrix[i][j] > 0.0){
+                    if(!agentSet[i].getFollowList()[j] || agentSet[i].getUnfollowList()[j]){
+                        System.out.println("follow, unfollow list consistency with W matrix error in " + i + ", " + j);
+                        System.out.println("follow list " + agentSet[i].getFollowList()[j] + ", unfollow list " + agentSet[i].getUnfollowList()[j] + ", W " +tempAdjMatrix[i][j]);
+                    }
+                }
+            }
+        }
 
         // opinion should be in [-1, 1]
         for(int i = 0 ; i < n ; i++){

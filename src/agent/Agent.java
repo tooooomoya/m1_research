@@ -43,7 +43,7 @@ public class Agent {
         this.followRate = Const.INITIAL_FOLLOW_RATE;
         this.unfollowRate = Const.INITIAL_UNFOLLOW_RATE;
         this.timeStep = 0;
-        setNumOfPosts(20); // 10件はないと0.1をかけても残らない
+        setNumOfPosts(10); // 10件はないと0.1をかけても残らない
         /*
          * if(0.1 > rand.nextDouble()){
          * this.traitor = true;
@@ -110,11 +110,11 @@ public class Agent {
         return this.postCash;
     }
 
-    public boolean[] getFollowList(){
+    public boolean[] getFollowList() {
         return this.followList;
     }
 
-    public boolean[] getUnfollowList(){
+    public boolean[] getUnfollowList() {
         return this.unfollowList;
     }
 
@@ -155,10 +155,10 @@ public class Agent {
         this.opinionClass = (int) Math.min(shiftedOpinion / opinionBinWidth, Const.NUM_OF_BINS_OF_OPINION - 1);
     }
 
-    public void setFollowList(double[][] W){
-        for(int i = 0 ; i < W.length ; i++){
-            for(int j = 0 ; j < W.length; j++){
-                if(W[i][j] > 0.0){
+    public void setFollowList(double[][] W) {
+        for (int i = 0; i < W.length; i++) {
+            for (int j = 0; j < W.length; j++) {
+                if (W[i][j] > 0.0) {
                     this.followList[j] = true;
                 }
             }
@@ -172,9 +172,12 @@ public class Agent {
     }
 
     // other methods
-    public void receiveLike(){
+    public void receiveLike() {
         this.postProb += 0.001;
-        //this.mediaUseRate += 0.001;
+        // this.mediaUseRate += 0.001;
+        if(this.postProb > 1.0){
+            this.postProb = 1.0;
+        }
     }
 
     public void resetPostCash() {
@@ -200,8 +203,8 @@ public class Agent {
         // feedに表示される投稿は全て閲覧する
         for (Post post : this.feed) {
             temp += post.getPostOpinion();
-            if(this.id % 100 == 0){
-               // System.out.println("read post opinion " + post.getPostOpinion());
+            if (this.id % 100 == 0) {
+                // System.out.println("read post opinion " + post.getPostOpinion());
             }
             postNum++;
             if (Math.abs(post.getPostOpinion() - this.opinion) < Const.MINIMUM_BC) {
@@ -212,25 +215,25 @@ public class Agent {
         if (postNum == 0)
             return;
 
-        if(this.id % 100 == 0){
+        if (this.id % 100 == 0) {
            // System.out.println("num of read post " + postNum);
         }
 
         double comfortPostRate = (double) comfortPostNum / postNum;
 
         if (comfortPostRate > Const.COMFORT_RATE) {
-            //this.postProb += 0.01 * decayFunc(this.timeStep);
-            this.postProb += 0.01;
-            //this.mediaUseRate += 0.01 * decayFunc(this.timeStep);
-           //this.mediaUseRate += 0.01;
+            // this.postProb += 0.01 * decayFunc(this.timeStep);
+            this.postProb += 0.1;
+            // this.mediaUseRate += 0.01 * decayFunc(this.timeStep);
+            // this.mediaUseRate += 0.01;
         } else {
-            //this.postProb -= 0.0001 * decayFunc(this.timeStep);
+            // this.postProb -= 0.0001 * decayFunc(this.timeStep);
             this.postProb -= 0.001;
-            if(this.postProb < 0.01){
-                this.postProb = 0.01;
+            if (this.postProb < 0.1) {
+                this.postProb = 0.1;
             }
-            //this.mediaUseRate -= 0.0001 * decayFunc(this.timeStep);
-            //this.mediaUseRate -= 0.00;
+            // this.mediaUseRate -= 0.0001 * decayFunc(this.timeStep);
+            // this.mediaUseRate -= 0.00;
         }
 
         this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
@@ -259,10 +262,10 @@ public class Agent {
         setOpinionClass();
     }
 
-    public int like() {
+    public Post like() {
         List<Post> candidates = new ArrayList<>();
         if (this.feed.size() <= 0) {
-            return -1;
+            return null;
         }
 
         // 条件に合う投稿をすべてリストアップ
@@ -276,9 +279,9 @@ public class Agent {
         if (!candidates.isEmpty()) {
             Post likedPost = candidates.get(rand.nextInt(candidates.size()));
             likedPost.receiveLike();
-            return likedPost.getPostUserId();
+            return likedPost;
         } else {
-            return -1;
+            return null;
         }
     }
 
@@ -288,7 +291,7 @@ public class Agent {
         }
 
         List<Integer> candidates = new ArrayList<>();
-    
+
         for (Post post : this.feed) {
             if (Math.abs(post.getPostOpinion() - this.opinion) < this.bc && this.id != post.getPostUserId()
                     && !this.followList[post.getPostUserId()] && !this.unfollowList[post.getPostUserId()]) {
@@ -308,56 +311,55 @@ public class Agent {
     public int unfollow() {
         int attemps = 0;
         int followeeNum = 0;
-        for(int i = 0; i < NUM_OF_AGENTS; i++){
-            if(this.followList[i]){
+        for (int i = 0; i < NUM_OF_AGENTS; i++) {
+            if (this.followList[i]) {
                 followeeNum++;
             }
         }
         if (this.feed.size() <= 0.0 || followeeNum <= 2) {
-            if(this.id % 10 == 0){
-              //  System.out.println("feed size " + this.feed.size() + ", followee num " + followeeNum);
+            if (this.id % 10 == 0) {
+                // System.out.println("feed size " + this.feed.size() + ", followee num " +
+                // followeeNum);
             }
             return -1;
         }
         List<Post> candidates = new ArrayList<>();
-        for(Post post : this.feed){
-            if(this.id % 10 ==0){
-               // System.out.println("opinion diff : " + Math.abs(post.getPostOpinion() - this.opinion));
+        for (Post post : this.feed) {
+            if (this.id % 10 == 0) {
+                // System.out.println("opinion diff : " + Math.abs(post.getPostOpinion() -
+                // this.opinion));
             }
-            if(Math.abs(post.getPostOpinion() - this.opinion) > this.bc){
+            if (Math.abs(post.getPostOpinion() - this.opinion) > this.bc) {
                 this.unfollowList[post.getPostUserId()] = true;
-                this.bc -= 0.01;
-                if(this.id % 10 == 0){
-                //    System.out.println("disagg posts");
-                }
-                if(this.bc < Const.MINIMUM_BC){
-                    this.bc = Const.MINIMUM_BC;
-                }
-                if(this.followList[post.getPostUserId()]){
-                candidates.add(post);
-                }
-
-            }
-        }
-        if(!candidates.isEmpty()){
-            return candidates.get(rand.nextInt(candidates.size())).getPostUserId();
-        }
-
-        /*while (attemps < 100) {
-            Post unfollowPost = this.feed.get(rand.nextInt(this.feed.size()));
-
-            if (Math.abs(unfollowPost.getPostOpinion() - this.opinion) > this.bc) {
-                int unfollowId = unfollowPost.getPostUserId();
-                //this.bc -= 0.05 * decayFunc(this.timeStep);
                 this.bc -= 0.05;
+                
                 if (this.bc < Const.MINIMUM_BC) {
                     this.bc = Const.MINIMUM_BC;
                 }
-                this.followList[unfollowId] = false;
-                return unfollowId;
+                if (this.followList[post.getPostUserId()]) {
+                    return post.getPostUserId();
+                }
+                return -1;
             }
-            attemps++;
-        }*/
+        }
+
+        /*
+         * while (attemps < 100) {
+         * Post unfollowPost = this.feed.get(rand.nextInt(this.feed.size()));
+         * 
+         * if (Math.abs(unfollowPost.getPostOpinion() - this.opinion) > this.bc) {
+         * int unfollowId = unfollowPost.getPostUserId();
+         * //this.bc -= 0.05 * decayFunc(this.timeStep);
+         * this.bc -= 0.05;
+         * if (this.bc < Const.MINIMUM_BC) {
+         * this.bc = Const.MINIMUM_BC;
+         * }
+         * this.followList[unfollowId] = false;
+         * return unfollowId;
+         * }
+         * attemps++;
+         * }
+         */
 
         return -1;
     }
@@ -379,7 +381,7 @@ public class Agent {
     public double decayFunc(double time) {
         double lambda = 0.0001;
         return Math.exp(-lambda * time);
-        //return 1;
+        // return 1;
     }
 
 }

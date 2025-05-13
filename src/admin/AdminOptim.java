@@ -48,7 +48,7 @@ public class AdminOptim {
         }
     }
 
-    public void updateRecommendPostQueue(List<Post> postList) {
+    /*public void updateRecommendPostQueue(List<Post> postList) {
         int maxLike = -1;
         List<Post> candidates = new ArrayList<>();
 
@@ -70,7 +70,7 @@ public class AdminOptim {
             Post chosen = candidates.get(rand.nextInt(candidates.size()));
             addRecommendPost(chosen);
         }
-    }
+    }*/
 
     public void updateAdjacencyMatrix(int userId, int likedId, int followedId, int unfollowedId) {
         if (likedId >= 0) {
@@ -150,8 +150,9 @@ public class AdminOptim {
          * }
          */
         int addedPost = 0;
-        if(agentSet[userId].getId() % 100 == 0){
-            //System.out.println("post cash size : " + agentSet[userId].getPostCash().getSize());
+        if (agentSet[userId].getId() % 100 == 0) {
+            // System.out.println("post cash size : " +
+            // agentSet[userId].getPostCash().getSize());
         }
         for (Post post : agentSet[userId].getPostCash().getAllPosts()) {
             // if(this.W[userId][post.getPostUserId()] > 0.0){
@@ -159,12 +160,22 @@ public class AdminOptim {
             addedPost++;
             // }
         }
-        int l = 1;
-        while (addedPost < postNum && l <= latestPostList.size()) {
-            agentSet[userId].addPostToFeed(latestPostList.get(latestPostList.size() - l));
-            l++;
-            addedPost++;
+        if(userId % 100 == 0){
+            //System.out.println("post cash rate in feed " + (double) addedPost / postNum);
         }
+        // いいね数が多い順にソート（降順）
+        /*List<Post> sortedList = new ArrayList<>(latestPostList);
+        sortedList.sort((p1, p2) -> Integer.compare(p2.getRecievedLike(), p1.getRecievedLike()));
+
+        int recPostNum = 0;
+        // 上位 postNum 件を追加（件数を超えないようにする）
+        for (Post post : sortedList) {
+            if (addedPost >= postNum || recPostNum > 1)
+                break;
+            agentSet[userId].addPostToFeed(post);
+            addedPost++;
+            recPostNum++;
+        }*/
 
         // add recommendation posts to user's feeds
         // いいねが集まってるやつとか、フォロワーが多い人のとか

@@ -107,7 +107,17 @@ public class OpinionDynamics {
                     //System.out.println("feed length is " + agent.getFeed().size());
                 }
 
-                int likedId = agent.like();
+                Post likedPost = agent.like();
+                int likedId = -1;
+                if(likedPost != null){
+                for (Agent otherAgent : agentSet) {
+                    if (otherAgent.getId() != agentId && W[agentId][otherAgent.getId()] > 0.00) { // follower全員のpostCashに追加
+                        otherAgent.addToPostCash(likedPost);
+                    }
+                }
+                likedId = likedPost.getPostUserId();
+            }
+            
                 if(likedId >= 0){
                     agentSet[likedId].receiveLike();
                 }
@@ -178,7 +188,7 @@ public class OpinionDynamics {
                 }
             }
             // adminがrecommend post を決める
-            admin.updateRecommendPostQueue(postList);
+            //admin.updateRecommendPostQueue(postList);
 
             if (step % 100 == 0) {
                 // export gexf

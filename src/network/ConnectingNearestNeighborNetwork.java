@@ -38,14 +38,14 @@ public class ConnectingNearestNeighborNetwork extends Network {
 
     @Override
     public void makeNetwork(Agent[] agentSet) {
-        int seedNodes = Math.min(10, getSize()); // 最初に作るノード数
+        int seedNodes = Math.min(20, getSize()); // 最初に作るノード数
         int currentSize = seedNodes;
         System.out.println("start making network");
 
         // 初期ノード間をランダムに接続
         for (int i = 0; i < seedNodes; i++) {
             for (int j = 0; j < seedNodes; j++) {
-                if (i != j && rand.nextDouble() < 0.5) {
+                if (i != j && rand.nextDouble() < 0.1) {
                     int weight = rand.nextInt(5) + 1;
                     setEdge(i, j, weight);
                 }

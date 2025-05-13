@@ -4,7 +4,7 @@ public class Post {
     private int postUserId;
     private double postOpinion;
     private int postedStep;
-    private int receivedLike;
+    private int recievedLike;
     private final int postId;
     private static int postIdCounter = 0;
 
@@ -12,7 +12,7 @@ public class Post {
         this.postUserId = postUserId;
         this.postOpinion = postOpinion;
         this.postedStep = postedStep;
-        this.receivedLike = 0;
+        this.recievedLike = 0;
         this.postId = postIdCounter++;
     }
 
@@ -29,8 +29,8 @@ public class Post {
         return postedStep;
     }
 
-    public int getReceivedLike(){
-        return this.receivedLike;
+    public int getRecievedLike(){
+        return this.recievedLike;
     }
 
     public int getPostId(){
@@ -57,6 +57,6 @@ public class Post {
     }
 
     public void receiveLike(){
-        this.receivedLike++;
+        this.recievedLike++;
     }
 }

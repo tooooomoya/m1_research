@@ -43,7 +43,7 @@ public class Agent {
         this.followRate = Const.INITIAL_FOLLOW_RATE;
         this.unfollowRate = Const.INITIAL_UNFOLLOW_RATE;
         this.timeStep = 0;
-        setNumOfPosts(30); // 10件はないと0.1をかけても残らない
+        setNumOfPosts(20); // 10件はないと0.1をかけても残らない
         /*
          * if(0.1 > rand.nextDouble()){
          * this.traitor = true;

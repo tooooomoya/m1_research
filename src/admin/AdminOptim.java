@@ -3,6 +3,7 @@ package admin;
 import agent.*;
 import constants.Const;
 import java.util.*;
+import rand.randomGenerater;
 
 public class AdminOptim {
     private int n;
@@ -126,43 +127,37 @@ public class AdminOptim {
             recommendPostNum = 0;
         }
 
-        // add posts from user's postCash to user's feed depending on W matrix
-        /*
-         * int[] maxPostNumArray = new int[this.n];
-         * for (int i = 0; i < n; i++) {
-         * maxPostNumArray[i] = (int) Math.round(this.W[userId][i] * friendPostNum);
-         * if(userId == 182){
-         * // System.out.println("max post array : " + maxPostNumArray[i] + ", W[i][j] "
-         * + this.W[userId][i]);
-         * //System.out.println("W and friedn num " + W[userId][136] + ", "+
-         * friendPostNum);
-         * }
-         * }
-         * for (Post post : agentSet[userId].getPostCash().getAllPosts()) {
-         * if (maxPostNumArray[post.getPostUserId()] > 0) {
-         * if(userId % 100 == 0){
-         * //System.out.println("max post num array is " +
-         * maxPostNumArray[post.getPostUserId()]);
-         * }
-         * agentSet[userId].addPostToFeed(post);
-         * maxPostNumArray[post.getPostUserId()]--;
-         * }
-         * }
-         */
         int addedPost = 0;
+        List<Post> tempFeed = new ArrayList<>();
         if (agentSet[userId].getId() % 100 == 0) {
             // System.out.println("post cash size : " +
             // agentSet[userId].getPostCash().getSize());
         }
         for (Post post : agentSet[userId].getPostCash().getAllPosts()) {
             // if(this.W[userId][post.getPostUserId()] > 0.0){
-            agentSet[userId].addPostToFeed(post);
+            tempFeed.add(post);
             addedPost++;
             // }
+        }
+        Collections.shuffle(tempFeed, randomGenerater.rand);
+        for(Post post : tempFeed){
+            agentSet[userId].addPostToFeed(post);
         }
         if(userId % 100 == 0){
             //System.out.println("post cash rate in feed " + (double) addedPost / postNum);
         }
+
+        List<Post> shuffled = new ArrayList<>(latestPostList);
+        Collections.shuffle(shuffled, randomGenerater.rand);
+
+        // n件以下しかない場合にも対応
+        int numToSelect = Math.min(1, shuffled.size());
+
+        // 先頭からn件を取り出して返す
+        for(Post selectedPost : shuffled.subList(0, numToSelect)){
+           // agentSet[userId].addPostToFeed(selectedPost);
+        }
+        
         // いいね数が多い順にソート（降順）
         /*List<Post> sortedList = new ArrayList<>(latestPostList);
         sortedList.sort((p1, p2) -> Integer.compare(p2.getRecievedLike(), p1.getRecievedLike()));

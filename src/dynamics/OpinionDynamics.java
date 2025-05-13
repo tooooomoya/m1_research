@@ -100,76 +100,51 @@ public class OpinionDynamics {
                 if (rand.nextDouble() > agent.getMediaUseRate()) {
                     continue;
                 }
-    
+
                 admin.AdminFeedback(agentId, agentSet, latestPostList);
-                if(agent.getId() % 100 == 0){
-                   // System.out.println("post cash length is " + agent.getPostCash().getSize());
-                    //System.out.println("feed length is " + agent.getFeed().size());
+                if (agent.getId() % 100 == 0) {
+                    // System.out.println("post cash length is " + agent.getPostCash().getSize());
+                    // System.out.println("feed length is " + agent.getFeed().size());
                 }
 
-                Post likedPost = agent.like();
+                
                 int likedId = -1;
-                if(likedPost != null){
-                for (Agent otherAgent : agentSet) {
-                    if (otherAgent.getId() != agentId && W[agentId][otherAgent.getId()] > 0.00) { // follower全員のpostCashに追加
-                        otherAgent.addToPostCash(likedPost);
-                    }
-                }
-                likedId = likedPost.getPostUserId();
-            }
-            
-                if(likedId >= 0){
-                    agentSet[likedId].receiveLike();
-                }
-                //int likedId = -1;
 
-                /// follow
-                
-                // 全体からフォローできる
-                /*List<Integer> followList = new ArrayList<>();
-                for (int j = 0; j < agentNum; j++) {
-                    if (agentId != j && W[agentId][j] == 0.0) {
-                        followList.add(j);
-                    }
-                }
-                // 重複を削除 (フォローしているユーザがフォローしているユーザは被る可能性がある)
-                followList = new ArrayList<>(new HashSet<>(followList));*/
-                
-                
-                // 友達の友達からフォローできる
-                List<Integer> followList = new ArrayList<>();
-                Set<Integer> candidates = new HashSet<>();
-                // 自分のフォロー相手（1次近傍）を取得
-                for (int j = 0; j < agentNum; j++) {
-                    if (agentId != j && W[agentId][j] > 0.0) {
-                        // フォロー中のエージェント j のフォロー相手を候補に追加（2次近傍）
-                        for (int k = 0; k < agentNum; k++) {
-                            if (k != agentId && W[j][k] > 0.0 && W[agentId][k] == 0.0) {
-                                candidates.add(k);
+                for(int i = 0 ; i < 3; i++){
+                    Post likedPost = agent.like();
+                    if (likedPost != null) {
+                        for (Agent otherAgent : agentSet) {
+                            if (W[otherAgent.getId()][agentId] > 0.00) { // follower全員のpostCashに追加
+                                otherAgent.addToPostCash(likedPost);
                             }
                         }
+                        likedId = likedPost.getPostUserId();
+                    }
+                    if (likedId >= 0) {
+                        agentSet[likedId].receiveLike();
                     }
                 }
-                followList = new ArrayList<>(candidates);
+                // int likedId = -1;
 
-                int followedId = agent.follow(latestPostList);
-                //int followedId = -1;
+                /////// follow
+                int followedId = agent.follow();
+                // int followedId = -1;
 
-                // unfollow
+                /////// unfollow
                 int unfollowedId = agent.unfollow();
 
-                // post
+                /////// post
                 if (rand.nextDouble() < agent.getPostProb()) {
                     Post post = agent.makePost(step);
                     for (Agent otherAgent : agentSet) {
-                        if (otherAgent.getId() != agentId && W[agentId][otherAgent.getId()] > 0.00) { // follower全員のpostCashに追加
+                        if (W[otherAgent.getId()][agentId] > 0.00) { // follower全員のpostCashに追加
                             otherAgent.addToPostCash(post);
                         }
                     }
                     writer.setPostBins(post);
                     analyzer.setPostCash(post);
                     postList.add(post);
-                    if(latestPostList.size() > latestListSize - 1){
+                    if (latestPostList.size() > latestListSize - 1) {
                         latestPostList.remove(0);
                     }
                     latestPostList.add(post);
@@ -188,7 +163,7 @@ public class OpinionDynamics {
                 }
             }
             // adminがrecommend post を決める
-            //admin.updateRecommendPostQueue(postList);
+            // admin.updateRecommendPostQueue(postList);
 
             if (step % 100 == 0) {
                 // export gexf

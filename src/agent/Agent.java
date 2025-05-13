@@ -43,7 +43,7 @@ public class Agent {
         this.followRate = Const.INITIAL_FOLLOW_RATE;
         this.unfollowRate = Const.INITIAL_UNFOLLOW_RATE;
         this.timeStep = 0;
-        setNumOfPosts(10); // 10件はないと0.1をかけても残らない
+        setNumOfPosts(30); // 10件はないと0.1をかけても残らない
         /*
          * if(0.1 > rand.nextDouble()){
          * this.traitor = true;
@@ -157,16 +157,14 @@ public class Agent {
 
     public void setFollowList(double[][] W) {
         for (int i = 0; i < W.length; i++) {
-            for (int j = 0; j < W.length; j++) {
-                if (W[i][j] > 0.0) {
-                    this.followList[j] = true;
-                }
+            if(W[this.id][i] > 0.0){
+                this.followList[i] = true;
             }
         }
     }
 
     public void addToPostCash(Post post) {
-        if (!this.alreadyAddedPostIds.contains(post.getPostId())) {
+        if (!this.alreadyAddedPostIds.contains(post.getPostId()) && post.getPostUserId() != this.id && !this.unfollowList[post.getPostUserId()]) {
             this.postCash.addPost(post);
         }
     }
@@ -174,7 +172,7 @@ public class Agent {
     // other methods
     public void receiveLike() {
         this.postProb += 0.001;
-        // this.mediaUseRate += 0.001;
+        this.mediaUseRate += 0.001;
         if(this.postProb > 1.0){
             this.postProb = 1.0;
         }
@@ -221,16 +219,17 @@ public class Agent {
 
         double comfortPostRate = (double) comfortPostNum / postNum;
 
-        if (comfortPostRate > Const.COMFORT_RATE) {
+        if (comfortPostRate > Const.COMFORT_RATE && this.feed.size() > 2) {
             // this.postProb += 0.01 * decayFunc(this.timeStep);
-            this.postProb += 0.1;
+            //System.out.println("I'm comfort");
+            this.postProb += 0.001;
             // this.mediaUseRate += 0.01 * decayFunc(this.timeStep);
-            // this.mediaUseRate += 0.01;
+            this.mediaUseRate += 0.001;
         } else {
             // this.postProb -= 0.0001 * decayFunc(this.timeStep);
-            this.postProb -= 0.001;
-            if (this.postProb < 0.1) {
-                this.postProb = 0.1;
+            this.postProb -= 0.0001;
+            if (this.postProb < 0.01) {
+                this.postProb = 0.01;
             }
             // this.mediaUseRate -= 0.0001 * decayFunc(this.timeStep);
             // this.mediaUseRate -= 0.00;
@@ -285,7 +284,7 @@ public class Agent {
         }
     }
 
-    public int follow(List<Post> latestPostList) {
+    public int follow() {
         if (this.followRate < rand.nextDouble()) {
             return -1;
         }
@@ -293,10 +292,12 @@ public class Agent {
         List<Integer> candidates = new ArrayList<>();
 
         for (Post post : this.feed) {
-            if (Math.abs(post.getPostOpinion() - this.opinion) < this.bc && this.id != post.getPostUserId()
-                    && !this.followList[post.getPostUserId()] && !this.unfollowList[post.getPostUserId()]) {
+            if (Math.abs(post.getPostOpinion() - this.opinion) < this.bc && !this.followList[post.getPostUserId()]) {
                 candidates.add(post.getPostUserId());
             }
+        }
+        if(this.id % 10 == 0){
+            //System.out.println("follow candidate size " + candidates.size() + ", feed size " + this.feed.size());
         }
         if (!candidates.isEmpty()) {
             int followId = candidates.get(rand.nextInt(candidates.size()));
@@ -317,50 +318,34 @@ public class Agent {
             }
         }
         if (this.feed.size() <= 0.0 || followeeNum <= 2) {
-            if (this.id % 10 == 0) {
-                // System.out.println("feed size " + this.feed.size() + ", followee num " +
-                // followeeNum);
-            }
             return -1;
         }
-        List<Post> candidates = new ArrayList<>();
+        
+        List<Integer> dislikeUser = new ArrayList<>();
         for (Post post : this.feed) {
-            if (this.id % 10 == 0) {
-                // System.out.println("opinion diff : " + Math.abs(post.getPostOpinion() -
-                // this.opinion));
-            }
-            if (Math.abs(post.getPostOpinion() - this.opinion) > this.bc) {
+            if (Math.abs(post.getPostOpinion() - this.opinion) > this.bc && this.followList[post.getPostUserId()]) {
                 this.unfollowList[post.getPostUserId()] = true;
+                this.followList[post.getPostUserId()] = false;
                 this.bc -= 0.05;
                 
                 if (this.bc < Const.MINIMUM_BC) {
                     this.bc = Const.MINIMUM_BC;
                 }
-                if (this.followList[post.getPostUserId()]) {
-                    return post.getPostUserId();
-                }
-                return -1;
+                return post.getPostUserId();
+            }
+            if(Math.abs(post.getPostOpinion() - this.opinion) > this.bc && !this.followList[post.getPostUserId()]){
+                dislikeUser.add(post.getPostUserId());
             }
         }
-
-        /*
-         * while (attemps < 100) {
-         * Post unfollowPost = this.feed.get(rand.nextInt(this.feed.size()));
-         * 
-         * if (Math.abs(unfollowPost.getPostOpinion() - this.opinion) > this.bc) {
-         * int unfollowId = unfollowPost.getPostUserId();
-         * //this.bc -= 0.05 * decayFunc(this.timeStep);
-         * this.bc -= 0.05;
-         * if (this.bc < Const.MINIMUM_BC) {
-         * this.bc = Const.MINIMUM_BC;
-         * }
-         * this.followList[unfollowId] = false;
-         * return unfollowId;
-         * }
-         * attemps++;
-         * }
-         */
-
+        if(dislikeUser.size() > 0){
+            // followしていないが、気にくわない投稿があれば1つを選んでその人をブロック
+            this.unfollowList[dislikeUser.get(rand.nextInt(dislikeUser.size()))] = true;
+            this.bc -= 0.05;
+            if (this.bc < Const.MINIMUM_BC) {
+                this.bc = Const.MINIMUM_BC;
+            }
+            //System.out.println("do not follow but dislike it");
+        }
         return -1;
     }
 

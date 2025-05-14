@@ -3,6 +3,7 @@ package network;
 import agent.Agent;
 import java.util.*;
 import rand.randomGenerater;
+import constants.Const;
 
 public class ConnectingNearestNeighborNetwork extends Network {
     private double p; // potential edge を実エッジに変換する確率
@@ -38,7 +39,7 @@ public class ConnectingNearestNeighborNetwork extends Network {
 
     @Override
     public void makeNetwork(Agent[] agentSet) {
-        int seedNodes = Math.min(20, getSize()); // 最初に作るノード数
+        int seedNodes = Math.min(Const.NUM_OF_SEED_USER, getSize()); // 最初に作るノード数
         int currentSize = seedNodes;
         System.out.println("start making network");
 

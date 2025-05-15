@@ -1,9 +1,10 @@
 package dynamics;
 
+import admin.*;
 import agent.*;
 import analysis.*;
 import constants.Const;
-import gephi.GraphVisualize;
+import gephi.*;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -11,8 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-
-import admin.*;
 import network.*;
 import rand.randomGenerater;
 import writer.Writer;
@@ -34,27 +33,47 @@ public class OpinionDynamics {
 
     // constructor
     public OpinionDynamics() {
-        setAgents();
-        setNetwork();
+        setAll();
         this.analyzer = new Analysis();
         this.writer = new Writer(folerPath, resultList);
         this.gephi = new GraphVisualize(0.00, agentSet, network);
         this.admin = new AdminOptim(agentNum, network.getAdjacencyMatrix());
     }
 
-    private void setAgents() {
-        for (int i = 0; i < agentNum; i++) {
-            agentSet[i] = new Agent(i);
-        }
+    private void setAll(){
+        setNetwork();
+        setAgents();
     }
 
     private void setNetwork() {
         ///// you can change the initial network bellow
-        // this.network = new RandomNetwork(agentNum, connectionProbability);
-        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.9);
+        //this.network = new RandomNetwork(agentNum, connectionProbability);
+        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.5);
         /////
 
         this.network.makeNetwork(agentSet);
+        System.out.println("finish making network");
+    }
+
+    private void setAgents() {
+        double[][] tempAdjacencyMatrix = this.network.getAdjacencyMatrix();
+        for (int i = 0; i < agentNum; i++) {
+            agentSet[i] = new Agent(i);
+            agentSet[i].setFollowList(tempAdjacencyMatrix);
+        }
+    }
+
+    private void setCustomized(){
+        this.network = new ReadNetwork(agentNum, Const.READ_NW_PATH);
+        this.network.makeNetwork(agentSet);
+        System.out.println("finish making network");
+
+        double[][] tempAdjacencyMatrix = this.network.getAdjacencyMatrix();
+        for (int i = 0; i < agentNum; i++) {
+            agentSet[i] = new Agent(i);
+            agentSet[i].setFollowList(tempAdjacencyMatrix);
+        }
+        GephiReader.readGraphNodes(agentSet, Const.READ_NW_PATH);
     }
 
     private void errorReport() {
@@ -77,6 +96,8 @@ public class OpinionDynamics {
 
         int followActionNum;
         int unfollowActionNum;
+        List<Post> latestPostList = new ArrayList<>();
+        int latestListSize = Const.LATEST_POST_LIST_LENGTH;
 
         for (int step = 1; step <= t; step++) {
             System.out.println("step = " + step);
@@ -87,6 +108,7 @@ public class OpinionDynamics {
             writer.clearPostBins();
             writer.setSimulationStep(step);
             double[][] W = admin.getAdjacencyMatrix();
+            List<Post> postList = new ArrayList<>();
 
             for (Agent agent : agentSet) {
                 int agentId = agent.getId();
@@ -96,68 +118,69 @@ public class OpinionDynamics {
                     continue;
                 }
 
-                int likedId = agent.like();
-                //int likedId = -1;
-
-                /// follow
-                
-                // 全体からフォローできる
-                /*List<Integer> followList = new ArrayList<>();
-                for (int j = 0; j < agentNum; j++) {
-                    if (agentId != j && W[agentId][j] == 0.0) {
-                        followList.add(j);
-                    }
+                admin.AdminFeedback(agentId, agentSet, latestPostList);
+                if (agent.getId() % 100 == 0) {
+                    // System.out.println("post cash length is " + agent.getPostCash().getSize());
+                    // System.out.println("feed length is " + agent.getFeed().size());
                 }
-                // 重複を削除 (フォローしているユーザがフォローしているユーザは被る可能性がある)
-                followList = new ArrayList<>(new HashSet<>(followList));*/
+
                 
-                
-                // 友達の友達からフォローできる
-                List<Integer> followList = new ArrayList<>();
-                Set<Integer> candidates = new HashSet<>();
-                // 自分のフォロー相手（1次近傍）を取得
-                for (int j = 0; j < agentNum; j++) {
-                    if (agentId != j && W[agentId][j] > 0.0) {
-                        // フォロー中のエージェント j のフォロー相手を候補に追加（2次近傍）
-                        for (int k = 0; k < agentNum; k++) {
-                            if (k != agentId && W[j][k] > 0.0 && W[agentId][k] == 0.0) {
-                                candidates.add(k);
+                int likedId = -1;
+
+                for(int i = 0 ; i < 3; i++){
+                    Post likedPost = agent.like();
+                    if (likedPost != null) {
+                        for (Agent otherAgent : agentSet) {
+                            if (W[otherAgent.getId()][agentId] > 0.00) { // follower全員のpostCashに追加
+                                otherAgent.addToPostCash(likedPost);
                             }
                         }
+                        likedId = likedPost.getPostUserId();
+                    }
+                    if (likedId >= 0) {
+                        agentSet[likedId].receiveLike();
                     }
                 }
-                followList = new ArrayList<>(candidates);
+                // int likedId = -1;
 
-                int followedId = agent.follow(followList, agentSet);
-                //int followedId = -1;
+                /////// follow
+                int followedId = agent.follow();
+                // int followedId = -1;
 
-                // unfollow
+                /////// unfollow
                 int unfollowedId = agent.unfollow();
 
-                // post
+                /////// post
                 if (rand.nextDouble() < agent.getPostProb()) {
                     Post post = agent.makePost(step);
                     for (Agent otherAgent : agentSet) {
-                        if (otherAgent.getId() != agentId && W[agentId][otherAgent.getId()] > 0.01) { // follower全員のpostCashに追加
+                        if (W[otherAgent.getId()][agentId] > 0.00) { // follower全員のpostCashに追加
                             otherAgent.addToPostCash(post);
                         }
                     }
                     writer.setPostBins(post);
                     analyzer.setPostCash(post);
+                    postList.add(post);
+                    if (latestPostList.size() > latestListSize - 1) {
+                        latestPostList.remove(0);
+                    }
+                    latestPostList.add(post);
                 }
 
                 agent.updateMyself();
                 admin.updateAdjacencyMatrix(agentId, likedId, followedId, unfollowedId);
-                agent.setFeed(admin.AdminFeedback(agentId, agentSet));
                 agent.resetPostCash();
-                ASChecker.assertionChecker(agentSet, network, agentNum, step);
-                if (followedId > 0) {
+                agent.resetFeed();
+                ASChecker.assertionChecker(agentSet, admin, agentNum, step);
+                if (followedId >= 0) {
                     followActionNum++;
                 }
-                if (unfollowedId > 0) {
+                if (unfollowedId >= 0) {
                     unfollowActionNum++;
                 }
             }
+            // adminがrecommend post を決める
+            // admin.updateRecommendPostQueue(postList);
 
             if (step % 100 == 0) {
                 // export gexf

@@ -35,7 +35,7 @@ public class RandomNetwork extends Network {
             for (int j = 0; j < size; j++) {
                 rowSum += tempMatrix[i][j];
             }
-            agentSet[i].setNumOfPosts(rowSum);
+            //agentSet[i].setNumOfPosts(rowSum);
             if (rowSum > 0) {
                 for (int j = 0; j < size; j++) {
                     if (tempMatrix[i][j] > 0) {

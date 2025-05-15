@@ -1,5 +1,6 @@
 package analysis;
 
+import admin.*;
 import agent.Agent;
 import network.*;
 
@@ -18,10 +19,10 @@ public class AssertionCheck {
         this.maxStep = maxStep;
     }
 
-    public void assertionChecker(Agent[] agentSet, Network network, int agentNum, int step) {
-        double[][] tempAdjMatrix = network.getAdjacencyMatrix();
+    public void assertionChecker(Agent[] agentSet, AdminOptim admin, int agentNum, int step) {
+        double[][] tempAdjMatrix = admin.getAdjacencyMatrix();
         // w行列の行方向の和は常に1.0
-        for (int i = 0; i < n; i++) {
+        /*for (int i = 0; i < n; i++) {
             double temp = 0;
             for(int j = 0; j < n; j++){
                 if(i == j){
@@ -30,10 +31,25 @@ public class AssertionCheck {
                     }
                 }
                 temp += tempAdjMatrix[i][j];
-                //System.out.println(temp);
+                if(agentSet[i].getFollowList()[j] && tempAdjMatrix[i][j] == 0.0){
+                    //System.out.println("follow list is not equal to the W matrix in node : " + i +" , " + j);
+                }
+                if(agentSet[i].getUnfollowList()[j] && tempAdjMatrix[i][j] > 0.0){
+                    //System.out.println("unfollow list is not equal to the W matrix in node : " + i +" , " + j);
+                }
             }
             if(Math.abs(temp - 1.0) > 0.1){
-                System.out.println("AC Error: sum of the row is not equal to 1 in node " + i);
+                System.out.println("AC Error: sum of the row is not equal to 1 in node " + i + " because sum is " + temp);
+            }
+        }*/
+        for(int i = 0 ; i < n ; i ++){
+            for(int j = 0; j < n ; j ++){
+                if(tempAdjMatrix[i][j] > 0.0){
+                    if(!agentSet[i].getFollowList()[j] || agentSet[i].getUnfollowList()[j]){
+                        System.out.println("follow, unfollow list consistency with W matrix error in " + i + ", " + j);
+                        System.out.println("follow list " + agentSet[i].getFollowList()[j] + ", unfollow list " + agentSet[i].getUnfollowList()[j] + ", W " +tempAdjMatrix[i][j]);
+                    }
+                }
             }
         }
 

@@ -3,6 +3,7 @@ package network;
 import agent.Agent;
 import java.util.*;
 import rand.randomGenerater;
+import constants.Const;
 
 public class ConnectingNearestNeighborNetwork extends Network {
     private double p; // potential edge を実エッジに変換する確率
@@ -38,13 +39,14 @@ public class ConnectingNearestNeighborNetwork extends Network {
 
     @Override
     public void makeNetwork(Agent[] agentSet) {
-        int seedNodes = Math.min(10, getSize()); // 最初に作るノード数
+        int seedNodes = Math.min(Const.NUM_OF_SEED_USER, getSize()); // 最初に作るノード数
         int currentSize = seedNodes;
+        System.out.println("start making network");
 
         // 初期ノード間をランダムに接続
         for (int i = 0; i < seedNodes; i++) {
             for (int j = 0; j < seedNodes; j++) {
-                if (i != j && rand.nextDouble() < 0.5) {
+                if (i != j && rand.nextDouble() < 0.1) {
                     int weight = rand.nextInt(5) + 1;
                     setEdge(i, j, weight);
                 }
@@ -77,12 +79,12 @@ public class ConnectingNearestNeighborNetwork extends Network {
         }
 
         // 正規化処理
-        for (int i = 0; i < getSize(); i++) {
+        /*for (int i = 0; i < getSize(); i++) {
             int rowSum = 0;
             for (int j = 0; j < getSize(); j++) {
                 rowSum += this.adjacencyMatrix[i][j];
             }
-            agentSet[i].setNumOfPosts(rowSum);
+            //agentSet[i].setNumOfPosts(rowSum);
             if (rowSum > 0) {
                 for (int j = 0; j < getSize(); j++) {
                     if (this.adjacencyMatrix[i][j] > 0) {
@@ -91,6 +93,6 @@ public class ConnectingNearestNeighborNetwork extends Network {
                     }
                 }
             }
-        }
+        }*/
     }
 }

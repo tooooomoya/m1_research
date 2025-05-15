@@ -11,6 +11,7 @@ public class Analysis {
     private List<Post> postCash;
     private int n;
     private double postOpinionVar;
+    private double[] feedVar;
 
     // constructor
     public Analysis() {
@@ -18,6 +19,7 @@ public class Analysis {
         this.opinionVar = -1;
         this.postCash = new ArrayList<>();
         this.postOpinionVar = -1;
+        this.feedVar = new double[n];
     }
 
     public void clearPostCash() {
@@ -49,6 +51,25 @@ public class Analysis {
             squaredDiffSum += diff * diff;
         }
         this.opinionVar = squaredDiffSum / n;
+    }
+
+    public void computeFeedVariance(int agentId, List<Post> feed){
+        if(feed.size() == 0){
+            this.feedVar[agentId] = 0.0;
+            return;
+        }
+        double sum = 0.0;
+        for(Post post : feed){
+            sum += post.getPostOpinion();
+        }
+        double mean = sum / feed.size();
+        
+        double squaredDiffSum = 0.0;
+        for(Post post : feed){
+            double diff = post.getPostOpinion() - mean;
+            squaredDiffSum += diff * diff;
+        }
+        this.feedVar[agentId] = squaredDiffSum / feed.size();
     }
 
     public double getOpinionVar() {

@@ -4,7 +4,7 @@ import admin.*;
 import agent.*;
 import analysis.*;
 import constants.Const;
-import gephi.GraphVisualize;
+import gephi.*;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -33,20 +33,16 @@ public class OpinionDynamics {
 
     // constructor
     public OpinionDynamics() {
-        setNetwork();
-        setAgents();
+        setAll();
         this.analyzer = new Analysis();
         this.writer = new Writer(folerPath, resultList);
         this.gephi = new GraphVisualize(0.00, agentSet, network);
         this.admin = new AdminOptim(agentNum, network.getAdjacencyMatrix());
     }
 
-    private void setAgents() {
-        double[][] tempAdjacencyMatrix = this.network.getAdjacencyMatrix();
-        for (int i = 0; i < agentNum; i++) {
-            agentSet[i] = new Agent(i);
-            agentSet[i].setFollowList(tempAdjacencyMatrix);
-        }
+    private void setAll(){
+        setNetwork();
+        setAgents();
     }
 
     private void setNetwork() {
@@ -57,6 +53,27 @@ public class OpinionDynamics {
 
         this.network.makeNetwork(agentSet);
         System.out.println("finish making network");
+    }
+
+    private void setAgents() {
+        double[][] tempAdjacencyMatrix = this.network.getAdjacencyMatrix();
+        for (int i = 0; i < agentNum; i++) {
+            agentSet[i] = new Agent(i);
+            agentSet[i].setFollowList(tempAdjacencyMatrix);
+        }
+    }
+
+    private void setCustomized(){
+        this.network = new ReadNetwork(agentNum, Const.READ_NW_PATH);
+        this.network.makeNetwork(agentSet);
+        System.out.println("finish making network");
+
+        double[][] tempAdjacencyMatrix = this.network.getAdjacencyMatrix();
+        for (int i = 0; i < agentNum; i++) {
+            agentSet[i] = new Agent(i);
+            agentSet[i].setFollowList(tempAdjacencyMatrix);
+        }
+        GephiReader.readGraphNodes(agentSet, Const.READ_NW_PATH);
     }
 
     private void errorReport() {

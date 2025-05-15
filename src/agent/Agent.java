@@ -122,6 +122,19 @@ public class Agent {
 
     public void setOpinion(double value) {
         this.opinion = value;
+        setOpinionClass();
+    }
+
+    public void setPostProb(double value){
+        this.postProb = value;
+    }
+
+    public void setMediaUseRate(double value){
+        this.mediaUseRate = value;
+    }
+
+    public void setBoundedConfidence(double value){
+        this.bc = value;
     }
 
     public void setTimeStep(int time) {
@@ -171,10 +184,13 @@ public class Agent {
 
     // other methods
     public void receiveLike() {
-        this.postProb += 0.001;
-        this.mediaUseRate += 0.001;
+        this.postProb += 0.001 * decayFunc(this.timeStep);
+        this.mediaUseRate += 0.001 * decayFunc(this.timeStep);
         if(this.postProb > 1.0){
             this.postProb = 1.0;
+        }
+        if(this.mediaUseRate > 1.0){
+            this.mediaUseRate = 1.0;
         }
     }
 
@@ -222,12 +238,12 @@ public class Agent {
         if (comfortPostRate > Const.COMFORT_RATE && this.feed.size() > 2) {
             // this.postProb += 0.01 * decayFunc(this.timeStep);
             //System.out.println("I'm comfort");
-            this.postProb += 0.001;
+            this.postProb += 0.001 * decayFunc(this.timeStep);
             // this.mediaUseRate += 0.01 * decayFunc(this.timeStep);
-            this.mediaUseRate += 0.001;
+            this.mediaUseRate += 0.001 * decayFunc(this.timeStep);
         } else {
             // this.postProb -= 0.0001 * decayFunc(this.timeStep);
-            this.postProb -= 0.0001;
+            this.postProb -= 0.0001 * decayFunc(this.timeStep);
             if (this.postProb < 0.01) {
                 this.postProb = 0.01;
             }
@@ -326,7 +342,7 @@ public class Agent {
             if (Math.abs(post.getPostOpinion() - this.opinion) > this.bc && this.followList[post.getPostUserId()]) {
                 this.unfollowList[post.getPostUserId()] = true;
                 this.followList[post.getPostUserId()] = false;
-                this.bc -= 0.05;
+                this.bc -= 0.05 * decayFunc(this.timeStep);
                 
                 if (this.bc < Const.MINIMUM_BC) {
                     this.bc = Const.MINIMUM_BC;
@@ -365,8 +381,8 @@ public class Agent {
 
     public double decayFunc(double time) {
         double lambda = 0.0001;
-        return Math.exp(-lambda * time);
-        // return 1;
+        //return Math.exp(-lambda * time);
+        return 1;
     }
 
 }

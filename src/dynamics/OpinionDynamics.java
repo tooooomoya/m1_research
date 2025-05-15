@@ -33,7 +33,8 @@ public class OpinionDynamics {
 
     // constructor
     public OpinionDynamics() {
-        setAll();
+        //setAll();
+        setCustomized();
         this.analyzer = new Analysis();
         this.writer = new Writer(folerPath, resultList);
         this.gephi = new GraphVisualize(0.00, agentSet, network);

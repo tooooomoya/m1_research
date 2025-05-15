@@ -33,15 +33,15 @@ public class OpinionDynamics {
 
     // constructor
     public OpinionDynamics() {
-        //setAll();
-        setCustomized();
+        setFromInitial(); // for regular experiment (from initial state)
+        //setCustomized(); // if you want to start from your GEXF file
         this.analyzer = new Analysis();
         this.writer = new Writer(folerPath, resultList);
         this.gephi = new GraphVisualize(0.00, agentSet, network);
         this.admin = new AdminOptim(agentNum, network.getAdjacencyMatrix());
     }
 
-    private void setAll(){
+    private void setFromInitial(){
         setNetwork();
         setAgents();
     }

@@ -368,10 +368,10 @@ public class Agent {
     public Post makePost(int step) {
         // 極端な投稿を自重するようにmoderate
         Post post;
-        if (this.opinion > 0.8 && rand.nextDouble() < 0.0) {
-            post = new Post(this.id, this.opinion - 0.1, step);
-        } else if (this.opinion < -0.8 && rand.nextDouble() < 0.0) {
-            post = new Post(this.id, this.opinion + 0.1, step);
+        if (this.opinion > 0.7 && rand.nextDouble() < 0.5) {
+            post = new Post(this.id, this.opinion - 0.2, step);
+        } else if (this.opinion < -0.7 && rand.nextDouble() < 0.5) {
+            post = new Post(this.id, this.opinion + 0.2, step);
         } else {
             post = new Post(this.id, this.opinion, step);
         }

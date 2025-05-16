@@ -135,6 +135,9 @@ public class Agent {
 
     public void setBoundedConfidence(double value){
         this.bc = value;
+        if(this.bc > Const.BOUNDED_CONFIDENCE){
+            this.bc = Const.BOUNDED_CONFIDENCE;
+        }
     }
 
     public void setTimeStep(int time) {
@@ -368,9 +371,9 @@ public class Agent {
     public Post makePost(int step) {
         // 極端な投稿を自重するようにmoderate
         Post post;
-        if (this.opinion > 0.7 && rand.nextDouble() < 0.5) {
+        if (this.opinion > 0.7 && rand.nextDouble() < 0.0) {
             post = new Post(this.id, this.opinion - 0.2, step);
-        } else if (this.opinion < -0.7 && rand.nextDouble() < 0.5) {
+        } else if (this.opinion < -0.7 && rand.nextDouble() < 0.0) {
             post = new Post(this.id, this.opinion + 0.2, step);
         } else {
             post = new Post(this.id, this.opinion, step);

@@ -119,9 +119,9 @@ public class OpinionDynamics {
 
                 /// depolarization 実験 2-2
                 /// BCを大きくしてもらう
-                if(rand.nextDouble() < 0.1){
-                    agent.setBoundedConfidence(agent.getBc() + 0.05);
-                }
+                /*if(rand.nextDouble() < 0.05){
+                    agent.setBoundedConfidence(agent.getBc() + 0.01);
+                }*/
                 
 
                 admin.AdminFeedback(agentId, agentSet, latestPostList);

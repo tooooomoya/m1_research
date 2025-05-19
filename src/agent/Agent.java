@@ -277,6 +277,11 @@ public class Agent {
             this.mediaUseRate = 0.0;
         }
 
+        // 実験 2-3 インフルエンサーのBCを最大値にセット
+        if(this.id < Const.NUM_OF_SEED_USER && Math.abs(this.intrinsicOpinion) > 0.7){
+            this.bc = Const.BOUNDED_CONFIDENCE;
+        }
+
         setOpinionClass();
     }
 

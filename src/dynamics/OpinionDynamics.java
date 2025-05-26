@@ -99,6 +99,14 @@ public class OpinionDynamics {
         List<Post> latestPostList = new ArrayList<>();
         int latestListSize = Const.LATEST_POST_LIST_LENGTH;
 
+        // exp 3-1 : 人海戦略bot
+        /*for(Agent agent : agentSet){
+            if(rand.nextDouble() < 0.001){
+                agent.setTraitor();
+            }
+        }*/
+        //
+
         for (int step = 1; step <= t; step++) {
             System.out.println("step = " + step);
             followActionNum = 0;
@@ -159,9 +167,9 @@ public class OpinionDynamics {
                         }
                         
                         /// exp 2-4 : add posts randomly irrespective of follow NW
-                        if(W[otherAgent.getId()][agentId] == 0.0 && rand.nextDouble() < 0.001){
+                        /*if(W[otherAgent.getId()][agentId] == 0.0 && rand.nextDouble() < 0.001){
                             otherAgent.addToPostCash(post);
-                        }  
+                        } */ 
                         ///
 
 

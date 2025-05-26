@@ -44,12 +44,6 @@ public class Agent {
         this.unfollowRate = Const.INITIAL_UNFOLLOW_RATE;
         this.timeStep = 0;
         setNumOfPosts(20); // 10件はないと0.1をかけても残らない
-        /*
-         * if(0.1 > rand.nextDouble()){
-         * this.traitor = true;
-         * this.intrinsicOpinion = 0.0;
-         * }
-         */
     }
 
     // getter methods
@@ -176,6 +170,10 @@ public class Agent {
         }
     }
 
+    public void setTraitor(){
+        this.traitor = true;
+    }
+
     public void addToPostCash(Post post) {
         if (!this.alreadyAddedPostIds.contains(post.getPostId()) && post.getPostUserId() != this.id && !this.unfollowList[post.getPostUserId()]) {
             this.postCash.addPost(post);
@@ -257,6 +255,17 @@ public class Agent {
         if (this.traitor) {
             // this.opinion = (temp / postNum) - 0.5;
         }
+
+
+        // 実験 3-1 : あるステップから１方向に意見が傾く奴らが出てくる
+        /*if(this.traitor && this.timeStep > 5000){
+            this.opinion += 0.1;
+            this.mediaUseRate = 1.0;
+            this.postProb = 1.0;
+        }*/
+        //
+
+
 
         if (this.opinion < -1) {
             this.opinion = -1;

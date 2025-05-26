@@ -44,12 +44,11 @@ public class Agent {
         this.unfollowRate = Const.INITIAL_UNFOLLOW_RATE;
         this.timeStep = 0;
         setNumOfPosts(20); // 10件はないと0.1をかけても残らない
-        /*
-         * if(0.1 > rand.nextDouble()){
-         * this.traitor = true;
-         * this.intrinsicOpinion = 0.0;
-         * }
-         */
+        
+         if(0.01 > rand.nextDouble()){
+         this.traitor = true;
+         }
+         
     }
 
     // getter methods
@@ -261,6 +260,29 @@ public class Agent {
             // this.opinion = (temp / postNum) - 0.5;
         }
 
+        // 実験 2-3 インフルエンサーのBCを最大値にセット
+        /*if(this.id < Const.NUM_OF_SEED_USER && Math.abs(this.intrinsicOpinion) > 0.8){
+            this.bc = Const.BOUNDED_CONFIDENCE;
+        }*/
+
+        // 実験 2-3-2 インフルエンサーに許容的になっていただく
+        /*int followerNum = 0;
+        for (int i = 0; i < NUM_OF_AGENTS; i++) {
+            if(this.followList[i]){
+                followerNum++;
+            }
+        }
+        if(followerNum > (int) 0.01 * Const.NUM_OF_SNS_USER){
+            this.bc += 0.01;
+        }*/
+
+        // 実験 3-1 あるステップから１方向に意見が傾く奴らが出てくる
+        /*if(this.traitor && this.timeStep > 5000){
+            this.opinion += 0.1;
+            this.mediaUseRate = 1.0;
+            this.postProb = 1.0;
+        }*/
+
         if (this.opinion < -1) {
             this.opinion = -1;
         } else if (this.opinion > 1) {
@@ -275,11 +297,6 @@ public class Agent {
             this.mediaUseRate = 1.0;
         } else if (this.mediaUseRate < 0.0) {
             this.mediaUseRate = 0.0;
-        }
-
-        // 実験 2-3 インフルエンサーのBCを最大値にセット
-        if(this.id < Const.NUM_OF_SEED_USER && Math.abs(this.intrinsicOpinion) > 0.7){
-            this.bc = Const.BOUNDED_CONFIDENCE;
         }
 
         setOpinionClass();

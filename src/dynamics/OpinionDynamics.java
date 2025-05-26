@@ -163,6 +163,10 @@ public class OpinionDynamics {
                         if (W[otherAgent.getId()][agentId] > 0.00) { // follower全員のpostCashに追加
                             otherAgent.addToPostCash(post);
                         }
+                        // 実験 2-4 follow NWとは無関係にランダムに投稿を追加する   
+                        /*if (W[otherAgent.getId()][agentId] == 0.00 && rand.nextDouble() < 0.0001) { // follower全員のpostCashに追加
+                            otherAgent.addToPostCash(post);
+                        }*/
                     }
                     writer.setPostBins(post);
                     analyzer.setPostCash(post);

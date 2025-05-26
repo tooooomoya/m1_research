@@ -45,9 +45,9 @@ public class Agent {
         this.timeStep = 0;
         setNumOfPosts(20); // 10件はないと0.1をかけても残らない
         
-         if(0.01 > rand.nextDouble()){
-         this.traitor = true;
-         }
+         //if(0.01 > rand.nextDouble()){
+        // this.traitor = true;
+         //}
          
     }
 
@@ -135,7 +135,7 @@ public class Agent {
     public void setBoundedConfidence(double value){
         this.bc = value;
         if(this.bc > Const.BOUNDED_CONFIDENCE){
-            this.bc = Const.BOUNDED_CONFIDENCE;
+           // this.bc = Const.BOUNDED_CONFIDENCE;
         }
     }
 

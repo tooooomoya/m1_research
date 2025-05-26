@@ -157,6 +157,14 @@ public class OpinionDynamics {
                         if (W[otherAgent.getId()][agentId] > 0.00) { // follower全員のpostCashに追加
                             otherAgent.addToPostCash(post);
                         }
+                        
+                        /// exp 2-4 : add posts randomly irrespective of follow NW
+                        if(W[otherAgent.getId()][agentId] == 0.0 && rand.nextDouble() < 0.001){
+                            otherAgent.addToPostCash(post);
+                        }  
+                        ///
+
+
                     }
                     writer.setPostBins(post);
                     analyzer.setPostCash(post);

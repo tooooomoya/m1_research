@@ -48,7 +48,7 @@ public class Agent {
          //if(0.01 > rand.nextDouble()){
         // this.traitor = true;
          //}
-         
+
     }
 
     // getter methods
@@ -178,6 +178,10 @@ public class Agent {
         }
     }
 
+    public void setTraitor(){
+        this.traitor = true;
+    }
+
     public void addToPostCash(Post post) {
         if (!this.alreadyAddedPostIds.contains(post.getPostId()) && post.getPostUserId() != this.id && !this.unfollowList[post.getPostUserId()]) {
             this.postCash.addPost(post);
@@ -186,8 +190,8 @@ public class Agent {
 
     // other methods
     public void receiveLike() {
-        this.postProb += 0.001 * decayFunc(this.timeStep);
-        this.mediaUseRate += 0.001 * decayFunc(this.timeStep);
+        this.postProb += Const.INCREMENT_PP * decayFunc(this.timeStep);
+        this.mediaUseRate += Const.INCREMENT_MUR * decayFunc(this.timeStep);
         if(this.postProb > 1.0){
             this.postProb = 1.0;
         }
@@ -238,27 +242,41 @@ public class Agent {
         double comfortPostRate = (double) comfortPostNum / postNum;
 
         if (comfortPostRate > Const.COMFORT_RATE && this.feed.size() > 2) {
-            // this.postProb += 0.01 * decayFunc(this.timeStep);
-            //System.out.println("I'm comfort");
-            this.postProb += 0.001 * decayFunc(this.timeStep);
-            // this.mediaUseRate += 0.01 * decayFunc(this.timeStep);
-            this.mediaUseRate += 0.001 * decayFunc(this.timeStep);
+            this.postProb += Const.INCREMENT_PP * decayFunc(this.timeStep);
+            this.mediaUseRate += Const.INCREMENT_MUR * decayFunc(this.timeStep);
         } else {
-            // this.postProb -= 0.0001 * decayFunc(this.timeStep);
-            this.postProb -= 0.0001 * decayFunc(this.timeStep);
+            this.postProb -= Const.DECREMENT_PP * decayFunc(this.timeStep);
             if (this.postProb < 0.01) {
                 this.postProb = 0.01;
             }
-            // this.mediaUseRate -= 0.0001 * decayFunc(this.timeStep);
-            // this.mediaUseRate -= 0.00;
         }
 
         this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
-        // this.opinion = this.tolerance * this.opinion + (1 - this.tolerance) * (temp /
-        // postNum);
-        if (this.traitor) {
-            // this.opinion = (temp / postNum) - 0.5;
-        }
+
+        // 実験 3-1 : あるステップから１方向に意見が傾く奴らが出てくる
+        /*if(this.traitor && this.timeStep > 5000){
+            this.opinion += 0.1;
+            this.mediaUseRate = 1.0;
+            this.postProb = 1.0;
+        }*/
+        //
+
+        //exp 3-2 : distract
+        /*if(this.traitor && this.timeStep > 5000){
+            this.opinion = 1.0;
+            this.mediaUseRate = 1.0;
+            this.postProb = 1.0;
+        }*/
+        //
+
+
+        // exp 2-2 : widen bc
+        /*if(rand.nextDouble() < 0.05 && this.bc < Const.BOUNDED_CONFIDENCE){
+            this.bc += 0.02;
+        }*/
+        //
+
+
 
         // 実験 2-3 インフルエンサーのBCを最大値にセット
         /*if(this.id < Const.NUM_OF_SEED_USER && Math.abs(this.intrinsicOpinion) > 0.8){

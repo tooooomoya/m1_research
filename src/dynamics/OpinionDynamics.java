@@ -31,8 +31,8 @@ public class OpinionDynamics {
 
     // constructor
     public OpinionDynamics() {
-        setFromInitial(); // for regular experiment (from initial state)
-        //setCustomized(); // if you want to start from your GEXF file
+        setAll();
+        //setCustomized();
         this.analyzer = new Analysis();
         this.writer = new Writer(folerPath, resultList);
         this.gephi = new GraphVisualize(0.00, agentSet, network);
@@ -97,6 +97,24 @@ public class OpinionDynamics {
         int unfollowActionNum;
         List<Post> latestPostList = new ArrayList<>();
         int latestListSize = Const.LATEST_POST_LIST_LENGTH;
+
+        // exp 3-1 : 人海戦略bot
+        /*for(Agent agent : agentSet){
+            if(rand.nextDouble() < 0.001){
+                agent.setTraitor();
+            }
+        }*/
+        //
+
+        // exp 3-2 : distract
+        /*for(Agent agent : agentSet){
+            if(rand.nextDouble() < 0.001){
+                agent.setTraitor();
+            }
+        }*/
+        //
+
+
 
         for (int step = 1; step <= t; step++) {
             System.out.println("step = " + step);
@@ -163,10 +181,13 @@ public class OpinionDynamics {
                         if (W[otherAgent.getId()][agentId] > 0.00) { // follower全員のpostCashに追加
                             otherAgent.addToPostCash(post);
                         }
-                        // 実験 2-4 follow NWとは無関係にランダムに投稿を追加する   
-                        /*if (W[otherAgent.getId()][agentId] == 0.00 && rand.nextDouble() < 0.0001) { // follower全員のpostCashに追加
+                        
+                        /// exp 2-4 : add posts randomly irrespective of follow NW
+                        /*if(W[otherAgent.getId()][agentId] == 0.0 && rand.nextDouble() < 0.001){
                             otherAgent.addToPostCash(post);
                         }*/
+                        ///
+
                     }
                     writer.setPostBins(post);
                     analyzer.setPostCash(post);

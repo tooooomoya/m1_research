@@ -8,10 +8,8 @@ import gephi.*;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 import network.*;
 import rand.randomGenerater;
 import writer.Writer;
@@ -41,7 +39,7 @@ public class OpinionDynamics {
         this.admin = new AdminOptim(agentNum, network.getAdjacencyMatrix());
     }
 
-    private void setAll(){
+    private void setFromInitial(){
         setNetwork();
         setAgents();
     }
@@ -137,6 +135,13 @@ public class OpinionDynamics {
                     continue;
                 }
 
+                /// depolarization 実験 2-2
+                /// BCを大きくしてもらう
+                /*if(rand.nextDouble() < 0.05){
+                    agent.setBoundedConfidence(agent.getBc() + 0.01);
+                }*/
+                
+
                 admin.AdminFeedback(agentId, agentSet, latestPostList);
                 if (agent.getId() % 100 == 0) {
                     // System.out.println("post cash length is " + agent.getPostCash().getSize());
@@ -182,7 +187,6 @@ public class OpinionDynamics {
                             otherAgent.addToPostCash(post);
                         }*/
                         ///
-
 
                     }
                     writer.setPostBins(post);

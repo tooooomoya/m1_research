@@ -31,7 +31,7 @@ public class OpinionDynamics {
 
     // constructor
     public OpinionDynamics() {
-        setAll();
+        setFromInitial();
         //setCustomized();
         this.analyzer = new Analysis();
         this.writer = new Writer(folerPath, resultList);
@@ -213,7 +213,7 @@ public class OpinionDynamics {
             // adminがrecommend post を決める
             // admin.updateRecommendPostQueue(postList);
 
-            if (step % 100 == 0) {
+            if (step % 1000 == 0) {
                 // export gexf
                 network.setAdjacencyMatrix(admin.getAdjacencyMatrix());
                 gephi.updateGraph(agentSet, network);

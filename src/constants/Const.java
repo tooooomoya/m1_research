@@ -6,7 +6,7 @@ public class Const {
     public static final int NUM_OF_USER = 5000;
     public static final int NUM_OF_SEED_USER = (int) (0.02 * NUM_OF_USER);
     public static final int NUM_OF_SNS_USER = NUM_OF_USER;
-    public static final int RANDOM_SEED = 903;
+    public static final int RANDOM_SEED = 303;
 
     // Admin feedback parameter
     // public static final double FEEDBACK_INCREASE_WEIGHT = 0.1;
@@ -34,7 +34,7 @@ public class Const {
     */
 
     // user num = 5000
-    public static final double INITIAL_CNN_SEED_GRAPH_CONNECT_PROB = 0.01;
+    public static final double INITIAL_CNN_SEED_GRAPH_CONNECT_PROB = 0.1;
     public static final double INITIAL_MEDIA_USER_RATE = 0.01;
     public static final double INCREMENT_PP = 0.0001;
     public static final double INCREMENT_MUR = 0.0001;

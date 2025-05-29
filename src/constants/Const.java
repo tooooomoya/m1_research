@@ -3,7 +3,7 @@ package constants;
 public class Const {
     // simulation parameter
     public static final int MAX_SIMULATION_STEP = 20000;
-    public static final int NUM_OF_USER = 1000;
+    public static final int NUM_OF_USER = 5000;
     public static final int NUM_OF_SEED_USER = (int) (0.02 * NUM_OF_USER);
     public static final int NUM_OF_SNS_USER = NUM_OF_USER;
     public static final int RANDOM_SEED = 903;
@@ -19,12 +19,29 @@ public class Const {
 
     // network parameter
     public static final double CONNECTION_PROB_OF_RANDOM_NW = 0.01;
-
+    
     // agent parameter
     public static final double INITIAL_POST_PROB = 0.1;
     public static final double BOUNDED_CONFIDENCE = 1.0;
     public static final double MINIMUM_BC = 0.1;
+
+    // user num = 1000
+    /*public static final double INITIAL_CNN_SEED_GRAPH_CONNECT_PROB = 0.1;
     public static final double INITIAL_MEDIA_USER_RATE = 0.1;
+    public static final double INCREMENT_PP = 0.001;
+    public static final double INCREMENT_MUR = 0.001;
+    public static final double DECREMENT_PP = 0.0001;
+    */
+
+    // user num = 5000
+    public static final double INITIAL_CNN_SEED_GRAPH_CONNECT_PROB = 0.01;
+    public static final double INITIAL_MEDIA_USER_RATE = 0.01;
+    public static final double INCREMENT_PP = 0.0001;
+    public static final double INCREMENT_MUR = 0.0001;
+    public static final double DECREMENT_PP = 0.00001;
+    
+
+
     public static final double COMFORT_RATE = 0.5;
     public static final double INITIAL_TOLERANCE = 0.8; // 0.8は決してunrealisticではない
     public static final double FEED_PREFERENTIALITY_RATE = 0.0;
@@ -39,7 +56,7 @@ public class Const {
     // input data parameter
     public static final String EDGES_FILE_PATH = "Twitter/edgesTwitter.txt";
     public static final String OPINION_FILE_PATH = "Twitter/Twitter_opinion.txt";
-    public static final String READ_NW_PATH = "results/GEXF/lambda_0.0/step_20000.gexf";
+    public static final String READ_NW_PATH = "results/temp/5000_0.02_MUR0.01_step_5800.gexf";
 
     // result data parameter
     public static final String[] RESULT_LIST = { "opinionVar", "postOpinionVar", "follow", "unfollow", "rewire" };

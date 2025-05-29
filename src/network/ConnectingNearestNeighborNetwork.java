@@ -46,7 +46,7 @@ public class ConnectingNearestNeighborNetwork extends Network {
         // 初期ノード間をランダムに接続
         for (int i = 0; i < seedNodes; i++) {
             for (int j = 0; j < seedNodes; j++) {
-                if (i != j && rand.nextDouble() < 0.1) {
+                if (i != j && rand.nextDouble() < Const.INITIAL_CNN_SEED_GRAPH_CONNECT_PROB) {
                     int weight = rand.nextInt(5) + 1;
                     setEdge(i, j, weight);
                 }

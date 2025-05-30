@@ -87,9 +87,8 @@ public class OpinionDynamics {
         gephi.exportGraph(0, folerPath);
 
         // export metrics
-        analyzer.computeVariance(agentSet);
         writer.setSimulationStep(0);
-        writer.setOpinionVar(analyzer.getOpinionVar());
+        writer.setOpinionVar(analyzer.computeVarianceOpinion(agentSet));
         writer.setOpinionBins(agentSet);
         writer.write();
 
@@ -220,8 +219,9 @@ public class OpinionDynamics {
                 gephi.exportGraph(step, folerPath);
             }
             // export metrics
-            analyzer.computeVariance(agentSet);
-            writer.setOpinionVar(analyzer.getOpinionVar());
+            writer.setOpinionVar(analyzer.computeVarianceOpinion(agentSet));
+            writer.setOpinionAvg(analyzer.computeMeanOpinion(agentSet));
+            writer.setFeedVar(analyzer.computeFeedVariance(agentSet));
             analyzer.computePostVariance();
             writer.setPostOpinionVar(analyzer.getPostOpinionVar());
             writer.setFollowUnfollowActionNum(followActionNum, unfollowActionNum);

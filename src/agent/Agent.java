@@ -294,7 +294,20 @@ public class Agent {
             this.bc += 0.01;
         }*/
 
-        // 実験 3-1 あるステップから１方向に意見が傾く奴らが出てくる
+        // 実験 2-5 deplarization bot
+        if(this.traitor && this.timeStep > 5000){
+            if(this.opinion > 0.5){
+                this.opinion -= 0.1;
+            this.mediaUseRate = 1.0;
+            this.postProb = 1.0;
+            }else if(this.opinion < -0.5){
+                this.opinion += 0.1;
+            this.mediaUseRate = 1.0;
+            this.postProb = 1.0;
+            }
+        }
+
+        // exp 3-1 : one-direction shifted bot
         /*if(this.traitor && this.timeStep > 5000){
             this.opinion += 0.1;
             this.mediaUseRate = 1.0;

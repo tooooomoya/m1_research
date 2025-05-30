@@ -7,19 +7,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Analysis {
-    private double opinionVar;
     private List<Post> postCash;
     private int n;
     private double postOpinionVar;
-    private double[] feedVar;
 
     // constructor
     public Analysis() {
         this.n = Const.NUM_OF_USER;
-        this.opinionVar = -1;
         this.postCash = new ArrayList<>();
         this.postOpinionVar = -1;
-        this.feedVar = new double[n];
     }
 
     public void clearPostCash() {
@@ -31,10 +27,9 @@ public class Analysis {
     }
 
     // Agent配列から分散を計算
-    public void computeVariance(Agent[] agentSet) {
+    public double computeVarianceOpinion(Agent[] agentSet) {
         if (n == 0) {
-            this.opinionVar = -1;
-            return;
+            return -1;
         }
 
         // 平均を計算
@@ -50,31 +45,52 @@ public class Analysis {
             double diff = agent.getOpinion() - mean;
             squaredDiffSum += diff * diff;
         }
-        this.opinionVar = squaredDiffSum / n;
+        return squaredDiffSum / n;
     }
 
-    public void computeFeedVariance(int agentId, List<Post> feed){
-        if(feed.size() == 0){
-            this.feedVar[agentId] = 0.0;
-            return;
+    // Agent配列から意見の平均を計算して返す
+    public double computeMeanOpinion(Agent[] agentSet) {
+        if (n == 0 || agentSet == null || agentSet.length == 0) {
+            return -1; // 意味のある平均がない場合は -1 を返す（必要に応じて変更）
         }
+
         double sum = 0.0;
-        for(Post post : feed){
-            sum += post.getPostOpinion();
+        for (Agent agent : agentSet) {
+            sum += agent.getOpinion();
         }
-        double mean = sum / feed.size();
-        
-        double squaredDiffSum = 0.0;
-        for(Post post : feed){
-            double diff = post.getPostOpinion() - mean;
-            squaredDiffSum += diff * diff;
-        }
-        this.feedVar[agentId] = squaredDiffSum / feed.size();
+        return sum / n;
     }
 
-    public double getOpinionVar() {
-        return opinionVar;
+    public double computeFeedVariance(Agent[] agentSet) {
+        double temp = 0.0;
+        int postNum = 0;
+    
+        // 平均を求めるために合計を計算
+        for (Agent agent : agentSet) {
+            for (Post post : agent.getFeed()) {
+                temp += post.getPostOpinion();
+                postNum++;
+            }
+        }
+    
+        if (postNum == 0) {
+            return -1; // 投稿が一つもない場合、意味のある分散が定義できない
+        }
+    
+        double avg = temp / postNum;
+    
+        // 分散を計算
+        double squaredDiffSum = 0.0;
+        for (Agent agent : agentSet) {
+            for (Post post : agent.getFeed()) {
+                double diff = post.getPostOpinion() - avg;
+                squaredDiffSum += diff * diff;
+            }
+        }
+    
+        return squaredDiffSum / postNum;
     }
+    
 
     public void computePostVariance() {
         int size = postCash.size();

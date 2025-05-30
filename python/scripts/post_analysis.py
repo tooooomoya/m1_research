@@ -2,9 +2,22 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
-def read_and_accumulate_bins(data_dir, bins, max_index=20000):
-    cumulative_counts = {bin_name: [] for bin_name in bins}
-    current_cumulative = {bin_name: 0 for bin_name in bins}
+def smooth_ratios(ratios, window_size=10):
+    smoothed = {bin_name: [] for bin_name in ratios}
+    num_steps = len(next(iter(ratios.values())))
+
+    for i in range(0, num_steps, window_size):
+        for bin_name in ratios:
+            window = ratios[bin_name][i:i+window_size]
+            if window:
+                avg = sum(window) / len(window)
+                smoothed[bin_name].append(avg)
+
+    return smoothed
+
+
+def read_and_compute_ratios(data_dir, bins, max_index=20000):
+    ratios = {bin_name: [] for bin_name in bins}
     x = []
 
     for i in range(max_index + 1):
@@ -18,11 +31,14 @@ def read_and_accumulate_bins(data_dir, bins, max_index=20000):
             df = pd.read_csv(filepath)
             row = df.iloc[0]
 
+            total = sum([int(row[bin_name]) for bin_name in bins])
+            if total == 0:
+                continue  # ゼロ除算を避けるためスキップ
+
             for bin_name in bins:
-                value = int(row[bin_name])
-                current_cumulative[bin_name] += value
-                cumulative_counts[bin_name].append(current_cumulative[bin_name])
-            
+                count = int(row[bin_name])
+                ratios[bin_name].append(count / total)
+
             x.append(i)
         except Exception as e:
             print(f"[{i:02d}] エラー発生: {e}")
@@ -32,40 +48,44 @@ def read_and_accumulate_bins(data_dir, bins, max_index=20000):
     else:
         print("⚠️ ファイルが読み込めなかったか、データが空です。")
 
-    return x, cumulative_counts
+    return x, ratios
 
-def plot_cumulative_bins(x, cumulative_counts, bin_labels=None):
+def plot_ratio_bins(x, ratios, bin_labels=None, window_size=10):
     if not x:
         print("❌ プロットできるデータがありません。")
         return
 
-    plt.figure(figsize=(10, 6))
+    # スムージング
+    smoothed_ratios = smooth_ratios(ratios, window_size)
+    smoothed_x = [x[i] for i in range(0, len(x), window_size)]
 
+    plt.figure(figsize=(10, 6))
     colors = ["blue", "dodgerblue", "green", "orange", "red"]
 
-    for idx, (bin_name, values) in enumerate(cumulative_counts.items()):
+    for idx, (bin_name, values) in enumerate(smoothed_ratios.items()):
         label = bin_labels[idx] if bin_labels and idx < len(bin_labels) else bin_name
-        color = colors[idx % len(colors)]  # インデックス超えても安全
-        plt.plot(x, values, label=label, color=color)
+        color = colors[idx % len(colors)]
+        plt.plot(smoothed_x, values, label=label, color=color, alpha=0.6)
 
     plt.xlabel("Step")
-    plt.ylabel("Cumulative Posts")
-    plt.title("Cumulative Post Counts by Bin")
+    plt.ylabel("Post Ratio (10-step average)")
+    plt.title("Smoothed Ratio of Posts in Each Bin (10-step average)")
+    plt.ylim(0, 1)
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
-    output_path = "cumulative_bins.png"
+    output_path = "ratio_bins_smoothed.png"
     plt.savefig(output_path)
-    print(f"✅ プロット画像を保存しました: {output_path}")
+    print(f"✅ 平滑化プロットを保存しました: {output_path}")
 
 
 def main():
     data_dir = "./results/posts"
-    bins = ["bin_0", "bin_1", "bin_2", "bin_3", "bin_4"]  # ← 実際のCSVカラム名
-    bin_labels = ["-1.0 ~ -0.6", "-0.6 ~ -0.2", "-0.2 ~ 0.2", "0.2 ~ 0.6", "0.6 ~ 1.0"]  # ← 描画用の凡例名
+    bins = ["bin_0", "bin_1", "bin_2", "bin_3", "bin_4"]
+    bin_labels = ["-1.0 ~ -0.6", "-0.6 ~ -0.2", "-0.2 ~ 0.2", "0.2 ~ 0.6", "0.6 ~ 1.0"]
 
-    x, cumulative_counts = read_and_accumulate_bins(data_dir, bins)
-    plot_cumulative_bins(x, cumulative_counts, bin_labels)
+    x, ratios = read_and_compute_ratios(data_dir, bins)
+    plot_ratio_bins(x, ratios, bin_labels)
 
 if __name__ == "__main__":
     main()

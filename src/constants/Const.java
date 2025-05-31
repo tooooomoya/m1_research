@@ -6,7 +6,7 @@ public class Const {
     public static final int NUM_OF_USER = 1000;
     public static final int NUM_OF_SEED_USER = (int) (0.02 * NUM_OF_USER);
     public static final int NUM_OF_SNS_USER = NUM_OF_USER;
-    public static final int RANDOM_SEED = 0;
+    public static final int RANDOM_SEED = 903;
 
     // Admin feedback parameter
     // public static final double FEEDBACK_INCREASE_WEIGHT = 0.1;

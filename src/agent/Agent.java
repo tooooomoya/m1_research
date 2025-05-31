@@ -44,11 +44,6 @@ public class Agent {
         this.unfollowRate = Const.INITIAL_UNFOLLOW_RATE;
         this.timeStep = 0;
         setNumOfPosts(20); // 10件はないと0.1をかけても残らない
-        
-         //if(0.01 > rand.nextDouble()){
-        // this.traitor = true;
-         //}
-
     }
 
     // getter methods
@@ -295,7 +290,7 @@ public class Agent {
         }*/
 
         // 実験 2-5 deplarization bot
-        if(this.traitor && this.timeStep > 5000){
+        /*if(this.traitor && this.timeStep > 5000){
             if(this.opinion > 0.5){
                 this.opinion -= 0.1;
             this.mediaUseRate = 1.0;
@@ -305,7 +300,7 @@ public class Agent {
             this.mediaUseRate = 1.0;
             this.postProb = 1.0;
             }
-        }
+        }*/
 
         // exp 3-1 : one-direction shifted bot
         /*if(this.traitor && this.timeStep > 5000){

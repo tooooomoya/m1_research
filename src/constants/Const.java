@@ -56,7 +56,10 @@ public class Const {
     // input data parameter
     public static final String EDGES_FILE_PATH = "Twitter/edgesTwitter.txt";
     public static final String OPINION_FILE_PATH = "Twitter/Twitter_opinion.txt";
+
     public static final String READ_NW_PATH = "results/temp/5000_0.02_MUR0.01_step_5800.gexf";
+   
+
 
     // result data parameter
     public static final String[] RESULT_LIST = { "opinionVar", "postOpinionVar", "follow", "unfollow", "rewire" };

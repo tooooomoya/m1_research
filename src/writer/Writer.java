@@ -19,6 +19,8 @@ public class Writer {
     private double postBinWidth;
     private int[] opinionBins = new int[Const.NUM_OF_BINS_OF_OPINION];
     private double opinionBinWidth;
+    private double opinionAvg;
+    private double feedVar;
 
     public Writer(String folderPath, String[] resultList) {
         this.simulationStep = -1;
@@ -31,6 +33,8 @@ public class Writer {
         this.resultList = resultList;
         this.postBinWidth = 2.0 / postBins.length;
         this.opinionBinWidth = 2.0 / opinionBins.length;
+        this.opinionAvg = 0.0;
+        this.feedVar = -1;
     }
 
     // Setter
@@ -54,6 +58,14 @@ public class Writer {
     public void setFollowUnfollowActionNum(int followActionNum, int unfollowActionNum) {
         this.followActionNum = followActionNum;
         this.unfollowActionNum = unfollowActionNum;
+    }
+
+    public void setOpinionAvg(double value){
+        this.opinionAvg = value;
+    }
+
+    public void setFeedVar(double value){
+        this.feedVar = value;
     }
 
     public void clearPostBins() {
@@ -99,10 +111,10 @@ public class Writer {
                 sb.append(",");
                 switch (key) {
                     case "opinionVar":
-                        sb.append(this.opinionVar);
+                        sb.append(String.format("%.4f", this.opinionVar));
                         break;
                     case "postOpinionVar":
-                        sb.append(this.postOpinionVar);
+                        sb.append(String.format("%.4f", this.postOpinionVar));
                         break;
                     case "follow":
                         sb.append(this.followActionNum);
@@ -112,6 +124,12 @@ public class Writer {
                         break;
                     case "rewire":
                         sb.append(this.rewireActionNum);
+                        break;
+                    case "opinionAvg":
+                        sb.append(String.format("%.4f", this.opinionAvg));
+                        break;
+                    case "feedVar":
+                        sb.append(String.format("%.4f", this.feedVar));
                         break;
                     default:
                         sb.append(""); // 未定義の項目は空

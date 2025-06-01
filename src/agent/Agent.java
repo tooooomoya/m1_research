@@ -253,6 +253,19 @@ public class Agent {
         }*/
         //
 
+                // 実験 2-5 deplarization botAdd commentMore actions
+                /*if(this.traitor && this.timeStep > 5000){
+                    if(this.opinion > 0.5){
+                        this.opinion -= 0.1;
+                    this.mediaUseRate = 1.0;
+                    this.postProb = 1.0;
+                    }else if(this.opinion < -0.5){
+                        this.opinion += 0.1;
+                    this.mediaUseRate = 1.0;
+                    this.postProb = 1.0;
+                    }
+                }*/
+
         //exp 3-2 : distract
         /*if(this.traitor && this.timeStep > 5000){
             this.opinion = 1.0;

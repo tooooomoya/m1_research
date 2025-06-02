@@ -6,7 +6,7 @@ public class Const {
     public static final int NUM_OF_USER = 1000;
     public static final int NUM_OF_SEED_USER = (int) (0.02 * NUM_OF_USER);
     public static final int NUM_OF_SNS_USER = NUM_OF_USER;
-    public static final int RANDOM_SEED = 1229;
+    public static final int RANDOM_SEED = 7;
 
     // Admin feedback parameter
     // public static final double FEEDBACK_INCREASE_WEIGHT = 0.1;
@@ -65,5 +65,5 @@ public class Const {
     public static final String RESULT_FOLDER_PATH = "results";
     public static final int NUM_OF_BINS_OF_POSTS = 5; // 投稿のデータをopinionごとに集計する際に何分割するか
     public static final int NUM_OF_BINS_OF_OPINION = 5; // Agentが待つopinion classの分割数を指定
-    public static final int NUM_OF_BINS_OF_OPINION_FOR_WRITER = 20; // writerがresultsフォルダに記録するデータの分割数を指定
+    public static final int NUM_OF_BINS_OF_OPINION_FOR_WRITER = 40; // writerがresultsフォルダに記録するデータの分割数を指定
 }

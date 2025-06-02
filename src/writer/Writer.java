@@ -81,11 +81,14 @@ public class Writer {
     }
 
     public void setOpinionBins(Agent[] agentSet) {
+        double opinionBinWidth = 2.0 / Const.NUM_OF_BINS_OF_OPINION_FOR_WRITER;
         for (int i = 0; i < opinionBins.length; i++) {
             opinionBins[i] = 0;
         }
         for (Agent agent : agentSet) {
-            this.opinionBins[agent.getOpinionClass()] += 1;
+            double shiftedOpinion = agent.getOpinion() + 1; // [-1,1] → [0,2]
+            int opinionClass = (int) Math.min(shiftedOpinion / opinionBinWidth, Const.NUM_OF_BINS_OF_OPINION_FOR_WRITER - 1);
+            this.opinionBins[opinionClass] += 1;
         }
     }
 

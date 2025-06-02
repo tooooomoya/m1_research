@@ -364,13 +364,11 @@ public class Agent {
         List<Integer> candidates = new ArrayList<>();
 
         for (Post post : this.feed) {
-            if (Math.abs(post.getPostOpinion() - this.opinion) < this.bc && !this.followList[post.getPostUserId()]) {
+            if (Math.abs(post.getPostOpinion() - this.opinion) < this.bc && !this.followList[post.getPostUserId()]  && !this.unfollowList[post.getPostUserId()]) {
                 candidates.add(post.getPostUserId());
             }
         }
-        if(this.id % 10 == 0){
-            //System.out.println("follow candidate size " + candidates.size() + ", feed size " + this.feed.size());
-        }
+
         if (!candidates.isEmpty()) {
             int followId = candidates.get(rand.nextInt(candidates.size()));
             this.followList[followId] = true;

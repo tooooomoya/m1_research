@@ -2,45 +2,50 @@ import os
 import pandas as pd
 import matplotlib.pyplot as plt
 import imageio
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+import numpy as np
 
 def create_histogram_gif(input_dir='results/opinion', output_gif='histogram.gif', duration=0.5, step_interval=100, y_max=2000):
-    """
-    指定ディレクトリ内の opinion_result_*.csv をステップ間隔ごとに読み込み、
-    ヒストグラムを描いてGIFを作成します。
-
-    Parameters:
-    - input_dir: CSVファイルが保存されているディレクトリ
-    - output_gif: 保存するGIFファイル名
-    - duration: 各フレームの表示時間（秒）
-    - step_interval: 何ステップごとにプロットするか（例：100ステップごと）
-    """
     files = sorted([
         f for f in os.listdir(input_dir)
         if f.startswith("opinion_result_") and f.endswith(".csv")
     ], key=lambda x: int(x.split('_')[-1].split('.')[0]))  # ステップ順にソート
 
     images = []
+
     for file in files:
         step = int(file.split('_')[-1].split('.')[0])
-
         if step % step_interval != 0:
-            continue  # スキップ
+            continue
 
         df = pd.read_csv(os.path.join(input_dir, file))
-        bins = df.columns[1:]
+        bin_labels = [float(col.replace("bin_", "")) for col in df.columns[1:]]
         values = df.iloc[0, 1:]
 
-        plt.figure()
-        plt.bar(bins, values, color='skyblue')
+        # bin_labels を -1 ~ 1 にスケーリング（正規化）
+        normed_labels = np.linspace(-1, 1, len(bin_labels))
+
+        # 独自のカラーマップを定義（左:青, 中央:緑, 右:赤）
+        cmap = mcolors.LinearSegmentedColormap.from_list("custom_cmap", ['blue', 'green', 'red'])
+        colors = [cmap((val + 1) / 2) for val in normed_labels]  # [-1, 1] → [0, 1]
+
+        plt.figure(figsize=(8, 4))
+        plt.bar(bin_labels, values, color=colors)
         plt.title(f'Opinion Histogram - Step {step}')
-        plt.xlabel('Opinion Bins')
+        plt.xlabel('Opinion')
         plt.ylabel('Frequency')
         plt.ylim(0, y_max)
-        plt.tight_layout()
 
+        n_bins = len(bin_labels)
+        xticks = [bin_labels[0], bin_labels[n_bins // 2], bin_labels[-1]]
+        plt.xticks(xticks, ['-1', '0', '1'])
+
+        plt.tight_layout()
         tmp_path = f'temp_hist_{step}.png'
         plt.savefig(tmp_path)
         plt.close()
+
         images.append(imageio.v2.imread(tmp_path))
         os.remove(tmp_path)
 
@@ -80,7 +85,7 @@ def save_histogram_for_step(step, input_dir='results/opinion', output_path=None)
 
 def main():
     # ヒストグラムGIFの作成
-    create_histogram_gif(step_interval=1000, y_max=2000)
+    create_histogram_gif(step_interval=100, y_max=200)
 
     # ステップ100のヒストグラム画像を保存
     #save_histogram_for_step(10000)

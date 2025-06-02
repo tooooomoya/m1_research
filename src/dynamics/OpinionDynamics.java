@@ -184,6 +184,23 @@ public class OpinionDynamics {
                             otherAgent.addToPostCash(post);
                         }*/
                         ///
+                        
+                        for(int i = 0; i < agentSet.length; i++){
+                            if(W[agent.getId()][i] > 0.0 && rand.nextDouble() < 0.01){
+                                int iter = 0;
+                                while(true){
+                                    int userId = rand.nextInt(agentSet.length);
+                                    if(W[userId][i] > 0.0){
+                                        agentSet[userId].addPostToFeed(post);
+                                    }
+                                    if(iter > 10){
+                                        break;
+                                    }
+                                    iter++;
+                                }
+                            }
+                        }
+                        
 
                     }
                     writer.setPostBins(post);

@@ -17,7 +17,7 @@ public class Writer {
     private int rewireActionNum;
     private int[] postBins = new int[Const.NUM_OF_BINS_OF_POSTS];
     private double postBinWidth;
-    private int[] opinionBins = new int[Const.NUM_OF_BINS_OF_OPINION];
+    private int[] opinionBins = new int[Const.NUM_OF_BINS_OF_OPINION_FOR_WRITER];
     private double opinionBinWidth;
     private double opinionAvg;
     private double feedVar;
@@ -195,6 +195,36 @@ public class Writer {
             e.printStackTrace();
         }
 
+    }
+
+    public void writeDegrees(double[][] adjacencyMatrix, String outputDirPath) {
+        String filePath = outputDirPath + "/degrees/degree_result_" + simulationStep + ".csv";
+    
+        try (PrintWriter pw = new PrintWriter(new FileWriter(filePath, false))) {
+            // ヘッダー行
+            pw.println("agentId,inDegree,outDegree");
+    
+            int numAgents = adjacencyMatrix.length;
+    
+            for (int i = 0; i < numAgents; i++) {
+                int outDegree = 0;
+                int inDegree = 0;
+    
+                // out-degree: 行を見る
+                for (int j = 0; j < numAgents; j++) {
+                    outDegree += (adjacencyMatrix[i][j] > 0) ? 1 : 0;
+                }
+    
+                // in-degree: 列を見る
+                for (int j = 0; j < numAgents; j++) {
+                    inDegree += (adjacencyMatrix[j][i] > 0) ? 1 : 0;
+                }
+    
+                pw.printf("%d,%d,%d%n", i, inDegree, outDegree);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

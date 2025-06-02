@@ -10,20 +10,30 @@ public class Analysis {
     private List<Post> postCash;
     private int n;
     private double postOpinionVar;
+    private List<List<Post>> feedList;
 
     // constructor
     public Analysis() {
         this.n = Const.NUM_OF_USER;
         this.postCash = new ArrayList<>();
         this.postOpinionVar = -1;
+        this.feedList = new ArrayList<>();
     }
 
     public void clearPostCash() {
         postCash.clear();
     }
+    
+    public void clearFeedList(){
+        this.feedList.clear();
+    }
 
     public void setPostCash(Post post) {
         postCash.add(post.copyPost());
+    }
+
+    public void setFeedList(List<Post> feed){
+        this.feedList.add(new ArrayList<>(feed));
     }
 
     // Agent配列から分散を計算
@@ -61,36 +71,36 @@ public class Analysis {
         return sum / n;
     }
 
-    public double computeFeedVariance(Agent[] agentSet) {
+    public double computeFeedVariance() {
         double temp = 0.0;
         int postNum = 0;
-    
+
         // 平均を求めるために合計を計算
-        for (Agent agent : agentSet) {
-            for (Post post : agent.getFeed()) {
+        for (List<Post> feed : this.feedList) {
+            for (Post post : feed) {
                 temp += post.getPostOpinion();
                 postNum++;
             }
         }
-    
+
         if (postNum == 0) {
+            System.out.println("no post was read by users in this step.");
             return -1; // 投稿が一つもない場合、意味のある分散が定義できない
         }
-    
+
         double avg = temp / postNum;
-    
+
         // 分散を計算
         double squaredDiffSum = 0.0;
-        for (Agent agent : agentSet) {
-            for (Post post : agent.getFeed()) {
+        for (List<Post> feed : this.feedList) {
+            for (Post post : feed) {
                 double diff = post.getPostOpinion() - avg;
                 squaredDiffSum += diff * diff;
             }
         }
-    
+
         return squaredDiffSum / postNum;
     }
-    
 
     public void computePostVariance() {
         int size = postCash.size();

@@ -31,7 +31,7 @@ public class OpinionDynamics {
 
     // constructor
     public OpinionDynamics() {
-        setAll();
+        setFromInitial();
         //setCustomized();
         this.analyzer = new Analysis();
         this.writer = new Writer(folerPath, resultList);
@@ -121,6 +121,7 @@ public class OpinionDynamics {
             unfollowActionNum = 0;
 
             analyzer.clearPostCash();
+            analyzer.clearFeedList();
             writer.clearPostBins();
             writer.setSimulationStep(step);
             double[][] W = admin.getAdjacencyMatrix();
@@ -141,12 +142,9 @@ public class OpinionDynamics {
                 }*/
                 
 
+                // admin sets user's feed
                 admin.AdminFeedback(agentId, agentSet, latestPostList);
-                if (agent.getId() % 100 == 0) {
-                    // System.out.println("post cash length is " + agent.getPostCash().getSize());
-                    // System.out.println("feed length is " + agent.getFeed().size());
-                }
-
+                analyzer.setFeedList(agent.getFeed());
                 
                 int likedId = -1;
 
@@ -212,11 +210,12 @@ public class OpinionDynamics {
             // adminがrecommend post を決める
             // admin.updateRecommendPostQueue(postList);
 
-            if (step % 100 == 0) {
+            if (step % 1000 == 0) {
                 // export gexf
                 network.setAdjacencyMatrix(admin.getAdjacencyMatrix());
                 gephi.updateGraph(agentSet, network);
                 gephi.exportGraph(step, folerPath);
+                writer.writeDegrees(W, folerPath);
             }
             // export metrics
             writer.setOpinionVar(analyzer.computeVarianceOpinion(agentSet));
@@ -224,6 +223,8 @@ public class OpinionDynamics {
             writer.setPostOpinionVar(analyzer.getPostOpinionVar());
             writer.setFollowUnfollowActionNum(followActionNum, unfollowActionNum);
             writer.setOpinionBins(agentSet);
+            writer.setFeedVar(analyzer.computeFeedVariance());
+            writer.setOpinionAvg(analyzer.computeMeanOpinion(agentSet));
             writer.write();
         }
     }

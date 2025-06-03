@@ -6,7 +6,7 @@ public class Const {
     public static final int NUM_OF_USER = 1000;
     public static final int NUM_OF_SEED_USER = (int) (0.02 * NUM_OF_USER);
     public static final int NUM_OF_SNS_USER = NUM_OF_USER;
-    public static final int RANDOM_SEED = 7;
+    public static final int RANDOM_SEED = 28;
 
     // Admin feedback parameter
     // public static final double FEEDBACK_INCREASE_WEIGHT = 0.1;
@@ -21,16 +21,22 @@ public class Const {
     public static final double CONNECTION_PROB_OF_RANDOM_NW = 0.01;
     
     // agent parameter
-    public static final double INITIAL_POST_PROB = 0.1;
     public static final double BOUNDED_CONFIDENCE = 1.0;
     public static final double MINIMUM_BC = 0.1;
 
     // user num = 1000
-    public static final double INITIAL_CNN_SEED_GRAPH_CONNECT_PROB = 0.1;
+    public static final double INITIAL_CNN_SEED_GRAPH_CONNECT_PROB = 0.2;
+    public static final double INITIAL_POST_PROB = 0.1;
     public static final double INITIAL_MEDIA_USER_RATE = 0.1;
-    public static final double INCREMENT_PP = 0.001;
-    public static final double INCREMENT_MUR = 0.001;
-    public static final double DECREMENT_PP = 0.0001;
+    public static final double INCREMENT_PP = 0.01;
+    public static final double INCREMENT_PP_BY_LIKE = 0.01;
+    public static final double INCREMENT_MUR = 0.01;
+    public static final double DECREMENT_PP = 0.05;
+    public static final double DECREMENT_MUR = 0.05;
+    public static final double MIN_PP = 0.01;
+    public static final double MIN_MUR = 0.1;
+    public static final double DECREMENT_BC_BY_UNFOLLOW = 0.05;
+    public static final double INCREMENT_BC = 0.000;
     
     
 
@@ -65,5 +71,5 @@ public class Const {
     public static final String RESULT_FOLDER_PATH = "results";
     public static final int NUM_OF_BINS_OF_POSTS = 5; // 投稿のデータをopinionごとに集計する際に何分割するか
     public static final int NUM_OF_BINS_OF_OPINION = 5; // Agentが待つopinion classの分割数を指定
-    public static final int NUM_OF_BINS_OF_OPINION_FOR_WRITER = 40; // writerがresultsフォルダに記録するデータの分割数を指定
+    public static final int NUM_OF_BINS_OF_OPINION_FOR_WRITER = 30; // writerがresultsフォルダに記録するデータの分割数を指定
 }

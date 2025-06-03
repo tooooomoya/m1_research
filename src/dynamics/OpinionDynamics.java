@@ -47,7 +47,7 @@ public class OpinionDynamics {
     private void setNetwork() {
         ///// you can change the initial network bellow
         //this.network = new RandomNetwork(agentNum, connectionProbability);
-        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.5);
+        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.7);
         /////
 
         this.network.makeNetwork(agentSet);
@@ -185,7 +185,23 @@ public class OpinionDynamics {
                         }*/
                         ///
                         
-                        for(int i = 0; i < agentSet.length; i++){
+                        if(rand.nextDouble() < 0.0001){
+                            int iter = 0;
+                            while (true) {
+                                int userId = rand.nextInt(agentSet.length);
+                                if(W[agent.getId()][userId] > 0.0){
+                                    agentSet[userId].addPostToFeed(post);
+                                    break;
+                                }
+                                iter++;
+                                if(iter > Const.NUM_OF_USER * 0.1){
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        
+                        /*for(int i = 0; i < agentSet.length; i++){
                             if(W[agent.getId()][i] > 0.0 && rand.nextDouble() < 0.01){
                                 int iter = 0;
                                 while(true){
@@ -199,7 +215,7 @@ public class OpinionDynamics {
                                     iter++;
                                 }
                             }
-                        }
+                        }*/
                         
 
                     }

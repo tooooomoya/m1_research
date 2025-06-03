@@ -190,7 +190,7 @@ public class Agent {
 
     // other methods
     public void receiveLike() {
-        this.postProb += Const.INCREMENT_PP * decayFunc(this.timeStep);
+        this.postProb += Const.INCREMENT_PP_BY_LIKE * decayFunc(this.timeStep);
         this.mediaUseRate += Const.INCREMENT_MUR * decayFunc(this.timeStep);
         if(this.postProb > 1.0){
             this.postProb = 1.0;
@@ -236,7 +236,7 @@ public class Agent {
             return;
 
         if (this.id % 100 == 0) {
-           // System.out.println("num of read post " + postNum);
+         //System.out.println("num of read post " + postNum);
         }
 
         double comfortPostRate = (double) comfortPostNum / postNum;
@@ -246,8 +246,16 @@ public class Agent {
             this.mediaUseRate += Const.INCREMENT_MUR * decayFunc(this.timeStep);
         } else {
             this.postProb -= Const.DECREMENT_PP * decayFunc(this.timeStep);
-            if (this.postProb < 0.01) {
-                this.postProb = 0.01;
+            this.mediaUseRate -= Const.DECREMENT_MUR * decayFunc(this.timeStep);
+            this.bc += Const.INCREMENT_BC * decayFunc(this.timeStep);
+            if (this.postProb < Const.MIN_PP) {
+                this.postProb = Const.MIN_PP;
+            }
+            if(this.mediaUseRate < Const.MIN_MUR){
+                this.mediaUseRate = Const.MIN_MUR;
+            }
+            if(this.bc > Const.BOUNDED_CONFIDENCE){
+                this.bc = Const.BOUNDED_CONFIDENCE;
             }
         }
 
@@ -396,7 +404,7 @@ public class Agent {
             if (Math.abs(post.getPostOpinion() - this.opinion) > this.bc && this.followList[post.getPostUserId()]) {
                 this.unfollowList[post.getPostUserId()] = true;
                 this.followList[post.getPostUserId()] = false;
-                this.bc -= 0.05 * decayFunc(this.timeStep);
+                this.bc -= Const.DECREMENT_BC_BY_UNFOLLOW * decayFunc(this.timeStep);
                 
                 if (this.bc < Const.MINIMUM_BC) {
                     this.bc = Const.MINIMUM_BC;
@@ -410,7 +418,7 @@ public class Agent {
         if(dislikeUser.size() > 0){
             // followしていないが、気にくわない投稿があれば1つを選んでその人をブロック
             this.unfollowList[dislikeUser.get(rand.nextInt(dislikeUser.size()))] = true;
-            this.bc -= 0.05;
+            this.bc -= Const.DECREMENT_BC_BY_UNFOLLOW;
             if (this.bc < Const.MINIMUM_BC) {
                 this.bc = Const.MINIMUM_BC;
             }

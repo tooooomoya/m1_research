@@ -4,9 +4,9 @@ public class Const {
     // simulation parameter
     public static final int MAX_SIMULATION_STEP = 20000;
     public static final int NUM_OF_USER = 1000;
-    public static final int NUM_OF_SEED_USER = (int) (0.02 * NUM_OF_USER);
+    public static final int NUM_OF_SEED_USER = (int) (0.05 * NUM_OF_USER);
     public static final int NUM_OF_SNS_USER = NUM_OF_USER;
-    public static final int RANDOM_SEED = 28;
+    public static final int RANDOM_SEED = 2; // 28
 
     // Admin feedback parameter
     // public static final double FEEDBACK_INCREASE_WEIGHT = 0.1;
@@ -31,12 +31,12 @@ public class Const {
     public static final double INCREMENT_PP = 0.01;
     public static final double INCREMENT_PP_BY_LIKE = 0.01;
     public static final double INCREMENT_MUR = 0.01;
-    public static final double DECREMENT_PP = 0.05;
-    public static final double DECREMENT_MUR = 0.05;
+    public static final double DECREMENT_PP = 0.001;
+    public static final double DECREMENT_MUR = 0.001;
     public static final double MIN_PP = 0.01;
     public static final double MIN_MUR = 0.1;
-    public static final double DECREMENT_BC_BY_UNFOLLOW = 0.05;
-    public static final double INCREMENT_BC = 0.000;
+    public static final double DECREMENT_BC_BY_UNFOLLOW = 0.02;
+    public static final double INCREMENT_BC = 0.00001;
     
     
 

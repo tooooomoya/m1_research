@@ -47,7 +47,7 @@ public class OpinionDynamics {
     private void setNetwork() {
         ///// you can change the initial network bellow
         //this.network = new RandomNetwork(agentNum, connectionProbability);
-        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.7);
+        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.8);
         /////
 
         this.network.makeNetwork(agentSet);
@@ -79,7 +79,7 @@ public class OpinionDynamics {
         ASChecker.reportASError();
     }
 
-    // the main part of the experimental dynamics
+    // main part of the experimental dynamics
     public void evolve() {
         this.ASChecker = new AssertionCheck(agentSet, network, agentNum, t);
         // export gexf
@@ -148,7 +148,7 @@ public class OpinionDynamics {
                 
                 int likedId = -1;
 
-                for(int i = 0 ; i < 3; i++){
+                for(int i = 0 ; i < 5; i++){
                     Post likedPost = agent.like();
                     if (likedPost != null) {
                         for (Agent otherAgent : agentSet) {
@@ -185,7 +185,7 @@ public class OpinionDynamics {
                         }*/
                         ///
                         
-                        if(rand.nextDouble() < 0.0001){
+                        /*if(rand.nextDouble() < 0.0001){
                             int iter = 0;
                             while (true) {
                                 int userId = rand.nextInt(agentSet.length);
@@ -198,7 +198,7 @@ public class OpinionDynamics {
                                     break;
                                 }
                             }
-                        }
+                        }*/
                         
                         
                         /*for(int i = 0; i < agentSet.length; i++){

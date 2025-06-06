@@ -6,7 +6,7 @@ public class Const {
     public static final int NUM_OF_USER = 1000;
     public static final int NUM_OF_SEED_USER = (int) (0.05 * NUM_OF_USER);
     public static final int NUM_OF_SNS_USER = NUM_OF_USER;
-    public static final int RANDOM_SEED = 2; // 28
+    public static final int RANDOM_SEED = 2; // 2
 
     // Admin feedback parameter
     // public static final double FEEDBACK_INCREASE_WEIGHT = 0.1;
@@ -27,14 +27,14 @@ public class Const {
     // user num = 1000
     public static final double INITIAL_CNN_SEED_GRAPH_CONNECT_PROB = 0.2;
     public static final double INITIAL_POST_PROB = 0.1;
-    public static final double INITIAL_MEDIA_USER_RATE = 0.1;
+    public static final double INITIAL_MEDIA_USER_RATE = 0.02;
     public static final double INCREMENT_PP = 0.01;
     public static final double INCREMENT_PP_BY_LIKE = 0.01;
-    public static final double INCREMENT_MUR = 0.01;
+    public static final double INCREMENT_MUR = 0.002;
     public static final double DECREMENT_PP = 0.001;
-    public static final double DECREMENT_MUR = 0.001;
+    public static final double DECREMENT_MUR = 0.0001;
     public static final double MIN_PP = 0.01;
-    public static final double MIN_MUR = 0.1;
+    public static final double MIN_MUR = 0.02;
     public static final double DECREMENT_BC_BY_UNFOLLOW = 0.02;
     public static final double INCREMENT_BC = 0.00001;
     
@@ -42,12 +42,17 @@ public class Const {
 
     // user num = 5000
     /*public static final double INITIAL_CNN_SEED_GRAPH_CONNECT_PROB = 0.01;
-    public static final double INITIAL_MEDIA_USER_RATE = 0.01;
-    public static final double INCREMENT_PP = 0.0001;
-    public static final double INCREMENT_MUR = 0.0001;
-    public static final double DECREMENT_PP = 0.00001;
-    */
-
+    public static final double INITIAL_POST_PROB = 0.1;
+    public static final double INITIAL_MEDIA_USER_RATE = 0.04;
+    public static final double INCREMENT_PP = 0.01;
+    public static final double INCREMENT_PP_BY_LIKE = 0.001;
+    public static final double INCREMENT_MUR = 0.004;
+    public static final double DECREMENT_PP = 0.001;
+    public static final double DECREMENT_MUR = 0.0001;
+    public static final double MIN_PP = 0.01;
+    public static final double MIN_MUR = 0.04;
+    public static final double DECREMENT_BC_BY_UNFOLLOW = 0.02;
+    public static final double INCREMENT_BC = 0.000001;*/
 
     public static final double COMFORT_RATE = 0.5;
     public static final double INITIAL_TOLERANCE = 0.8; // 0.8は決してunrealisticではない

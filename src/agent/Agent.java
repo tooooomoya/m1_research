@@ -26,6 +26,7 @@ public class Agent {
     private boolean[] followList = new boolean[NUM_OF_AGENTS];
     private boolean[] unfollowList = new boolean[NUM_OF_AGENTS];
     private Set<Integer> alreadyAddedPostIds = new HashSet<>();
+    private int followerNum;
 
     // constructor
     public Agent(int agentID) {
@@ -105,6 +106,10 @@ public class Agent {
         return this.unfollowRate;
     }
 
+    public int getFollwerNum(){
+        return this.followerNum;
+    }
+
     public PostCash getPostCash() {
         return this.postCash;
     }
@@ -174,6 +179,15 @@ public class Agent {
         for (int i = 0; i < W.length; i++) {
             if(W[this.id][i] > 0.0){
                 this.followList[i] = true;
+            }
+        }
+    }
+
+    public void setFollowerNum(double[][] W){
+        this.followerNum = 0;
+        for(int i = 0 ; i < NUM_OF_AGENTS; i++){
+            if(W[i][this.id] > 0.0){
+                this.followerNum++;
             }
         }
     }

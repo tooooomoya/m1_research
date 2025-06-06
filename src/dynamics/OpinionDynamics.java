@@ -32,21 +32,21 @@ public class OpinionDynamics {
     // constructor
     public OpinionDynamics() {
         setFromInitial();
-        //setCustomized();
+        // setCustomized();
         this.analyzer = new Analysis();
         this.writer = new Writer(folerPath, resultList);
         this.gephi = new GraphVisualize(0.00, agentSet, network);
         this.admin = new AdminOptim(agentNum, network.getAdjacencyMatrix());
     }
 
-    private void setFromInitial(){
+    private void setFromInitial() {
         setNetwork();
         setAgents();
     }
 
     private void setNetwork() {
         ///// you can change the initial network bellow
-        //this.network = new RandomNetwork(agentNum, connectionProbability);
+        // this.network = new RandomNetwork(agentNum, connectionProbability);
         this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.8);
         /////
 
@@ -62,7 +62,7 @@ public class OpinionDynamics {
         }
     }
 
-    private void setCustomized(){
+    private void setCustomized() {
         this.network = new ReadNetwork(agentNum, Const.READ_NW_PATH);
         this.network.makeNetwork(agentSet);
         System.out.println("finish making network");
@@ -98,22 +98,24 @@ public class OpinionDynamics {
         int latestListSize = Const.LATEST_POST_LIST_LENGTH;
 
         // exp 3-1 : 人海戦略bot
-        /*for(Agent agent : agentSet){
-            if(rand.nextDouble() < 0.001){
-                agent.setTraitor();
-            }
-        }*/
+        /*
+         * for(Agent agent : agentSet){
+         * if(rand.nextDouble() < 0.001){
+         * agent.setTraitor();
+         * }
+         * }
+         */
         //
 
         // exp 3-2 : distract
-        /*for(Agent agent : agentSet){
-            if(rand.nextDouble() < 0.001){
-                agent.setTraitor();
-            }
-        }*/
+        /*
+         * for(Agent agent : agentSet){
+         * if(rand.nextDouble() < 0.001){
+         * agent.setTraitor();
+         * }
+         * }
+         */
         //
-
-
 
         for (int step = 1; step <= t; step++) {
             System.out.println("step = " + step);
@@ -129,6 +131,7 @@ public class OpinionDynamics {
 
             for (Agent agent : agentSet) {
                 int agentId = agent.getId();
+                agent.setFollowerNum(W);
                 agent.setTimeStep(step);
                 // このstepでSNSを利用するか決定する
                 if (rand.nextDouble() > agent.getMediaUseRate()) {
@@ -137,18 +140,19 @@ public class OpinionDynamics {
 
                 /// depolarization 実験 2-2
                 /// BCを大きくしてもらう
-                /*if(rand.nextDouble() < 0.05){
-                    agent.setBoundedConfidence(agent.getBc() + 0.01);
-                }*/
-                
+                /*
+                 * if(rand.nextDouble() < 0.05){
+                 * agent.setBoundedConfidence(agent.getBc() + 0.01);
+                 * }
+                 */
 
                 // admin sets user's feed
                 admin.AdminFeedback(agentId, agentSet, latestPostList);
                 analyzer.setFeedList(agent.getFeed());
-                
+
                 int likedId = -1;
 
-                for(int i = 0 ; i < 5; i++){
+                for (int i = 0; i < 5; i++) {
                     Post likedPost = agent.like();
                     if (likedPost != null) {
                         for (Agent otherAgent : agentSet) {
@@ -178,45 +182,68 @@ public class OpinionDynamics {
                         if (W[otherAgent.getId()][agentId] > 0.00) { // follower全員のpostCashに追加
                             otherAgent.addToPostCash(post);
                         }
-                        
+
+                        // exp 3-2 : influencer likes their follower's post
+                        /*if (Math.abs(post.getPostOpinion()) > 0.6 && rand.nextDouble() < 0.01) {
+                            List<Integer> candidates = new ArrayList<>();
+                            for (int i = 0; i < agentSet.length; i++) {
+                                if (agentSet[i].getFollwerNum() > (int) Const.NUM_OF_SNS_USER * 0.05) {
+                                    candidates.add(i);
+                                }
+                            }
+                            if (!candidates.isEmpty()) {
+                                int influencerId = candidates.get(rand.nextInt(candidates.size()));
+                                post.receiveLike();
+                                for (Agent follower : agentSet) {
+                                    if (W[follower.getId()][influencerId] > 0.00) { // follower全員のpostCashに追加
+                                        follower.addToPostCash(post);
+                                    }
+                                }
+                            }
+                        }*/
+
                         /// exp 2-4 : add posts randomly irrespective of follow NW
-                        /*if(W[otherAgent.getId()][agentId] == 0.0 && rand.nextDouble() < 0.001){
-                            otherAgent.addToPostCash(post);
-                        }*/
+                        /*
+                         * if(W[otherAgent.getId()][agentId] == 0.0 && rand.nextDouble() < 0.001){
+                         * otherAgent.addToPostCash(post);
+                         * }
+                         */
                         ///
-                        
-                        /*if(rand.nextDouble() < 0.0001){
-                            int iter = 0;
-                            while (true) {
-                                int userId = rand.nextInt(agentSet.length);
-                                if(W[agent.getId()][userId] > 0.0){
-                                    agentSet[userId].addPostToFeed(post);
-                                    break;
-                                }
-                                iter++;
-                                if(iter > Const.NUM_OF_USER * 0.1){
-                                    break;
-                                }
-                            }
-                        }*/
-                        
-                        
-                        /*for(int i = 0; i < agentSet.length; i++){
-                            if(W[agent.getId()][i] > 0.0 && rand.nextDouble() < 0.01){
-                                int iter = 0;
-                                while(true){
-                                    int userId = rand.nextInt(agentSet.length);
-                                    if(W[userId][i] > 0.0){
-                                        agentSet[userId].addPostToFeed(post);
-                                    }
-                                    if(iter > 10){
-                                        break;
-                                    }
-                                    iter++;
-                                }
-                            }
-                        }*/
-                        
+
+                        /*
+                         * if(rand.nextDouble() < 0.0001){
+                         * int iter = 0;
+                         * while (true) {
+                         * int userId = rand.nextInt(agentSet.length);
+                         * if(W[agent.getId()][userId] > 0.0){
+                         * agentSet[userId].addPostToFeed(post);
+                         * break;
+                         * }
+                         * iter++;
+                         * if(iter > Const.NUM_OF_USER * 0.1){
+                         * break;
+                         * }
+                         * }
+                         * }
+                         */
+
+                        /*
+                         * for(int i = 0; i < agentSet.length; i++){
+                         * if(W[agent.getId()][i] > 0.0 && rand.nextDouble() < 0.01){
+                         * int iter = 0;
+                         * while(true){
+                         * int userId = rand.nextInt(agentSet.length);
+                         * if(W[userId][i] > 0.0){
+                         * agentSet[userId].addPostToFeed(post);
+                         * }
+                         * if(iter > 10){
+                         * break;
+                         * }
+                         * iter++;
+                         * }
+                         * }
+                         * }
+                         */
 
                     }
                     writer.setPostBins(post);

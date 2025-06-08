@@ -98,13 +98,13 @@ public class OpinionDynamics {
         int latestListSize = Const.LATEST_POST_LIST_LENGTH;
 
         // exp 3-1 : 人海戦略bot
-        /*
-         * for(Agent agent : agentSet){
-         * if(rand.nextDouble() < 0.001){
-         * agent.setTraitor();
-         * }
-         * }
-         */
+
+        for (Agent agent : agentSet) {
+            if (rand.nextDouble() < 0.01) {
+                agent.setTraitor();
+            }
+        }
+
         //
 
         // exp 3-2 : distract
@@ -184,23 +184,25 @@ public class OpinionDynamics {
                         }
 
                         // exp 3-2 : influencer likes their follower's post
-                        /*if (Math.abs(post.getPostOpinion()) > 0.6 && rand.nextDouble() < 0.01) {
-                            List<Integer> candidates = new ArrayList<>();
-                            for (int i = 0; i < agentSet.length; i++) {
-                                if (agentSet[i].getFollwerNum() > (int) Const.NUM_OF_SNS_USER * 0.05) {
-                                    candidates.add(i);
-                                }
-                            }
-                            if (!candidates.isEmpty()) {
-                                int influencerId = candidates.get(rand.nextInt(candidates.size()));
-                                post.receiveLike();
-                                for (Agent follower : agentSet) {
-                                    if (W[follower.getId()][influencerId] > 0.00) { // follower全員のpostCashに追加
-                                        follower.addToPostCash(post);
-                                    }
-                                }
-                            }
-                        }*/
+                        /*
+                         * if (Math.abs(post.getPostOpinion()) > 0.6 && rand.nextDouble() < 0.01) {
+                         * List<Integer> candidates = new ArrayList<>();
+                         * for (int i = 0; i < agentSet.length; i++) {
+                         * if (agentSet[i].getFollwerNum() > (int) Const.NUM_OF_SNS_USER * 0.05) {
+                         * candidates.add(i);
+                         * }
+                         * }
+                         * if (!candidates.isEmpty()) {
+                         * int influencerId = candidates.get(rand.nextInt(candidates.size()));
+                         * post.receiveLike();
+                         * for (Agent follower : agentSet) {
+                         * if (W[follower.getId()][influencerId] > 0.00) { // follower全員のpostCashに追加
+                         * follower.addToPostCash(post);
+                         * }
+                         * }
+                         * }
+                         * }
+                         */
 
                         /// exp 2-4 : add posts randomly irrespective of follow NW
                         /*

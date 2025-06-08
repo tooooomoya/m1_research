@@ -45,10 +45,6 @@ public class Agent {
         this.unfollowRate = Const.INITIAL_UNFOLLOW_RATE;
         this.timeStep = 0;
         setNumOfPosts(20); // 10件はないと0.1をかけても残らない
-        
-         //if(0.01 > rand.nextDouble()){
-        // this.traitor = true;
-         //}
 
     }
 
@@ -106,7 +102,7 @@ public class Agent {
         return this.unfollowRate;
     }
 
-    public int getFollwerNum(){
+    public int getFollwerNum() {
         return this.followerNum;
     }
 
@@ -129,18 +125,18 @@ public class Agent {
         setOpinionClass();
     }
 
-    public void setPostProb(double value){
+    public void setPostProb(double value) {
         this.postProb = value;
     }
 
-    public void setMediaUseRate(double value){
+    public void setMediaUseRate(double value) {
         this.mediaUseRate = value;
     }
 
-    public void setBoundedConfidence(double value){
+    public void setBoundedConfidence(double value) {
         this.bc = value;
-        if(this.bc > Const.BOUNDED_CONFIDENCE){
-           // this.bc = Const.BOUNDED_CONFIDENCE;
+        if (this.bc > Const.BOUNDED_CONFIDENCE) {
+            // this.bc = Const.BOUNDED_CONFIDENCE;
         }
     }
 
@@ -177,27 +173,28 @@ public class Agent {
 
     public void setFollowList(double[][] W) {
         for (int i = 0; i < W.length; i++) {
-            if(W[this.id][i] > 0.0){
+            if (W[this.id][i] > 0.0) {
                 this.followList[i] = true;
             }
         }
     }
 
-    public void setFollowerNum(double[][] W){
+    public void setFollowerNum(double[][] W) {
         this.followerNum = 0;
-        for(int i = 0 ; i < NUM_OF_AGENTS; i++){
-            if(W[i][this.id] > 0.0){
+        for (int i = 0; i < NUM_OF_AGENTS; i++) {
+            if (W[i][this.id] > 0.0) {
                 this.followerNum++;
             }
         }
     }
 
-    public void setTraitor(){
+    public void setTraitor() {
         this.traitor = true;
     }
 
     public void addToPostCash(Post post) {
-        if (!this.alreadyAddedPostIds.contains(post.getPostId()) && post.getPostUserId() != this.id && !this.unfollowList[post.getPostUserId()]) {
+        if (!this.alreadyAddedPostIds.contains(post.getPostId()) && post.getPostUserId() != this.id
+                && !this.unfollowList[post.getPostUserId()]) {
             this.postCash.addPost(post);
         }
     }
@@ -206,10 +203,10 @@ public class Agent {
     public void receiveLike() {
         this.postProb += Const.INCREMENT_PP_BY_LIKE * decayFunc(this.timeStep);
         this.mediaUseRate += Const.INCREMENT_MUR * decayFunc(this.timeStep);
-        if(this.postProb > 1.0){
+        if (this.postProb > 1.0) {
             this.postProb = 1.0;
         }
-        if(this.mediaUseRate > 1.0){
+        if (this.mediaUseRate > 1.0) {
             this.mediaUseRate = 1.0;
         }
     }
@@ -250,7 +247,7 @@ public class Agent {
             return;
 
         if (this.id % 100 == 0) {
-         //System.out.println("num of read post " + postNum);
+            // System.out.println("num of read post " + postNum);
         }
 
         double comfortPostRate = (double) comfortPostNum / postNum;
@@ -265,10 +262,10 @@ public class Agent {
             if (this.postProb < Const.MIN_PP) {
                 this.postProb = Const.MIN_PP;
             }
-            if(this.mediaUseRate < Const.MIN_MUR){
+            if (this.mediaUseRate < Const.MIN_MUR) {
                 this.mediaUseRate = Const.MIN_MUR;
             }
-            if(this.bc > Const.BOUNDED_CONFIDENCE){
+            if (this.bc > Const.BOUNDED_CONFIDENCE) {
                 this.bc = Const.BOUNDED_CONFIDENCE;
             }
         }
@@ -276,65 +273,90 @@ public class Agent {
         this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
 
         // 実験 3-1 : あるステップから１方向に意見が傾く奴らが出てくる
-        /*if(this.traitor && this.timeStep > 5000){
-            this.opinion += 0.1;
-            this.mediaUseRate = 1.0;
-            this.postProb = 1.0;
-        }*/
+        /*
+         * if(this.traitor && this.timeStep > 5000){
+         * this.opinion += 0.1;
+         * this.mediaUseRate = 1.0;
+         * this.postProb = 1.0;
+         * }
+         */
         //
 
-                // 実験 2-5 deplarization botAdd commentMore actions
-                /*if(this.traitor && this.timeStep > 5000){
-                    if(this.opinion > 0.5){
-                        this.opinion -= 0.1;
-                    this.mediaUseRate = 1.0;
-                    this.postProb = 1.0;
-                    }else if(this.opinion < -0.5){
-                        this.opinion += 0.1;
-                    this.mediaUseRate = 1.0;
-                    this.postProb = 1.0;
-                    }
-                }*/
+        // 実験 2-5 deplarization bot
 
-        //exp 3-2 : distract
-        /*if(this.traitor && this.timeStep > 5000){
-            this.opinion = 1.0;
-            this.mediaUseRate = 1.0;
-            this.postProb = 1.0;
+        /*if (this.traitor && this.timeStep > 0) {
+            if (this.opinion > 0.5) {
+                this.opinion -= 0.0001;
+                this.mediaUseRate = 1.0;
+                this.postProb = 1.0;
+            } else if (this.opinion < -0.5) {
+                this.opinion += 0.0001;
+                this.mediaUseRate = 1.0;
+                this.postProb = 1.0;
+            }
         }*/
-        //
 
+        // exp 3-2 : distract
+        /*
+         * if(this.traitor && this.timeStep > 5000){
+         * this.opinion = 1.0;
+         * this.mediaUseRate = 1.0;
+         * this.postProb = 1.0;
+         * }
+         */
+        //
 
         // exp 2-2 : widen bc
-        /*if(rand.nextDouble() < 0.05 && this.bc < Const.BOUNDED_CONFIDENCE){
-            this.bc += 0.02;
-        }*/
+
+        
+          /*if(rand.nextDouble() < 0.05 && this.bc < Const.BOUNDED_CONFIDENCE){
+          this.bc += 0.02;
+          }*/
+         
+
         //
 
-
-
         // 実験 2-3 インフルエンサーのBCを最大値にセット
-        /*if(this.id < Const.NUM_OF_SEED_USER && Math.abs(this.intrinsicOpinion) > 0.8){
-            this.bc = Const.BOUNDED_CONFIDENCE;
-        }*/
+        /*
+         * if(this.id < Const.NUM_OF_SEED_USER && Math.abs(this.intrinsicOpinion) >
+         * 0.8){
+         * this.bc = Const.BOUNDED_CONFIDENCE;
+         * }
+         */
 
         // 実験 2-3-2 インフルエンサーに許容的になっていただく
-        /*int followerNum = 0;
-        for (int i = 0; i < NUM_OF_AGENTS; i++) {
-            if(this.followList[i]){
-                followerNum++;
-            }
-        }
-        if(followerNum > (int) 0.01 * Const.NUM_OF_SNS_USER){
-            this.bc += 0.01;
-        }*/
+        /*
+         * int followerNum = 0;
+         * for (int i = 0; i < NUM_OF_AGENTS; i++) {
+         * if(this.followList[i]){
+         * followerNum++;
+         * }
+         * }
+         * if(followerNum > (int) 0.01 * Const.NUM_OF_SNS_USER){
+         * this.bc += 0.01;
+         * }
+         */
 
         // 実験 3-1 あるステップから１方向に意見が傾く奴らが出てくる
-        /*if(this.traitor && this.timeStep > 5000){
-            this.opinion += 0.1;
-            this.mediaUseRate = 1.0;
-            this.postProb = 1.0;
-        }*/
+
+        /*
+         * if (this.traitor && this.timeStep > 0) {
+         * this.opinion -= 0.001;
+         * this.mediaUseRate = 1.0;
+         * this.postProb = 1.0;
+         * }
+         */
+
+        // exp 3-3 : infulencerの買収
+
+        /*
+         * if (this.id == 30 || this.id == 16 || this.id == 4) {
+         * if (this.timeStep == 1000) {
+         * System.out.print("follower num " + this.followerNum);
+         * }
+         * this.opinion -= 0.0003;
+         * }
+         */
 
         if (this.opinion < -1) {
             this.opinion = -1;
@@ -386,7 +408,8 @@ public class Agent {
         List<Integer> candidates = new ArrayList<>();
 
         for (Post post : this.feed) {
-            if (Math.abs(post.getPostOpinion() - this.opinion) < this.bc && !this.followList[post.getPostUserId()]  && !this.unfollowList[post.getPostUserId()]) {
+            if (Math.abs(post.getPostOpinion() - this.opinion) < this.bc && !this.followList[post.getPostUserId()]
+                    && !this.unfollowList[post.getPostUserId()]) {
                 candidates.add(post.getPostUserId());
             }
         }
@@ -412,31 +435,31 @@ public class Agent {
         if (this.feed.size() <= 0.0 || followeeNum <= 2) {
             return -1;
         }
-        
+
         List<Integer> dislikeUser = new ArrayList<>();
         for (Post post : this.feed) {
             if (Math.abs(post.getPostOpinion() - this.opinion) > this.bc && this.followList[post.getPostUserId()]) {
                 this.unfollowList[post.getPostUserId()] = true;
                 this.followList[post.getPostUserId()] = false;
                 this.bc -= Const.DECREMENT_BC_BY_UNFOLLOW * decayFunc(this.timeStep);
-                
+
                 if (this.bc < Const.MINIMUM_BC) {
                     this.bc = Const.MINIMUM_BC;
                 }
                 return post.getPostUserId();
             }
-            if(Math.abs(post.getPostOpinion() - this.opinion) > this.bc && !this.followList[post.getPostUserId()]){
+            if (Math.abs(post.getPostOpinion() - this.opinion) > this.bc && !this.followList[post.getPostUserId()]) {
                 dislikeUser.add(post.getPostUserId());
             }
         }
-        if(dislikeUser.size() > 0){
+        if (dislikeUser.size() > 0) {
             // followしていないが、気にくわない投稿があれば1つを選んでその人をブロック
             this.unfollowList[dislikeUser.get(rand.nextInt(dislikeUser.size()))] = true;
             this.bc -= Const.DECREMENT_BC_BY_UNFOLLOW;
             if (this.bc < Const.MINIMUM_BC) {
                 this.bc = Const.MINIMUM_BC;
             }
-            //System.out.println("do not follow but dislike it");
+            // System.out.println("do not follow but dislike it");
         }
         return -1;
     }
@@ -457,7 +480,7 @@ public class Agent {
 
     public double decayFunc(double time) {
         double lambda = 0.0001;
-        //return Math.exp(-lambda * time);
+        // return Math.exp(-lambda * time);
         return 1;
     }
 

@@ -3,7 +3,7 @@ package constants;
 public class Const {
     // simulation parameter
     public static final int MAX_SIMULATION_STEP = 20000;
-    public static final int NUM_OF_USER = 1000;
+    public static final int NUM_OF_USER = 5000;
     public static final int NUM_OF_SEED_USER = (int) (0.05 * NUM_OF_USER);
     public static final int NUM_OF_SNS_USER = NUM_OF_USER;
     public static final int RANDOM_SEED = 2; // 2
@@ -25,7 +25,7 @@ public class Const {
     public static final double MINIMUM_BC = 0.1;
 
     // user num = 1000
-    public static final double INITIAL_CNN_SEED_GRAPH_CONNECT_PROB = 0.2;
+    /*public static final double INITIAL_CNN_SEED_GRAPH_CONNECT_PROB = 0.2;
     public static final double INITIAL_POST_PROB = 0.1;
     public static final double INITIAL_MEDIA_USER_RATE = 0.02;
     public static final double INCREMENT_PP = 0.01;
@@ -36,23 +36,23 @@ public class Const {
     public static final double MIN_PP = 0.01;
     public static final double MIN_MUR = 0.02;
     public static final double DECREMENT_BC_BY_UNFOLLOW = 0.02;
-    public static final double INCREMENT_BC = 0.00001;
+    public static final double INCREMENT_BC = 0.00001;*/
     
     
 
     // user num = 5000
-    /*public static final double INITIAL_CNN_SEED_GRAPH_CONNECT_PROB = 0.01;
+    public static final double INITIAL_CNN_SEED_GRAPH_CONNECT_PROB = 0.01;
     public static final double INITIAL_POST_PROB = 0.1;
-    public static final double INITIAL_MEDIA_USER_RATE = 0.04;
-    public static final double INCREMENT_PP = 0.01;
+    public static final double INITIAL_MEDIA_USER_RATE = 0.02;
+    public static final double INCREMENT_PP = 0.001;
     public static final double INCREMENT_PP_BY_LIKE = 0.001;
     public static final double INCREMENT_MUR = 0.004;
     public static final double DECREMENT_PP = 0.001;
     public static final double DECREMENT_MUR = 0.0001;
     public static final double MIN_PP = 0.01;
-    public static final double MIN_MUR = 0.04;
+    public static final double MIN_MUR = 0.02;
     public static final double DECREMENT_BC_BY_UNFOLLOW = 0.02;
-    public static final double INCREMENT_BC = 0.000001;*/
+    public static final double INCREMENT_BC = 0.000001;
 
     public static final double COMFORT_RATE = 0.5;
     public static final double INITIAL_TOLERANCE = 0.8; // 0.8は決してunrealisticではない
@@ -69,7 +69,7 @@ public class Const {
     public static final String EDGES_FILE_PATH = "Twitter/edgesTwitter.txt";
     public static final String OPINION_FILE_PATH = "Twitter/Twitter_opinion.txt";
 
-    public static final String READ_NW_PATH = "results/temp/5000_0.02_MUR0.01_step_5800.gexf";
+    public static final String READ_NW_PATH = "results/temp/June6_plain_step_20000.gexf";
 
     // result data parameter
     public static final String[] RESULT_LIST = { "opinionVar", "postOpinionVar", "follow", "unfollow", "rewire", "opinionAvg", "feedVar"};

@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 import numpy as np
 
-def create_histogram_gif(input_dir='results/opinion', output_gif='histogram.gif', duration=0.5, step_interval=100, y_max=2000):
+def create_histogram_gif(input_dir='results/opinion', output_gif='./results/figures/histogram.gif', duration=0.5, step_interval=100, y_max=2000):
     files = sorted([
         f for f in os.listdir(input_dir)
         if f.startswith("opinion_result_") and f.endswith(".csv")

@@ -99,11 +99,11 @@ public class OpinionDynamics {
 
         // exp 3-1 : 人海戦略bot
 
-        for (Agent agent : agentSet) {
+        /*for (Agent agent : agentSet) {
             if (rand.nextDouble() < 0.01) {
                 agent.setTraitor();
             }
-        }
+        }*/
 
         //
 

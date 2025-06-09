@@ -106,7 +106,7 @@ def main():
     plot_log_log_degree_distribution(out_degrees, "Log-Log Plot of Out-Degree", ax2)
     #plot_hist_log_y(in_degrees, "Histogram of In-Degree (Y-axis Log Scale)", ax3)
     plt.tight_layout()
-    plt.savefig('loglog_plot.png')
+    plt.savefig('./results/figures/loglog_plot.png')
     
     
 
@@ -121,7 +121,7 @@ def main():
     out_fit.power_law.plot_ccdf(color='r', linestyle='--', label='Out-degree power-law fit')
     plt.legend()
     plt.title("CCDF and power-law distribution fitness")
-    plt.savefig('powerflow.png')
+    #plt.savefig('./results/figures/powerflow.png')
 
     min_degree = 10  # 例：10以上のみ使う
 
@@ -129,7 +129,7 @@ def main():
     in_filtered_fit = filter_and_analyze(in_degrees, min_degree, "In-degree", ax3)
     out_filtered_fit = filter_and_analyze(out_degrees, min_degree, "Out-degree", ax4)
     plt.tight_layout()
-    plt.savefig('filtered_degree_logY_plot.png')
+    #plt.savefig('./results/figures/filtered_degree_logY_plot.png')
 
     # フィルタ後の CCDF & power law fit の可視化
     in_filtered_fit.plot_ccdf(color='b', label='In-degree empirical')
@@ -138,13 +138,13 @@ def main():
     out_filtered_fit.power_law.plot_ccdf(color='r', linestyle='--', label='Out-degree fit')
     plt.legend()
     plt.title(f"CCDF with Degree ≥ {min_degree}")
-    plt.savefig('filtered_powerflow.png')
+    #plt.savefig('./results/figures/filtered_powerflow.png')
     
     # 度数のビン表示（in-degreeのみ例）
     fig, ax = plt.subplots(figsize=(6, 4))
     plot_binned_degree_distribution(in_degrees, bin_width=50, title="In-degree Distribution (Binned, Log-Y)", ax=ax)
     plt.tight_layout()
-    plt.savefig("in_degree_binned_logY.png")
+    plt.savefig("./results/figures/in_degree_binned_logY.png")
 
 
 if __name__ == "__main__":

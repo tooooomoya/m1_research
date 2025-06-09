@@ -54,7 +54,7 @@ def plot_cumulative_bins(x, cumulative_counts, bin_labels=None):
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
-    output_path = "cumulative_bins.png"
+    output_path = "./results/figures/cumulative_bins.png"
     plt.savefig(output_path)
     print(f"✅ プロット画像を保存しました: {output_path}")
 

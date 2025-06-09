@@ -2,9 +2,11 @@ package network;
 
 import agent.Agent;
 import java.util.Random;
+import rand.randomGenerater;
 
 public class RandomNetwork extends Network {
     private double connectionProbability; // エッジを張る確率
+    private Random rand = randomGenerater.rand;
 
     // Constructor
     public RandomNetwork(int size, double connectionProbability) {
@@ -14,7 +16,6 @@ public class RandomNetwork extends Network {
 
     @Override
     public void makeNetwork(Agent[] agentSet) {
-        Random rand = new Random(0);
         int size = getSize();
         int[][] tempMatrix = new int[size][size];
 

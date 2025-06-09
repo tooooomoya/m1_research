@@ -16,7 +16,7 @@ def smooth_ratios(ratios, window_size=10):
     return smoothed
 
 
-def read_and_compute_ratios(data_dir, bins, max_index=15000):
+def read_and_compute_ratios(data_dir, bins, max_index=20000):
     ratios = {bin_name: [] for bin_name in bins}
     x = []
 
@@ -74,7 +74,7 @@ def plot_ratio_bins(x, ratios, bin_labels=None, window_size=10):
     plt.legend()
     plt.grid(True)
     plt.tight_layout()
-    output_path = "ratio_bins_smoothed.png"
+    output_path = "./results/figures/ratio_bins_smoothed.png"
     plt.savefig(output_path)
     print(f"✅ 平滑化プロットを保存しました: {output_path}")
 

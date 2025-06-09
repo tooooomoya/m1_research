@@ -270,7 +270,14 @@ public class Agent {
             }
         }
 
-        this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
+        // exp 3-3 : infulencerの買収
+
+        if (this.id == 0) { // seed 0
+        // if (this.id == 5 || this.id == 16) { // seed 0
+            this.opinion -= 0.0001;
+        } else {
+            this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
+        }
 
         // 実験 3-1 : あるステップから１方向に意見が傾く奴らが出てくる
         /*
@@ -284,17 +291,19 @@ public class Agent {
 
         // 実験 2-5 deplarization bot
 
-        /*if (this.traitor && this.timeStep > 0) {
-            if (this.opinion > 0.5) {
-                this.opinion -= 0.0001;
-                this.mediaUseRate = 1.0;
-                this.postProb = 1.0;
-            } else if (this.opinion < -0.5) {
-                this.opinion += 0.0001;
-                this.mediaUseRate = 1.0;
-                this.postProb = 1.0;
-            }
-        }*/
+        /*
+         * if (this.traitor && this.timeStep > 0) {
+         * if (this.opinion > 0.5) {
+         * this.opinion -= 0.0001;
+         * this.mediaUseRate = 1.0;
+         * this.postProb = 1.0;
+         * } else if (this.opinion < -0.5) {
+         * this.opinion += 0.0001;
+         * this.mediaUseRate = 1.0;
+         * this.postProb = 1.0;
+         * }
+         * }
+         */
 
         // exp 3-2 : distract
         /*
@@ -308,11 +317,11 @@ public class Agent {
 
         // exp 2-2 : widen bc
 
-        
-          /*if(rand.nextDouble() < 0.05 && this.bc < Const.BOUNDED_CONFIDENCE){
-          this.bc += 0.02;
-          }*/
-         
+        /*
+         * if(rand.nextDouble() < 0.05 && this.bc < Const.BOUNDED_CONFIDENCE){
+         * this.bc += 0.02;
+         * }
+         */
 
         //
 
@@ -344,17 +353,6 @@ public class Agent {
          * this.opinion -= 0.001;
          * this.mediaUseRate = 1.0;
          * this.postProb = 1.0;
-         * }
-         */
-
-        // exp 3-3 : infulencerの買収
-
-        /*
-         * if (this.id == 30 || this.id == 16 || this.id == 4) {
-         * if (this.timeStep == 1000) {
-         * System.out.print("follower num " + this.followerNum);
-         * }
-         * this.opinion -= 0.0003;
          * }
          */
 

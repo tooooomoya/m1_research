@@ -59,6 +59,7 @@ public class OpinionDynamics {
         for (int i = 0; i < agentNum; i++) {
             agentSet[i] = new Agent(i);
             agentSet[i].setFollowList(tempAdjacencyMatrix);
+            agentSet[i].setFollowerNum(tempAdjacencyMatrix);
         }
     }
 
@@ -97,15 +98,14 @@ public class OpinionDynamics {
         List<Post> latestPostList = new ArrayList<>();
         int latestListSize = Const.LATEST_POST_LIST_LENGTH;
 
-        // exp 3-1 : 人海戦略bot
-
-        /*for (Agent agent : agentSet) {
-            if (rand.nextDouble() < 0.01) {
+        // exp : set bot
+        ///
+        for (Agent agent : agentSet) {
+            if (rand.nextDouble() < 0.1 && agent.getFollwerNum() < 10) {
                 agent.setTraitor();
             }
-        }*/
-
-        //
+        }
+        ///
 
         // exp 3-2 : distract
         /*

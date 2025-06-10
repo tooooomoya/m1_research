@@ -47,7 +47,7 @@ public class Writer {
         this.opinionVar = var;
     }
 
-    public void setPostOpinionVar(double var){
+    public void setPostOpinionVar(double var) {
         this.postOpinionVar = var;
     }
 
@@ -60,11 +60,11 @@ public class Writer {
         this.unfollowActionNum = unfollowActionNum;
     }
 
-    public void setOpinionAvg(double value){
+    public void setOpinionAvg(double value) {
         this.opinionAvg = value;
     }
 
-    public void setFeedVar(double value){
+    public void setFeedVar(double value) {
         this.feedVar = value;
     }
 
@@ -86,9 +86,12 @@ public class Writer {
             opinionBins[i] = 0;
         }
         for (Agent agent : agentSet) {
-            double shiftedOpinion = agent.getOpinion() + 1; // [-1,1] → [0,2]
-            int opinionClass = (int) Math.min(shiftedOpinion / opinionBinWidth, Const.NUM_OF_BINS_OF_OPINION_FOR_WRITER - 1);
-            this.opinionBins[opinionClass] += 1;
+            if (!agent.getTraitor()) {
+                double shiftedOpinion = agent.getOpinion() + 1; // [-1,1] → [0,2]
+                int opinionClass = (int) Math.min(shiftedOpinion / opinionBinWidth,
+                        Const.NUM_OF_BINS_OF_OPINION_FOR_WRITER - 1);
+                this.opinionBins[opinionClass] += 1;
+            }
         }
     }
 
@@ -202,27 +205,27 @@ public class Writer {
 
     public void writeDegrees(double[][] adjacencyMatrix, String outputDirPath) {
         String filePath = outputDirPath + "/degrees/degree_result_" + simulationStep + ".csv";
-    
+
         try (PrintWriter pw = new PrintWriter(new FileWriter(filePath, false))) {
             // ヘッダー行
             pw.println("agentId,inDegree,outDegree");
-    
+
             int numAgents = adjacencyMatrix.length;
-    
+
             for (int i = 0; i < numAgents; i++) {
                 int outDegree = 0;
                 int inDegree = 0;
-    
+
                 // out-degree: 行を見る
                 for (int j = 0; j < numAgents; j++) {
                     outDegree += (adjacencyMatrix[i][j] > 0) ? 1 : 0;
                 }
-    
+
                 // in-degree: 列を見る
                 for (int j = 0; j < numAgents; j++) {
                     inDegree += (adjacencyMatrix[j][i] > 0) ? 1 : 0;
                 }
-    
+
                 pw.printf("%d,%d,%d%n", i, inDegree, outDegree);
             }
         } catch (IOException e) {

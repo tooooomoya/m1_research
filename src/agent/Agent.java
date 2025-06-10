@@ -118,6 +118,10 @@ public class Agent {
         return this.unfollowList;
     }
 
+    public boolean getTraitor() {
+        return this.traitor;
+    }
+
     // setter methods
 
     public void setOpinion(double value) {
@@ -270,14 +274,32 @@ public class Agent {
             }
         }
 
-        // exp 3-3 : infulencerの買収
+        // this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance)
+        // * (temp / postNum);
 
-        if (this.id == 0) { // seed 0
-        // if (this.id == 5 || this.id == 16) { // seed 0
+        // exp 3-3 : infulencerの買収
+        ///
+        /*
+         * //if (this.id == 0) { // seed 0
+         * if (this.id == 5 || this.id == 16) { // seed 0
+         * this.opinion -= 0.0001;
+         * } else {
+         * this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance)
+         * * (temp / postNum);
+         * }
+         */
+        ///
+
+        // 実験 3-1 malicious bot
+        ///
+        if (this.traitor) {
             this.opinion -= 0.0001;
+            this.mediaUseRate = 1.0;
+            this.postProb = 1.0;
         } else {
             this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
         }
+        ///
 
         // 実験 3-1 : あるステップから１方向に意見が傾く奴らが出てくる
         /*
@@ -343,16 +365,6 @@ public class Agent {
          * }
          * if(followerNum > (int) 0.01 * Const.NUM_OF_SNS_USER){
          * this.bc += 0.01;
-         * }
-         */
-
-        // 実験 3-1 あるステップから１方向に意見が傾く奴らが出てくる
-
-        /*
-         * if (this.traitor && this.timeStep > 0) {
-         * this.opinion -= 0.001;
-         * this.mediaUseRate = 1.0;
-         * this.postProb = 1.0;
          * }
          */
 

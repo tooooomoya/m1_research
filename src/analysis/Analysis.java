@@ -23,8 +23,8 @@ public class Analysis {
     public void clearPostCash() {
         postCash.clear();
     }
-    
-    public void clearFeedList(){
+
+    public void clearFeedList() {
         this.feedList.clear();
     }
 
@@ -32,12 +32,13 @@ public class Analysis {
         postCash.add(post.copyPost());
     }
 
-    public void setFeedList(List<Post> feed){
+    public void setFeedList(List<Post> feed) {
         this.feedList.add(new ArrayList<>(feed));
     }
 
     // Agent配列から分散を計算
     public double computeVarianceOpinion(Agent[] agentSet) {
+        int num = 0;
         if (n == 0) {
             return -1;
         }
@@ -45,30 +46,39 @@ public class Analysis {
         // 平均を計算
         double sum = 0.0;
         for (Agent agent : agentSet) {
-            sum += agent.getOpinion();
+            if (!agent.getTraitor()) {
+                sum += agent.getOpinion();
+                num++;
+            }
         }
-        double mean = sum / n;
+        double mean = sum / num;
 
         // 分散を計算
         double squaredDiffSum = 0.0;
         for (Agent agent : agentSet) {
-            double diff = agent.getOpinion() - mean;
-            squaredDiffSum += diff * diff;
+            if (!agent.getTraitor()) {
+                double diff = agent.getOpinion() - mean;
+                squaredDiffSum += diff * diff;
+            }
         }
-        return squaredDiffSum / n;
+        return squaredDiffSum / num;
     }
 
     // Agent配列から意見の平均を計算して返す
     public double computeMeanOpinion(Agent[] agentSet) {
+        int num = 0;
         if (n == 0 || agentSet == null || agentSet.length == 0) {
             return -1; // 意味のある平均がない場合は -1 を返す（必要に応じて変更）
         }
 
         double sum = 0.0;
         for (Agent agent : agentSet) {
-            sum += agent.getOpinion();
+            if (!agent.getTraitor()) {
+                sum += agent.getOpinion();
+                num++;
+            }
         }
-        return sum / n;
+        return sum / num;
     }
 
     public double computeFeedVariance() {

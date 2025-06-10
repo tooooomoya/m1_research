@@ -75,6 +75,11 @@ public class GraphVisualize {
             graphModel.getNodeTable().addColumn("intrinsicOpinion", Double.class);
         }
 
+        Column bot = graphModel.getNodeTable().getColumn("bot");
+        if(bot == null){
+            graphModel.getNodeTable().addColumn("bot", Boolean.class);
+        }
+
         for (int i = 0; i < nodeCount; i++) {
             Node node = graphModel.factory().newNode(String.valueOf(i));
             node.setLabel("Node " + i);
@@ -86,6 +91,7 @@ public class GraphVisualize {
             node.setAttribute("mediaUseRate", agents[i].getMediaUseRate());
             node.setAttribute("shiftedOpinion", agents[i].getOpinion() - agents[i].getIntrinsicOpinion());
             node.setAttribute("intrinsicOpinion", agents[i].getIntrinsicOpinion());
+            node.setAttribute("bot", agents[i].getTraitor());
             graph.addNode(node);
         }
 
@@ -136,6 +142,7 @@ public class GraphVisualize {
                 node.setAttribute("mediaUseRate", agents[i].getMediaUseRate());
                 node.setAttribute("shiftedOpinion", agents[i].getOpinion() - agents[i].getIntrinsicOpinion());
                 node.setAttribute("intrinsicOpinion", agents[i].getIntrinsicOpinion());
+                node.setAttribute("bot", agents[i].getTraitor());
             }
         }
 

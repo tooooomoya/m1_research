@@ -3,6 +3,7 @@ package agent;
 import constants.Const;
 import java.util.*;
 import rand.randomGenerater;
+import algorithm.*;
 
 public class Agent {
     private int id;
@@ -27,25 +28,67 @@ public class Agent {
     private boolean[] unfollowList = new boolean[NUM_OF_AGENTS];
     private Set<Integer> alreadyAddedPostIds = new HashSet<>();
     private int followerNum;
+    private double fitness;
+    private int receivedLike;
+    private Gene[] geneArray;
+    private static final int GENE_COUNT = 4; // geneP, geneU, geneB, geneO の4種類
+    private static final int GENE_LENGTH = 16; // 各Geneのビット長など適宜設定
+    private int numOfPosted;
 
     // constructor
     public Agent(int agentID) {
         this.id = agentID;
-        // this.tolerance = rand.nextDouble(); // 0〜1 の乱数
         this.tolerance = Const.INITIAL_TOLERANCE;
         this.intrinsicOpinion = Math.max(-1.0, Math.min(1.0, rand.nextGaussian() * 0.6));
         // this.intrinsicOpinion = rand.nextDouble() * 2.0 - 1;
         this.opinion = this.intrinsicOpinion;
         this.bc = Const.BOUNDED_CONFIDENCE; // 動的
-        // this.numOfPosts = rand.nextInt(80) + 20;
-        // this.numOfPosts = 10;
         setOpinionClass();
         this.postProb = Const.INITIAL_POST_PROB;
         this.followRate = Const.INITIAL_FOLLOW_RATE;
         this.unfollowRate = Const.INITIAL_UNFOLLOW_RATE;
         this.timeStep = 0;
+        this.fitness = 0.0;
+        this.receivedLike = 0;
         setNumOfPosts(20); // 10件はないと0.1をかけても残らない
+        initializeGeneArray();
+        this.numOfPosted = 0;
+    }
 
+    public void initializeGeneArray() {
+        for (int i = 0; i < GENE_COUNT; i++) {
+            int[] values = new int[GENE_LENGTH];
+            for (int j = 0; j < GENE_LENGTH; j++) {
+                values[j] = rand.nextBoolean() ? 1 : 0;
+            }
+            geneArray[i] = new Gene(values);
+        }
+    }
+
+    public Agent clone() {
+        Agent clone = new Agent(this.id); // idなど基本情報を引き継ぐコンストラクタが必要
+
+        // Gene[] のディープコピー
+        Gene[] clonedGeneArray = new Gene[this.geneArray.length];
+        for (int i = 0; i < geneArray.length; i++) {
+            clonedGeneArray[i] = this.geneArray[i].clone(); // Geneクラスにclone()実装必要
+        }
+        clone.setGeneArray(clonedGeneArray);
+
+        // fitnessやパラメータなども引き継ぐ
+        clone.setFitness(this.fitness);
+        clone.setIntrinsicOpinion(this.intrinsicOpinion);
+        clone.setOpinion(this.opinion);
+        clone.setBoundedConfidence(this.bc);
+        clone.setPostProb(this.postProb);
+        clone.setuseProb(this.useProb);
+        clone.setTimeStep(this.timeStep);
+        clone.setFitness(this.fitness);
+        clone.setReceievedLike(this.receivedLike);
+        clone.setOpinionClass();
+        clone.setNumOfPosted(this.numOfPosted);
+
+        return clone;
     }
 
     // getter methods
@@ -94,6 +137,14 @@ public class Agent {
         return this.useProb;
     }
 
+    public double getFitness() {
+        return this.fitness;
+    }
+
+    public Gene getGene(int index) {
+        return geneArray[index];
+    }
+
     public double getFollowRate() {
         return this.followRate;
     }
@@ -122,6 +173,10 @@ public class Agent {
         return this.traitor;
     }
 
+    public int getNumOfPosted(){
+        return this.numOfPosted;
+    }
+
     // setter methods
 
     public void setOpinion(double value) {
@@ -133,9 +188,34 @@ public class Agent {
         this.postProb = value;
     }
 
+    public void setReceievedLike(int value){
+        this.receivedLike = value;
+    }
+
     public void setuseProb(double value) {
         this.useProb = value;
     }
+
+    public void setFitness(double value) {
+        this.fitness = value;
+    }
+
+    public void setGene(int index, Gene gene) {
+        geneArray[index] = gene;
+    }
+
+    public void setNumOfPosted(int value){
+        this.numOfPosted = value;
+    }
+
+    public void setGeneArray(Gene[] geneArray) {
+        // ディープコピーされた配列をそのまま設定
+        this.geneArray = new Gene[geneArray.length];
+        for (int i = 0; i < geneArray.length; i++) {
+            this.geneArray[i] = geneArray[i].clone(); // 念のため再度 clone でコピー
+        }
+    }
+    
 
     public void setBoundedConfidence(double value) {
         this.bc = value;
@@ -205,14 +285,11 @@ public class Agent {
 
     // other methods
     public void receiveLike() {
-        this.postProb += Const.INCREMENT_PP_BY_LIKE * decayFunc(this.timeStep);
-        this.useProb += Const.INCREMENT_MUR * decayFunc(this.timeStep);
-        if (this.postProb > 1.0) {
-            this.postProb = 1.0;
-        }
-        if (this.useProb > 1.0) {
-            this.useProb = 1.0;
-        }
+        this.receivedLike += 1;
+    }
+
+    public void resetReceivedLike() {
+        this.receivedLike = 0;
     }
 
     public void resetPostCash() {
@@ -238,9 +315,6 @@ public class Agent {
         // feedに表示される投稿は全て閲覧する
         for (Post post : this.feed) {
             temp += post.getPostOpinion();
-            if (this.id % 100 == 0) {
-                // System.out.println("read post opinion " + post.getPostOpinion());
-            }
             postNum++;
             if (Math.abs(post.getPostOpinion() - this.opinion) < Const.MINIMUM_BC) {
                 comfortPostNum++;
@@ -250,53 +324,39 @@ public class Agent {
         if (postNum == 0)
             return;
 
-        if (this.id % 100 == 0) {
-            // System.out.println("num of read post " + postNum);
-        }
-
         double comfortPostRate = (double) comfortPostNum / postNum;
 
-        if (comfortPostRate > Const.COMFORT_RATE && this.feed.size() > 2) {
-            this.postProb += Const.INCREMENT_PP * decayFunc(this.timeStep);
-            this.useProb += Const.INCREMENT_MUR * decayFunc(this.timeStep);
-        } else {
-            this.postProb -= Const.DECREMENT_PP * decayFunc(this.timeStep);
-            this.useProb -= Const.DECREMENT_MUR * decayFunc(this.timeStep);
-            this.bc += Const.INCREMENT_BC * decayFunc(this.timeStep);
-            if (this.postProb < Const.MIN_PP) {
-                this.postProb = Const.MIN_PP;
-            }
-            if (this.useProb < Const.MIN_MUR) {
-                this.useProb = Const.MIN_MUR;
-            }
-            if (this.bc > Const.BOUNDED_CONFIDENCE) {
-                this.bc = Const.BOUNDED_CONFIDENCE;
-            }
-        }
+        this.fitness = comfortPostRate + 0.1 * receivedLike - 0.1 * this.numOfPosted;
 
         this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
 
         // exp 3-3 : infulencerの買収
         ///
-        
-          //if (this.id == 5 || this.id == 16) { // seed 0
-          /*if ((this.id == 33 || this.id == 42) && this.timeStep > 5000 ) { // seed 0
-            this.opinion -= 0.0001;
-          } else {
-          this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
-          }*/
-         
+
+        // if (this.id == 5 || this.id == 16) { // seed 0
+        /*
+         * if ((this.id == 33 || this.id == 42) && this.timeStep > 5000 ) { // seed 0
+         * this.opinion -= 0.0001;
+         * } else {
+         * this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance)
+         * * (temp / postNum);
+         * }
+         */
+
         ///
 
         // 実験 3-1 malicious bot
         ///
-        /*if (this.traitor) {
-            this.opinion -= 0.0001;
-            this.useProb = 1.0;
-            this.postProb = 1.0;
-        } else {
-            this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
-        }*/
+        /*
+         * if (this.traitor) {
+         * this.opinion -= 0.0001;
+         * this.useProb = 1.0;
+         * this.postProb = 1.0;
+         * } else {
+         * this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance)
+         * * (temp / postNum);
+         * }
+         */
         ///
 
         // 実験 3-1 : あるステップから１方向に意見が傾く奴らが出てくる
@@ -483,13 +543,24 @@ public class Agent {
             post = new Post(this.id, this.opinion, step);
         }
         this.toPost = 1;
+        this.numOfPosted++;
         return post;
     }
 
-    public double decayFunc(double time) {
+    private double decayFunc(double time) {
         double lambda = 0.0001;
         // return Math.exp(-lambda * time);
         return 1;
+    }
+
+    private double decodeGene(Gene gene) {
+        int[] bits = gene.getBits();
+        int value = 0;
+        for (int i = 0; i < bits.length; i++) {
+            value = (value << 1) | bits[i];
+        }
+        int max = (1 << bits.length) - 1;
+        return (double) value / max;
     }
 
 }

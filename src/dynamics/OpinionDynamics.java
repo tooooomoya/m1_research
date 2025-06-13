@@ -133,6 +133,7 @@ public class OpinionDynamics {
                 int agentId = agent.getId();
                 agent.setFollowerNum(W);
                 agent.setTimeStep(step);
+                agent.setNumOfPosted(0);
                 // このstepでSNSを利用するか決定する
                 if (rand.nextDouble() > agent.getuseProb()) {
                     continue;
@@ -261,6 +262,7 @@ public class OpinionDynamics {
                 admin.updateAdjacencyMatrix(agentId, likedId, followedId, unfollowedId);
                 agent.resetPostCash();
                 agent.resetFeed();
+                agent.setNumOfPosted(0);
                 ASChecker.assertionChecker(agentSet, admin, agentNum, step);
                 if (followedId >= 0) {
                     followActionNum++;

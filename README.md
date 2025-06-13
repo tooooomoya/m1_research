@@ -11,6 +11,8 @@ java -cp "$(find lib -name '*.jar' | tr '\n' ':'):bin" dynamics.OpinionDynamics
 
 ## Folder Structure
 
+Make sure you create `results` folder as we do not upload them on github.
+
 The workspace contains two folders by default, where:
 
 - `src`: the folder to maintain sources

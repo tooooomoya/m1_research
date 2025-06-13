@@ -134,7 +134,7 @@ public class OpinionDynamics {
                 agent.setFollowerNum(W);
                 agent.setTimeStep(step);
                 // このstepでSNSを利用するか決定する
-                if (rand.nextDouble() > agent.getMediaUseRate()) {
+                if (rand.nextDouble() > agent.getuseProb()) {
                     continue;
                 }
 

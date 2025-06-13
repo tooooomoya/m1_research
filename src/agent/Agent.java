@@ -18,7 +18,7 @@ public class Agent {
     private PostCash postCash;
     private double postProb;
     private List<Post> feed = new ArrayList<>(); // ユーザjの投稿を何件閲覧できるか(タイムラインのモデル)、Adminによって操作される
-    private double mediaUseRate = Const.INITIAL_MEDIA_USER_RATE;
+    private double useProb = Const.INITIAL_MEDIA_USER_RATE;
     private double followRate;
     private double unfollowRate;
     private boolean traitor = false;
@@ -90,8 +90,8 @@ public class Agent {
         return this.feed;
     }
 
-    public double getMediaUseRate() {
-        return this.mediaUseRate;
+    public double getuseProb() {
+        return this.useProb;
     }
 
     public double getFollowRate() {
@@ -133,8 +133,8 @@ public class Agent {
         this.postProb = value;
     }
 
-    public void setMediaUseRate(double value) {
-        this.mediaUseRate = value;
+    public void setuseProb(double value) {
+        this.useProb = value;
     }
 
     public void setBoundedConfidence(double value) {
@@ -206,12 +206,12 @@ public class Agent {
     // other methods
     public void receiveLike() {
         this.postProb += Const.INCREMENT_PP_BY_LIKE * decayFunc(this.timeStep);
-        this.mediaUseRate += Const.INCREMENT_MUR * decayFunc(this.timeStep);
+        this.useProb += Const.INCREMENT_MUR * decayFunc(this.timeStep);
         if (this.postProb > 1.0) {
             this.postProb = 1.0;
         }
-        if (this.mediaUseRate > 1.0) {
-            this.mediaUseRate = 1.0;
+        if (this.useProb > 1.0) {
+            this.useProb = 1.0;
         }
     }
 
@@ -258,16 +258,16 @@ public class Agent {
 
         if (comfortPostRate > Const.COMFORT_RATE && this.feed.size() > 2) {
             this.postProb += Const.INCREMENT_PP * decayFunc(this.timeStep);
-            this.mediaUseRate += Const.INCREMENT_MUR * decayFunc(this.timeStep);
+            this.useProb += Const.INCREMENT_MUR * decayFunc(this.timeStep);
         } else {
             this.postProb -= Const.DECREMENT_PP * decayFunc(this.timeStep);
-            this.mediaUseRate -= Const.DECREMENT_MUR * decayFunc(this.timeStep);
+            this.useProb -= Const.DECREMENT_MUR * decayFunc(this.timeStep);
             this.bc += Const.INCREMENT_BC * decayFunc(this.timeStep);
             if (this.postProb < Const.MIN_PP) {
                 this.postProb = Const.MIN_PP;
             }
-            if (this.mediaUseRate < Const.MIN_MUR) {
-                this.mediaUseRate = Const.MIN_MUR;
+            if (this.useProb < Const.MIN_MUR) {
+                this.useProb = Const.MIN_MUR;
             }
             if (this.bc > Const.BOUNDED_CONFIDENCE) {
                 this.bc = Const.BOUNDED_CONFIDENCE;
@@ -292,7 +292,7 @@ public class Agent {
         ///
         /*if (this.traitor) {
             this.opinion -= 0.0001;
-            this.mediaUseRate = 1.0;
+            this.useProb = 1.0;
             this.postProb = 1.0;
         } else {
             this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
@@ -303,7 +303,7 @@ public class Agent {
         /*
          * if(this.traitor && this.timeStep > 5000){
          * this.opinion += 0.1;
-         * this.mediaUseRate = 1.0;
+         * this.useProb = 1.0;
          * this.postProb = 1.0;
          * }
          */
@@ -315,11 +315,11 @@ public class Agent {
          * if (this.traitor && this.timeStep > 0) {
          * if (this.opinion > 0.5) {
          * this.opinion -= 0.0001;
-         * this.mediaUseRate = 1.0;
+         * this.useProb = 1.0;
          * this.postProb = 1.0;
          * } else if (this.opinion < -0.5) {
          * this.opinion += 0.0001;
-         * this.mediaUseRate = 1.0;
+         * this.useProb = 1.0;
          * this.postProb = 1.0;
          * }
          * }
@@ -329,7 +329,7 @@ public class Agent {
         /*
          * if(this.traitor && this.timeStep > 5000){
          * this.opinion = 1.0;
-         * this.mediaUseRate = 1.0;
+         * this.useProb = 1.0;
          * this.postProb = 1.0;
          * }
          */
@@ -376,10 +376,10 @@ public class Agent {
         } else if (this.postProb < 0.0) {
             this.postProb = 0.0;
         }
-        if (this.mediaUseRate > 1.0) {
-            this.mediaUseRate = 1.0;
-        } else if (this.mediaUseRate < 0.0) {
-            this.mediaUseRate = 0.0;
+        if (this.useProb > 1.0) {
+            this.useProb = 1.0;
+        } else if (this.useProb < 0.0) {
+            this.useProb = 0.0;
         }
 
         setOpinionClass();

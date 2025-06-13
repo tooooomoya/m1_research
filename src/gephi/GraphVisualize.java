@@ -60,9 +60,9 @@ public class GraphVisualize {
             graphModel.getNodeTable().addColumn("postProb", Double.class);
         }
 
-        Column mediaUseRate = graphModel.getNodeTable().getColumn("mediaUseRate");
-        if(mediaUseRate == null){
-            graphModel.getNodeTable().addColumn("mediaUseRate", Double.class);
+        Column useProb = graphModel.getNodeTable().getColumn("useProb");
+        if(useProb == null){
+            graphModel.getNodeTable().addColumn("useProb", Double.class);
         }
 
         Column shiftedOpinion = graphModel.getNodeTable().getColumn("shiftedOpinion");
@@ -88,7 +88,7 @@ public class GraphVisualize {
             node.setAttribute("opinionClass", agents[i].getOpinionClass());
             node.setAttribute("boundedConfidence", agents[i].getBc());
             node.setAttribute("postProb", agents[i].getPostProb());
-            node.setAttribute("mediaUseRate", agents[i].getMediaUseRate());
+            node.setAttribute("useProb", agents[i].getuseProb());
             node.setAttribute("shiftedOpinion", agents[i].getOpinion() - agents[i].getIntrinsicOpinion());
             node.setAttribute("intrinsicOpinion", agents[i].getIntrinsicOpinion());
             node.setAttribute("bot", agents[i].getTraitor());
@@ -139,7 +139,7 @@ public class GraphVisualize {
                 node.setAttribute("opinionClass", agents[i].getOpinionClass());
                 node.setAttribute("boundedConfidence", agents[i].getBc());
                 node.setAttribute("postProb", agents[i].getPostProb());
-                node.setAttribute("mediaUseRate", agents[i].getMediaUseRate());
+                node.setAttribute("useProb", agents[i].getuseProb());
                 node.setAttribute("shiftedOpinion", agents[i].getOpinion() - agents[i].getIntrinsicOpinion());
                 node.setAttribute("intrinsicOpinion", agents[i].getIntrinsicOpinion());
                 node.setAttribute("bot", agents[i].getTraitor());

@@ -70,8 +70,8 @@ public class GephiReader {
                             case "postprob":
                                 agentSet[id].setPostProb(Double.parseDouble(value));
                                 break;
-                            case "mediauserate":
-                                agentSet[id].setMediaUseRate(Double.parseDouble(value));
+                            case "useProb":
+                                agentSet[id].setuseProb(Double.parseDouble(value));
                                 break;
                             case "intrinsicopinion":
                                 agentSet[id].setIntrinsicOpinion(Double.parseDouble(value));

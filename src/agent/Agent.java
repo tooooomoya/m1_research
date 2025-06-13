@@ -274,17 +274,17 @@ public class Agent {
             }
         }
 
-        // this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
+        this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
 
         // exp 3-3 : infulencerの買収
         ///
         
           //if (this.id == 5 || this.id == 16) { // seed 0
-          if ((this.id == 33 || this.id == 42) && this.timeStep > 5000 ) { // seed 0
+          /*if ((this.id == 33 || this.id == 42) && this.timeStep > 5000 ) { // seed 0
             this.opinion -= 0.0001;
           } else {
           this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
-          }
+          }*/
          
         ///
 

@@ -101,7 +101,7 @@ public class OpinionDynamics {
         // exp : set bot
         ///
         /*for (Agent agent : agentSet) {
-            if (rand.nextDouble() < 0.1 && agent.getFollwerNum() < 10) {
+            if (rand.nextDouble() < 0.2 && agent.getFollwerNum() < Const.NUM_OF_USER * 0.1) {
                 agent.setTraitor();
             }
         }*/

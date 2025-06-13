@@ -9,10 +9,6 @@ javac -cp "$(find lib -name '*.jar' | tr '\n' ':')" -d bin src/**/*.java
 java -cp "$(find lib -name '*.jar' | tr '\n' ':'):bin" dynamics.OpinionDynamics
 ```
 
-```
-java -Djava.library.path=/Users/tomoyatakeda/Documents/m1_research/lib/gurobi -cp "$(find lib -name '*.jar' | tr '\n' ':'):bin" dynamics.OpinionDynamics
-```
-
 ## Folder Structure
 
 The workspace contains two folders by default, where:

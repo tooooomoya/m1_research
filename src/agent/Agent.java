@@ -27,6 +27,7 @@ public class Agent {
     private boolean[] unfollowList = new boolean[NUM_OF_AGENTS];
     private Set<Integer> alreadyAddedPostIds = new HashSet<>();
     private int followerNum;
+    private boolean used;
 
     // constructor
     public Agent(int agentID) {
@@ -201,6 +202,14 @@ public class Agent {
                 && !this.unfollowList[post.getPostUserId()]) {
             this.postCash.addPost(post);
         }
+    }
+
+    public void setUsed(){
+        this.used = true;
+    }
+
+    public void resetUsed(){
+        this.used = false;
     }
 
     // other methods

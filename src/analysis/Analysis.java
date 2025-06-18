@@ -3,14 +3,17 @@ package analysis;
 import agent.*;
 import constants.Const;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class Analysis {
     private List<Post> postCash;
     private int n;
     private double postOpinionVar;
     private List<List<Post>> feedList;
+    private double[] feedMeanArray;
+    private double[] feedVarArray;
+    private Map<Integer, List<Post>> feedMap = new HashMap<>();
+
 
     // constructor
     public Analysis() {
@@ -18,6 +21,16 @@ public class Analysis {
         this.postCash = new ArrayList<>();
         this.postOpinionVar = -1;
         this.feedList = new ArrayList<>();
+        this.feedMeanArray = new double[Const.NUM_OF_BINS_OF_OPINION];
+        this.feedVarArray = new double[Const.NUM_OF_BINS_OF_OPINION];
+    }
+
+    public double[] getFeedMeanArray(){
+        return this.feedMeanArray;
+    }
+
+    public double[] getFeedVarArray(){
+        return this.feedVarArray;
     }
 
     public void clearPostCash() {
@@ -35,6 +48,15 @@ public class Analysis {
     public void setFeedList(List<Post> feed) {
         this.feedList.add(new ArrayList<>(feed));
     }
+
+    public void setFeedMap(Agent agent){
+        this.feedMap.put(agent.getId(), new ArrayList<>(agent.getFeed()));
+    }
+
+    public void resetFeedMap() {
+        feedMap.clear();
+    }
+    
 
     // Agent配列から分散を計算
     public double computeVarianceOpinion(Agent[] agentSet) {
@@ -110,6 +132,53 @@ public class Analysis {
         }
 
         return squaredDiffSum / postNum;
+    }
+
+    public void computeFeedMetrics(Agent[] agentSet) {
+        Arrays.fill(this.feedMeanArray, 0.0);
+        Arrays.fill(this.feedVarArray, 0.0);
+
+        double[] classVarianceSum = new double[Const.NUM_OF_BINS_OF_OPINION];
+        int[] agentCount = new int[Const.NUM_OF_BINS_OF_OPINION];
+        
+        for (Map.Entry<Integer, List<Post>> entry : feedMap.entrySet()) {
+            Integer userId = entry.getKey();
+            List<Post> feed = entry.getValue();
+            Agent agent = agentSet[userId];
+            int classId = agent.getOpinionClass();
+        
+            if (feed.isEmpty()) continue;
+            
+        
+            // 個人平均
+            double sum = 0.0;
+            for (Post post : feed) {
+                sum += post.getPostOpinion();
+            }
+            double mean = sum / feed.size();
+            this.feedMeanArray[classId] += mean;
+        
+            // 個人分散
+            double var = 0.0;
+            for (Post post : feed) {
+                double diff = post.getPostOpinion() - mean;
+                var += diff * diff;
+            }
+            var /= feed.size(); // or (feed.size() - 1) for unbiased
+        
+            // クラスごとに集計
+            classVarianceSum[classId] += var;
+            agentCount[classId]++;
+        }
+        
+        // 最終的な平均分散
+        for (int i = 0; i < Const.NUM_OF_BINS_OF_OPINION; i++) {
+            if (agentCount[i] != 0) {
+                this.feedVarArray[i] = classVarianceSum[i] / agentCount[i];
+                this.feedMeanArray[i] = this.feedMeanArray[i] / agentCount[i];
+            }
+        }
+        
     }
 
     public void computePostVariance() {

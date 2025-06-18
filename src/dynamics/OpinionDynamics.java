@@ -123,7 +123,8 @@ public class OpinionDynamics {
             unfollowActionNum = 0;
 
             analyzer.clearPostCash();
-            analyzer.clearFeedList();
+            //　analyzer.clearFeedList();
+            analyzer.resetFeedMap();
             writer.clearPostBins();
             writer.setSimulationStep(step);
             double[][] W = admin.getAdjacencyMatrix();
@@ -133,10 +134,12 @@ public class OpinionDynamics {
                 int agentId = agent.getId();
                 agent.setFollowerNum(W);
                 agent.setTimeStep(step);
+                agent.resetUsed();
                 // このstepでSNSを利用するか決定する
                 if (rand.nextDouble() > agent.getuseProb()) {
                     continue;
                 }
+                agent.setUsed();
 
                 /// depolarization 実験 2-2
                 /// BCを大きくしてもらう
@@ -148,7 +151,7 @@ public class OpinionDynamics {
 
                 // admin sets user's feed
                 admin.AdminFeedback(agentId, agentSet, latestPostList);
-                analyzer.setFeedList(agent.getFeed());
+                analyzer.setFeedMap(agent);
 
                 int likedId = -1;
 
@@ -285,8 +288,11 @@ public class OpinionDynamics {
             writer.setPostOpinionVar(analyzer.getPostOpinionVar());
             writer.setFollowUnfollowActionNum(followActionNum, unfollowActionNum);
             writer.setOpinionBins(agentSet);
-            writer.setFeedVar(analyzer.computeFeedVariance());
+            // writer.setFeedVar(analyzer.computeFeedVariance());
             writer.setOpinionAvg(analyzer.computeMeanOpinion(agentSet));
+            analyzer.computeFeedMetrics(agentSet);
+            writer.setFeedMeanArray(analyzer.getFeedMeanArray());
+            writer.setFeedVarArray(analyzer.getFeedVarArray());
             writer.write();
         }
     }

@@ -21,6 +21,9 @@ public class Writer {
     private double opinionBinWidth;
     private double opinionAvg;
     private double feedVar;
+    private double[] feedMeanArray;
+    private double[] feedVarArray;
+
 
     public Writer(String folderPath, String[] resultList) {
         this.simulationStep = -1;
@@ -35,6 +38,8 @@ public class Writer {
         this.opinionBinWidth = 2.0 / opinionBins.length;
         this.opinionAvg = 0.0;
         this.feedVar = -1;
+        this.feedMeanArray = new double[Const.NUM_OF_BINS_OF_OPINION];
+        this.feedVarArray = new double[Const.NUM_OF_BINS_OF_OPINION];
     }
 
     // Setter
@@ -66,6 +71,14 @@ public class Writer {
 
     public void setFeedVar(double value) {
         this.feedVar = value;
+    }
+
+    public void setFeedMeanArray(double[] original){
+        this.feedMeanArray = original.clone();
+    }
+
+    public void setFeedVarArray(double[] original){
+        this.feedVarArray = original.clone();
     }
 
     public void clearPostBins() {
@@ -137,6 +150,37 @@ public class Writer {
                     case "feedVar":
                         sb.append(String.format("%.4f", this.feedVar));
                         break;
+                    case "feedPostOpinionMean_0":
+                        sb.append(String.format("%.4f", this.feedMeanArray[0]));
+                        break;
+                    case "feedPostOpinionMean_1":
+                        sb.append(String.format("%.4f", this.feedMeanArray[1]));
+                        break;
+                    case "feedPostOpinionMean_2":
+                        sb.append(String.format("%.4f", this.feedMeanArray[2]));
+                        break;
+                    case "feedPostOpinionMean_3":
+                        sb.append(String.format("%.4f", this.feedMeanArray[3]));
+                        break;
+                    case "feedPostOpinionMean_4":
+                        sb.append(String.format("%.4f", this.feedMeanArray[4]));
+                        break;
+                    case "feedPostOpinionVar_0":
+                        sb.append(String.format("%.4f", this.feedVarArray[0]));
+                        break;
+                    case "feedPostOpinionVar_1":
+                        sb.append(String.format("%.4f", this.feedVarArray[1]));
+                        break;
+                    case "feedPostOpinionVar_2":
+                        sb.append(String.format("%.4f", this.feedVarArray[2]));
+                        break;
+                    case "feedPostOpinionVar_3":
+                        sb.append(String.format("%.4f", this.feedVarArray[3]));
+                        break;
+                    case "feedPostOpinionVar_4":
+                        sb.append(String.format("%.4f", this.feedVarArray[4]));
+                        break;
+          
                     default:
                         sb.append(""); // 未定義の項目は空
                 }

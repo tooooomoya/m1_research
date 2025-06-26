@@ -45,7 +45,7 @@ def plot_variances(df, output_path="./results/figures/variances_over_time.png"):
 
 def main():
     folder_path = "./results/metrics"
-    max_step = 20000  # ← ここでステップ数を指定
+    max_step = 10000  # ← ここでステップ数を指定
 
     df = read_metrics_up_to_step(folder_path, max_step)
     plot_variances(df)  # ← 追加

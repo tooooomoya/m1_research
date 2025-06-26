@@ -3,8 +3,9 @@ import matplotlib.pyplot as plt
 import os
 import numpy as np
 
-def read_metrics_series(data_dir, target_prefix, metric_prefix, num_classes=5, max_index=20000):
-    class_series = {i: [] for i in range(num_classes)}
+def read_metrics_mean_var_series(data_dir, target_prefix, metric_prefix, var_prefix, num_classes=5, max_index=10000):
+    class_means = {i: [] for i in range(num_classes)}
+    class_stds = {i: [] for i in range(num_classes)}
     steps = []
 
     for i in range(max_index + 1):
@@ -17,27 +18,16 @@ def read_metrics_series(data_dir, target_prefix, metric_prefix, num_classes=5, m
             row = df.iloc[0]
             steps.append(int(row["step"]))
             for c in range(num_classes):
-                key = f"{metric_prefix}_{c}"
-                class_series[c].append(float(row[key]))
+                mean_key = f"{metric_prefix}_{c}"
+                var_key = f"{var_prefix}_{c}"
+                mean_val = float(row[mean_key])
+                var_val = float(row[var_key])
+                class_means[c].append(mean_val)
+                class_stds[c].append(np.sqrt(var_val))  # 標準偏差に変換
         except Exception as e:
             print(f"[{i:04d}] エラー: {e}")
 
-    return steps, class_series
-
-def smooth_and_get_band(series_dict, window_size=10):
-    smoothed_means = {}
-    smoothed_stds = {}
-    for c, values in series_dict.items():
-        means = []
-        stds = []
-        for i in range(0, len(values), window_size):
-            window = values[i:i+window_size]
-            if window:
-                means.append(np.mean(window))
-                stds.append(np.std(window))
-        smoothed_means[c] = means
-        smoothed_stds[c] = stds
-    return smoothed_means, smoothed_stds
+    return steps, class_means, class_stds
 
 def plot_smoothed_band(x, mean_dict, std_dict, title, ylabel, output_path, window_size=10):
     smoothed_x = [x[i] for i in range(0, len(x), window_size)]
@@ -63,26 +53,41 @@ def plot_smoothed_band(x, mean_dict, std_dict, title, ylabel, output_path, windo
     plt.savefig(output_path)
     print(f"✅ プロット保存: {output_path}")
 
+def smooth(series_dict, window_size=10):
+    smoothed = {}
+    for c, values in series_dict.items():
+        smoothed[c] = [
+            np.mean(values[i:i+window_size])
+            for i in range(0, len(values), window_size)
+        ]
+    return smoothed
+
 def main():
     data_dir = "./results/metrics"
-    prefix = "results"
+    prefix = "result"
     window_size = 10
     num_classes = 5
 
     metric_prefix = "feedPostOpinionMean"
+    var_prefix = "feedPostOpinionVar"
     ylabel = "Feed Post Opinion Mean"
     title = "Feed Post Opinion Mean per Class (Smoothed, ±1σ)"
     filename = "feed_post_mean_with_std.png"
 
-    x, series = read_metrics_series(data_dir, prefix, metric_prefix, num_classes)
+    x, mean_series, std_series = read_metrics_mean_var_series(
+        data_dir, prefix, metric_prefix, var_prefix, num_classes
+    )
+
     if not x:
         print(f"⚠️ データがありません: {metric_prefix}")
         return
 
-    means, stds = smooth_and_get_band(series, window_size)
+    smoothed_means = smooth(mean_series, window_size)
+    smoothed_stds = smooth(std_series, window_size)
+
     os.makedirs("./results/figures", exist_ok=True)
     output_path = os.path.join("./results/figures", filename)
-    plot_smoothed_band(x, means, stds, title, ylabel, output_path, window_size)
+    plot_smoothed_band(x, smoothed_means, smoothed_stds, title, ylabel, output_path, window_size)
 
 if __name__ == "__main__":
     main()

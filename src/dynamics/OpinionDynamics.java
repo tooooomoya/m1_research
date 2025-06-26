@@ -25,9 +25,11 @@ public class OpinionDynamics {
     private final String[] resultList = Const.RESULT_LIST;
     private final String folerPath = Const.RESULT_FOLDER_PATH;
     private GraphVisualize gephi;
+    private RepostVisualize repostGephi;
     private double connectionProbability = Const.CONNECTION_PROB_OF_RANDOM_NW;
     private AdminOptim admin;
     private static final Random rand = randomGenerater.rand;
+    private int[][] repostNetwork;
 
     // constructor
     public OpinionDynamics() {
@@ -36,7 +38,9 @@ public class OpinionDynamics {
         this.analyzer = new Analysis();
         this.writer = new Writer(folerPath, resultList);
         this.gephi = new GraphVisualize(0.00, agentSet, network);
+        this.repostGephi = new RepostVisualize(agentSet);
         this.admin = new AdminOptim(agentNum, network.getAdjacencyMatrix());
+        this.repostNetwork = new int[agentSet.length][agentSet.length];
     }
 
     private void setFromInitial() {
@@ -158,6 +162,7 @@ public class OpinionDynamics {
                 for (int i = 0; i < 5; i++) {
                     Post likedPost = agent.like();
                     if (likedPost != null) {
+                        repostNetwork[agentId][likedPost.getPostUserId()]++;
                         for (Agent otherAgent : agentSet) {
                             if (W[otherAgent.getId()][agentId] > 0.00) { // follower全員のpostCashに追加
                                 otherAgent.addToPostCash(likedPost);
@@ -280,6 +285,8 @@ public class OpinionDynamics {
                 network.setAdjacencyMatrix(admin.getAdjacencyMatrix());
                 gephi.updateGraph(agentSet, network);
                 gephi.exportGraph(step, folerPath);
+                repostGephi.updateGraph(agentSet, repostNetwork, step);
+                repostGephi.exportGraph(step, folerPath);
                 writer.writeDegrees(W, folerPath);
             }
             // export metrics

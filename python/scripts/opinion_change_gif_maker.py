@@ -85,7 +85,8 @@ def save_histogram_for_step(step, input_dir='results/opinion', output_path=None)
 
 def main():
     # ヒストグラムGIFの作成
-    create_histogram_gif(step_interval=100, y_max=200)
+    #create_histogram_gif(step_interval=100, y_max=200)
+    create_histogram_gif(step_interval=100, y_max=1000)
 
     # ステップ100のヒストグラム画像を保存
     #save_histogram_for_step(10000)

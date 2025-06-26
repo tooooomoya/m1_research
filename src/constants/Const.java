@@ -3,7 +3,7 @@ package constants;
 public class Const {
     // simulation parameter
     public static final int MAX_SIMULATION_STEP = 20000;
-    public static final int NUM_OF_USER = 1000;
+    public static final int NUM_OF_USER = 5000;
     public static final int NUM_OF_SEED_USER = (int) (0.05 * NUM_OF_USER);
     public static final int NUM_OF_SNS_USER = NUM_OF_USER;
     public static final int RANDOM_SEED = 0; // 2
@@ -33,12 +33,10 @@ public class Const {
     public static final double INCREMENT_MUR = 0.002;
     public static final double DECREMENT_PP = 0.001;
     public static final double DECREMENT_MUR = 0.0001;
-    public static final double MIN_PP = 0.01;
-    public static final double MIN_MUR = 0.02;
+    public static final double MIN_PP = 0.0;
+    public static final double MIN_MUR = 0.0;
     public static final double DECREMENT_BC_BY_UNFOLLOW = 0.02;
     public static final double INCREMENT_BC = 0.00001;
-    
-    
 
     // user num = 5000
     // 実験が進みやすいようにMURは小さくしたい。

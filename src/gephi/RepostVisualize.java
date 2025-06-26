@@ -144,7 +144,7 @@ public class RepostVisualize {
                 Node target = graph.getNode(String.valueOf(j));
                 Edge edge = graph.getEdge(source, target);
 
-                if (newW[i][j] == 0.0) {
+                if (newW[i][j] == 0) {
                     if (edge != null) {
                         graph.removeEdge(edge);
                     }

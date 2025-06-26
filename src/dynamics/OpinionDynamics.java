@@ -8,6 +8,7 @@ import gephi.*;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import network.*;
@@ -104,11 +105,14 @@ public class OpinionDynamics {
 
         // exp : set bot
         ///
-        /*for (Agent agent : agentSet) {
-            if (rand.nextDouble() < 0.2 && agent.getFollwerNum() < Const.NUM_OF_USER * 0.1) {
-                agent.setTraitor();
-            }
-        }*/
+        /*
+         * for (Agent agent : agentSet) {
+         * if (rand.nextDouble() < 0.2 && agent.getFollwerNum() < Const.NUM_OF_USER *
+         * 0.1) {
+         * agent.setTraitor();
+         * }
+         * }
+         */
         ///
 
         // exp 3-2 : distract
@@ -127,7 +131,7 @@ public class OpinionDynamics {
             unfollowActionNum = 0;
 
             analyzer.clearPostCash();
-            //　analyzer.clearFeedList();
+            // analyzer.clearFeedList();
             analyzer.resetFeedMap();
             writer.clearPostBins();
             writer.setSimulationStep(step);
@@ -287,6 +291,9 @@ public class OpinionDynamics {
                 gephi.exportGraph(step, folerPath);
                 repostGephi.updateGraph(agentSet, repostNetwork, step);
                 repostGephi.exportGraph(step, folerPath);
+                for (int[] repostNetwork1 : repostNetwork) {
+                    Arrays.fill(repostNetwork1, 0);
+                }
                 writer.writeDegrees(W, folerPath);
             }
             // export metrics

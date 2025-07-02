@@ -73,17 +73,8 @@ public class AdminOptim {
         }
     }*/
 
-    public void updateAdjacencyMatrix(int userId, int likedId, int followedId, int unfollowedId) {
-        if (likedId >= 0) {
-            // フォローしていないユーザに対するいいねは無視
-            /*
-             * if(this.W[userId][likedId] > 0.0){
-             * this.W[userId][likedId] += Const.LIKE_INCREASE_WEIGHT;
-             * }
-             */
-            // this.W[userId][likedId] = 1.01 * this.W[userId][likedId];
-            // System.out.println("increased weight : " + this.W[userId][likedId]);
-        }
+    public void updateAdjacencyMatrix(int userId, int followedId, int unfollowedId) {
+
         if (followedId >= 0) {
             // this.W[userId][followedId] = Const.FOLLOW_INCREASE_WEIGHT;
             this.W[userId][followedId] = 1.0;

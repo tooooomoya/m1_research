@@ -52,7 +52,7 @@ public class OpinionDynamics {
     private void setNetwork() {
         ///// you can change the initial network bellow
         // this.network = new RandomNetwork(agentNum, connectionProbability);
-        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.8);
+        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.6);
         /////
 
         this.network.makeNetwork(agentSet);
@@ -97,6 +97,7 @@ public class OpinionDynamics {
         writer.setOpinionVar(analyzer.computeVarianceOpinion(agentSet));
         writer.setOpinionBins(agentSet);
         writer.write();
+        writer.writeDegrees(network.getAdjacencyMatrix(), folerPath);
 
         int followActionNum;
         int unfollowActionNum;
@@ -161,7 +162,7 @@ public class OpinionDynamics {
                 admin.AdminFeedback(agentId, agentSet, latestPostList);
                 analyzer.setFeedMap(agent);
 
-                int likedId = -1;
+                /*int likedId = -1;
 
                 for (int i = 0; i < 5; i++) {
                     Post likedPost = agent.like();
@@ -177,8 +178,19 @@ public class OpinionDynamics {
                     if (likedId >= 0) {
                         agentSet[likedId].receiveLike();
                     }
+                }*/
+
+                List<Post> repostedPostList = agent.repost();
+                for(Post repostedPost : repostedPostList){
+                    repostNetwork[agentId][repostedPost.getPostUserId()]++;
+                    for (Agent otherAgent : agentSet) {
+                        if (W[otherAgent.getId()][agentId] > 0.00) { // follower全員のpostCashに追加
+                            otherAgent.addToPostCash(repostedPost);
+                        }
+                    }
+                    agentSet[repostedPost.getPostUserId()].receiveLike();
                 }
-                // int likedId = -1;
+
 
                 /////// follow
                 int followedId = agent.follow();
@@ -270,7 +282,7 @@ public class OpinionDynamics {
                 }
 
                 agent.updateMyself();
-                admin.updateAdjacencyMatrix(agentId, likedId, followedId, unfollowedId);
+                admin.updateAdjacencyMatrix(agentId, followedId, unfollowedId);
                 agent.resetPostCash();
                 agent.resetFeed();
                 ASChecker.assertionChecker(agentSet, admin, agentNum, step);

@@ -67,11 +67,11 @@ def plot_ratio_bins(x, ratios, bin_labels=None, window_size=10):
         color = colors[idx % len(colors)]
         plt.plot(smoothed_x, values, label=label, color=color, alpha=0.6)
 
-    plt.xlabel("Step")
-    plt.ylabel("Post Ratio (10-step average)")
-    plt.title("Smoothed Ratio of Posts in Each Bin (10-step average)")
+    plt.xlabel("Step", fontsize=14)
+    plt.ylabel("Post Ratio (10-step average)", fontsize=14)
+    #plt.title("Smoothed Ratio of Posts in Each Bin (10-step average)")
     plt.ylim(0, 1)
-    plt.legend()
+    plt.legend(fontsize=12)
     plt.grid(True)
     plt.tight_layout()
     output_path = "./results/figures/ratio_bins_smoothed.png"

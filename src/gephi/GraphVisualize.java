@@ -4,6 +4,7 @@ import agent.Agent;
 import network.Network;
 import org.gephi.graph.api.*;
 import org.gephi.project.api.ProjectController;
+import org.gephi.project.api.Workspace;
 import org.gephi.io.exporter.api.ExportController;
 import org.openide.util.Lookup;
 
@@ -17,6 +18,7 @@ public class GraphVisualize {
     private GraphModel graphModel;
     private Graph graph;
     private ExportController exportController;
+    private Workspace workspace;
 
     // constructor
     public GraphVisualize(double lambda, Agent[] agents, Network network) {
@@ -24,6 +26,9 @@ public class GraphVisualize {
 
         ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
         pc.newProject();
+        this.workspace = pc.newWorkspace(pc.getCurrentProject());
+        pc.openWorkspace(workspace); // 必ず明示的にオープン！
+
         graphModel = Lookup.getDefault().lookup(GraphController.class).getGraphModel();
         graph = graphModel.getDirectedGraph();
         exportController = Lookup.getDefault().lookup(ExportController.class);
@@ -32,6 +37,8 @@ public class GraphVisualize {
     }
 
     private void initializeGraph(Agent[] agents, Network network) {
+        ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
+        pc.openWorkspace(this.workspace);
         int nodeCount = agents.length;
         double[][] W = network.getAdjacencyMatrix();
 
@@ -111,6 +118,8 @@ public class GraphVisualize {
     }
 
     public void assignCommunities(Map<Integer, List<Integer>> communityGroups) {
+        ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
+        pc.openWorkspace(this.workspace);
         Column communityColumn = graphModel.getNodeTable().getColumn("community");
         if (communityColumn == null) {
             graphModel.getNodeTable().addColumn("community", Integer.class);
@@ -130,6 +139,8 @@ public class GraphVisualize {
     }
 
     public void updateGraph(Agent[] agents, Network network) {
+        ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
+        pc.openWorkspace(this.workspace);
         double[][] newW = network.getAdjacencyMatrix();
 
         for (int i = 0; i < agents.length; i++) {
@@ -170,6 +181,8 @@ public class GraphVisualize {
     }
 
     public void exportGraph(int step, String folderPath) {
+        ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
+        pc.openWorkspace(this.workspace);
         try {
             String lambdaFolder = folderPath + "/GEXF/lambda_" + lambda;
             File lambdaDir = new File(lambdaFolder);

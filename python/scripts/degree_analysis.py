@@ -40,10 +40,10 @@ def analyze_and_plot_indegree_fit(in_degrees, output_path):
 
     plt.xscale('log')
     plt.yscale('log')
-    plt.xlabel(r'$k^{(\mathrm{in})}$')
-    plt.ylabel(r'$P(k^{(\mathrm{in})} \geq x)$')
+    plt.xlabel(r'$k^{(\mathrm{in})}$', fontsize=14)
+    plt.ylabel(r'$P(k^{(\mathrm{in})} \geq x)$', fontsize=14)
     plt.grid(True, which='both', ls=':')
-    plt.legend()
+    plt.legend(fontsize=14)
     plt.tight_layout()
     plt.savefig(output_path)
     print(f"✅ 図を保存しました: {output_path}")

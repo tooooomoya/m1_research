@@ -20,7 +20,6 @@ public class Agent {
     private List<Post> feed = new ArrayList<>(); // ユーザjの投稿を何件閲覧できるか(タイムラインのモデル)、Adminによって操作される
     private double useProb = Const.INITIAL_MEDIA_USER_RATE;
     private double followRate;
-    private double unfollowRate;
     private boolean traitor = false;
     private int timeStep;
     private boolean[] followList = new boolean[NUM_OF_AGENTS];
@@ -28,6 +27,7 @@ public class Agent {
     private Set<Integer> alreadyAddedPostIds = new HashSet<>();
     private int followerNum;
     private boolean used;
+    private int recievedLikeCount;
 
     // constructor
     public Agent(int agentID) {
@@ -43,9 +43,9 @@ public class Agent {
         setOpinionClass();
         this.postProb = Const.INITIAL_POST_PROB;
         this.followRate = Const.INITIAL_FOLLOW_RATE;
-        this.unfollowRate = Const.INITIAL_UNFOLLOW_RATE;
         this.timeStep = 0;
-        setNumOfPosts(20); // 10件はないと0.1をかけても残らない
+        this.recievedLikeCount = 0;
+        setNumOfPosts(10); // 10件はないと0.1をかけても残らない
 
     }
 
@@ -97,10 +97,6 @@ public class Agent {
 
     public double getFollowRate() {
         return this.followRate;
-    }
-
-    public double getUnfollowRate() {
-        return this.unfollowRate;
     }
 
     public int getFollwerNum() {
@@ -214,8 +210,9 @@ public class Agent {
 
     // other methods
     public void receiveLike() {
-        this.postProb += Const.INCREMENT_PP_BY_LIKE * decayFunc(this.timeStep);
-        this.useProb += Const.INCREMENT_MUR * decayFunc(this.timeStep);
+        this.recievedLikeCount++;
+        // post prob is set based on the marginal utility theory
+        this.postProb += Const.MU_PRAM * Math.log(1 * this.recievedLikeCount + 1);
         if (this.postProb > 1.0) {
             this.postProb = 1.0;
         }
@@ -248,7 +245,7 @@ public class Agent {
         for (Post post : this.feed) {
             temp += post.getPostOpinion();
             if (this.id % 100 == 0) {
-                // System.out.println("read post opinion " + post.getPostOpinion());
+                //System.out.println("read post opinion " + post.getPostOpinion());
             }
             postNum++;
             if (Math.abs(post.getPostOpinion() - this.opinion) < Const.MINIMUM_BC) {
@@ -272,15 +269,6 @@ public class Agent {
             this.postProb -= Const.DECREMENT_PP * decayFunc(this.timeStep);
             this.useProb -= Const.DECREMENT_MUR * decayFunc(this.timeStep);
             this.bc += Const.INCREMENT_BC * decayFunc(this.timeStep);
-            if (this.postProb < Const.MIN_PP) {
-                this.postProb = Const.MIN_PP;
-            }
-            if (this.useProb < Const.MIN_MUR) {
-                this.useProb = Const.MIN_MUR;
-            }
-            if (this.bc > Const.BOUNDED_CONFIDENCE) {
-                this.bc = Const.BOUNDED_CONFIDENCE;
-            }
         }
 
         this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
@@ -382,13 +370,13 @@ public class Agent {
         }
         if (this.postProb > 1.0) {
             this.postProb = 1.0;
-        } else if (this.postProb < 0.0) {
-            this.postProb = 0.0;
+        } else if (this.postProb < Const.MIN_PP) {
+            this.postProb = Const.MIN_PP;
         }
         if (this.useProb > 1.0) {
             this.useProb = 1.0;
-        } else if (this.useProb < 0.0) {
-            this.useProb = 0.0;
+        } else if (this.useProb < Const.MIN_MUR) {
+            this.useProb = Const.MIN_MUR;
         }
 
         setOpinionClass();
@@ -417,11 +405,35 @@ public class Agent {
         }
     }
 
-    public int follow() {
-        if (this.followRate < rand.nextDouble()) {
-            return -1;
+    public List<Post> repost(){
+        List<Post> candidates = new ArrayList<>();
+        List<Post> repostedPostList = new ArrayList<>();
+        if(this.feed.isEmpty()){
+            return Collections.emptyList();
         }
 
+        // 条件に合う投稿をすべてリストアップ
+        for (Post post : this.feed) {
+            if (Math.abs(post.getPostOpinion() - this.opinion) < this.bc) {
+                candidates.add(post);
+            }
+        }
+
+        if (!candidates.isEmpty()) {
+            for(Post post : candidates){
+                if(rand.nextDouble() < Const.REPOST_PROB){
+                    post.receiveLike();
+                    repostedPostList.add(post);
+                }
+            }
+        } else {
+            return Collections.emptyList();
+        }
+
+        return repostedPostList;
+    }
+
+    public int follow() {
         List<Integer> candidates = new ArrayList<>();
 
         for (Post post : this.feed) {
@@ -442,7 +454,6 @@ public class Agent {
 
     // 閲覧した投稿の中でBC以上の意見の差があったらunfollowする
     public int unfollow() {
-        int attemps = 0;
         int followeeNum = 0;
         for (int i = 0; i < NUM_OF_AGENTS; i++) {
             if (this.followList[i]) {
@@ -454,6 +465,7 @@ public class Agent {
         }
 
         List<Integer> dislikeUser = new ArrayList<>();
+        Collections.shuffle(this.feed);
         for (Post post : this.feed) {
             if (Math.abs(post.getPostOpinion() - this.opinion) > this.bc && this.followList[post.getPostUserId()]) {
                 this.unfollowList[post.getPostUserId()] = true;
@@ -492,6 +504,13 @@ public class Agent {
             post = new Post(this.id, this.opinion, step);
         }
         this.toPost = 1;
+
+        this.postProb -= Const.POST_COST;
+        this.recievedLikeCount = 0;
+        if(this.postProb < Const.MIN_PP){
+            this.postProb = Const.MIN_PP;
+        }
+
         return post;
     }
 

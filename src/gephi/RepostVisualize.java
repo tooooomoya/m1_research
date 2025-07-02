@@ -4,6 +4,7 @@ import agent.Agent;
 import network.Network;
 import org.gephi.graph.api.*;
 import org.gephi.project.api.ProjectController;
+import org.gephi.project.api.Workspace;
 import org.gephi.io.exporter.api.ExportController;
 import org.openide.util.Lookup;
 
@@ -16,6 +17,7 @@ public class RepostVisualize {
     private int n;
     private GraphModel graphModel;
     private Graph graph;
+    private Workspace repostWorkspace;
     private ExportController exportController;
 
     // constructor
@@ -24,6 +26,8 @@ public class RepostVisualize {
 
         ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
         pc.newProject();
+        this.repostWorkspace = pc.newWorkspace(pc.getCurrentProject());
+        pc.openWorkspace(repostWorkspace); // 必ず明示的にオープン！
         graphModel = Lookup.getDefault().lookup(GraphController.class).getGraphModel();
         graph = graphModel.getDirectedGraph();
         exportController = Lookup.getDefault().lookup(ExportController.class);
@@ -32,6 +36,8 @@ public class RepostVisualize {
     }
 
     private void initializeGraph(Agent[] agents) {
+        ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
+        pc.openWorkspace(this.repostWorkspace);
         int nodeCount = agents.length;
 
         Column opinionColumn = graphModel.getNodeTable().getColumn("opinion");
@@ -102,6 +108,8 @@ public class RepostVisualize {
     }
 
     public void assignCommunities(Map<Integer, List<Integer>> communityGroups) {
+        ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
+        pc.openWorkspace(this.repostWorkspace);
         Column communityColumn = graphModel.getNodeTable().getColumn("community");
         if (communityColumn == null) {
             graphModel.getNodeTable().addColumn("community", Integer.class);
@@ -121,6 +129,8 @@ public class RepostVisualize {
     }
 
     public void updateGraph(Agent[] agents, int[][] repostNetwork, int step) {
+        ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
+        pc.openWorkspace(this.repostWorkspace);
         int[][] newW = repostNetwork.clone();
 
         for (int i = 0; i < agents.length; i++) {
@@ -162,6 +172,8 @@ public class RepostVisualize {
     }
 
     public void exportGraph(int step, String folderPath) {
+        ProjectController pc = Lookup.getDefault().lookup(ProjectController.class);
+        pc.openWorkspace(this.repostWorkspace);
         try {
             String lambdaFolder = folderPath + "/GEXF/repostNW";
             File lambdaDir = new File(lambdaFolder);

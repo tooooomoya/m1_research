@@ -44,11 +44,11 @@ def plot_smoothed_band(x, mean_dict, std_dict, title, ylabel, output_path, windo
                          np.array(mean) + np.array(std),
                          color=color, alpha=0.2)
 
-    plt.xlabel("Step")
-    plt.ylabel(ylabel)
-    plt.title(title)
+    plt.xlabel("Step", fontsize=14)
+    plt.ylabel(ylabel, fontsize=14)
+    #plt.title(title)
     plt.grid(True)
-    plt.legend()
+    plt.legend(fontsize=14)
     plt.tight_layout()
     plt.savefig(output_path)
     print(f"✅ プロット保存: {output_path}")

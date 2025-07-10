@@ -51,7 +51,7 @@ public class OpinionDynamics {
 
     private void setNetwork() {
         ///// you can change the initial network bellow
-        // this.network = new RandomNetwork(agentNum, connectionProbability);
+        //this.network = new RandomNetwork(agentNum, connectionProbability);
         this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.6);
         /////
 
@@ -65,6 +65,30 @@ public class OpinionDynamics {
             agentSet[i] = new Agent(i);
             agentSet[i].setFollowList(tempAdjacencyMatrix);
             agentSet[i].setFollowerNum(tempAdjacencyMatrix);
+            /*if(agentSet[i].getFollwerNum() > 10){
+                double newO = 2.0 * rand.nextDouble() -1.0;
+                agentSet[i].setIntrinsicOpinion(newO);
+                agentSet[i].setOpinion(newO);
+            }*/
+
+            /*if(agentSet[i].getId() < 20){
+                if(agentSet[i].getId() % 5 == 0){
+                    agentSet[i].setIntrinsicOpinion(-0.8);
+                    agentSet[i].setOpinion(-0.8);
+                }else if(agentSet[i].getId() % 5 == 1){
+                    agentSet[i].setIntrinsicOpinion(-0.4);
+                    agentSet[i].setOpinion(-0.4);
+                }else if(agentSet[i].getId() % 5 == 2){
+                    agentSet[i].setIntrinsicOpinion(0.0);
+                    agentSet[i].setOpinion(0.0);
+                }else if(agentSet[i].getId() % 5 == 3){
+                    agentSet[i].setIntrinsicOpinion(0.4);
+                    agentSet[i].setOpinion(0.4);
+                }else if(agentSet[i].getId() % 5 == 4){
+                    agentSet[i].setIntrinsicOpinion(0.8);
+                    agentSet[i].setOpinion(0.8);
+                }
+            }*/
         }
     }
 
@@ -161,6 +185,7 @@ public class OpinionDynamics {
                 // admin sets user's feed
                 admin.AdminFeedback(agentId, agentSet, latestPostList);
                 analyzer.setFeedMap(agent);
+                agent.updatePostProb();
 
                 /*int likedId = -1;
 

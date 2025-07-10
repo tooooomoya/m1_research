@@ -211,14 +211,6 @@ public class Agent {
     // other methods
     public void receiveLike() {
         this.recievedLikeCount++;
-        // post prob is set based on the marginal utility theory
-        this.postProb += Const.MU_PRAM * Math.log(1 * this.recievedLikeCount + 1);
-        if (this.postProb > 1.0) {
-            this.postProb = 1.0;
-        }
-        if (this.useProb > 1.0) {
-            this.useProb = 1.0;
-        }
     }
 
     public void resetPostCash() {
@@ -236,6 +228,21 @@ public class Agent {
         this.feed.clear();
     }
 
+    public void updatePostProb(){
+        // post prob is set based on the marginal utility theory
+        this.postProb += Const.MU_PRAM * Math.log(this.recievedLikeCount * this.recievedLikeCount + 1);
+        if (this.recievedLikeCount > 0 && (this.id == 141 || this.id == 11 )) {
+             System.out.println("id : " + this.id + ", follower : " + this.followerNum + ", like " + this.recievedLikeCount);
+        }
+        if (this.postProb > 1.0) {
+            this.postProb = 1.0;
+        }
+        if (this.useProb > 1.0) {
+            this.useProb = 1.0;
+        }
+        this.recievedLikeCount = 0;
+    }
+
     public void updateMyself() {
         double temp = 0.0;
 
@@ -249,6 +256,7 @@ public class Agent {
             }
             postNum++;
             if (Math.abs(post.getPostOpinion() - this.opinion) < Const.MINIMUM_BC) {
+            // if (Math.abs(post.getPostOpinion() - this.opinion) < 0.2) {
                 comfortPostNum++;
             }
         }
@@ -256,11 +264,11 @@ public class Agent {
         if (postNum == 0)
             return;
 
-        if (this.id % 100 == 0) {
-            // System.out.println("num of read post " + postNum);
-        }
-
         double comfortPostRate = (double) comfortPostNum / postNum;
+
+        if(this.id == 640){
+            //System.out.println("compostnum : " + comfortPostNum + ", comfort : " + comfortPostRate);
+        }
 
         if (comfortPostRate > Const.COMFORT_RATE && this.feed.size() > 2) {
             this.postProb += Const.INCREMENT_PP * decayFunc(this.timeStep);
@@ -268,7 +276,7 @@ public class Agent {
         } else {
             this.postProb -= Const.DECREMENT_PP * decayFunc(this.timeStep);
             this.useProb -= Const.DECREMENT_MUR * decayFunc(this.timeStep);
-            this.bc += Const.INCREMENT_BC * decayFunc(this.timeStep);
+            // this.bc += Const.INCREMENT_BC * decayFunc(this.timeStep);
         }
 
         this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
@@ -276,14 +284,13 @@ public class Agent {
         // exp 3-3 : infulencerの買収
         ///
         
-          //if (this.id == 5 || this.id == 16) { // seed 0
-          /*if ((this.id == 33 || this.id == 42) && this.timeStep > 5000 ) { // seed 0
-            this.opinion -= 0.0001;
+          /*if ((this.id == 34 || this.id == 21) && this.timeStep > 5000 ) { 
+            this.opinion += 0.0001;
           } else {
-          this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
+            this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
           }*/
          
-        ///
+        ///    
 
         // 実験 3-1 malicious bot
         ///
@@ -378,6 +385,18 @@ public class Agent {
         } else if (this.useProb < Const.MIN_MUR) {
             this.useProb = Const.MIN_MUR;
         }
+
+
+        /// 
+        // exp : 人気インフルエンサーがトピックに参加してくる
+        /*if(this.id == 2){
+            if(this.timeStep < 2000){
+                this.postProb = 0.0;
+            }else{
+                this.opinion = 0.4;
+            }
+        }*/
+        ///
 
         setOpinionClass();
     }
@@ -506,7 +525,6 @@ public class Agent {
         this.toPost = 1;
 
         this.postProb -= Const.POST_COST;
-        this.recievedLikeCount = 0;
         if(this.postProb < Const.MIN_PP){
             this.postProb = Const.MIN_PP;
         }

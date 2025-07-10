@@ -4,9 +4,9 @@ public class Const {
     // simulation parameter
     public static final int MAX_SIMULATION_STEP = 20000;
     public static final int NUM_OF_USER = 1000;
-    public static final int NUM_OF_SEED_USER = (int) (0.02 * NUM_OF_USER);
+    public static final int NUM_OF_SEED_USER = (int) (0.003 * NUM_OF_USER);
     public static final int NUM_OF_SNS_USER = NUM_OF_USER;
-    public static final int RANDOM_SEED = 0; //1
+    public static final int RANDOM_SEED = 5;
 
     // Admin feedback parameter
     // public static final double FEEDBACK_INCREASE_WEIGHT = 0.1;
@@ -18,28 +18,28 @@ public class Const {
     // public static final double UNACCEPTABLE_BOUNDED_CONFIDENCE = 0.7;
 
     // network parameter
-    public static final double CONNECTION_PROB_OF_RANDOM_NW = 0.1;
+    public static final double CONNECTION_PROB_OF_RANDOM_NW = 0.01;
     
     // agent parameter
     public static final double BOUNDED_CONFIDENCE = 1.0;
     public static final double MINIMUM_BC = 0.1;
     public static final double REPOST_PROB = 0.4;
-    public static final double POST_COST = 0.25;
-    public static final double MU_PRAM = 0.2; // Marginal Utility log func parameter
+    public static final double POST_COST = 0.1;
+    public static final double MU_PRAM = 0.1; // Marginal Utility log func parameter
 
     // user num = 1000
     // increment mur = 0にしても大丈夫か
     public static final double INITIAL_CNN_SEED_GRAPH_CONNECT_PROB = 0.2;
     public static final double INITIAL_POST_PROB = 0.1;
-    public static final double INITIAL_MEDIA_USER_RATE = 0.2;
-    public static final double INCREMENT_PP = 0.3;
-    public static final double INCREMENT_MUR = 0.002;
-    public static final double DECREMENT_PP = 0.3;
-    public static final double DECREMENT_MUR = 0.002;
-    public static final double MIN_PP = 0.01;
-    public static final double MIN_MUR = 0.2;
-    public static final double DECREMENT_BC_BY_UNFOLLOW = 0.05;
-    public static final double INCREMENT_BC = 0.00001;
+    public static final double INITIAL_MEDIA_USER_RATE = 0.1;
+    public static final double INCREMENT_PP = 0.1;
+    public static final double INCREMENT_MUR = 0.0;
+    public static final double DECREMENT_PP = 0.0;
+    public static final double DECREMENT_MUR = 0.0;
+    public static final double MIN_PP = 0.1;
+    public static final double MIN_MUR = INITIAL_MEDIA_USER_RATE;
+    public static final double DECREMENT_BC_BY_UNFOLLOW = 0.025;
+    //public static final double INCREMENT_BC = 0.00001;
 
     // user num = 5000
     // 実験が進みやすいようにMURは小さくしたい。

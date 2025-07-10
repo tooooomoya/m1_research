@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import os
 
-def smooth_ratios(ratios, window_size=10):
+def smooth_ratios(ratios, window_size=100):
     smoothed = {bin_name: [] for bin_name in ratios}
     num_steps = len(next(iter(ratios.values())))
 
@@ -16,7 +16,7 @@ def smooth_ratios(ratios, window_size=10):
     return smoothed
 
 
-def read_and_compute_ratios(data_dir, bins, max_index=20000):
+def read_and_compute_ratios(data_dir, bins, max_index=10000):
     ratios = {bin_name: [] for bin_name in bins}
     x = []
 
@@ -50,7 +50,7 @@ def read_and_compute_ratios(data_dir, bins, max_index=20000):
 
     return x, ratios
 
-def plot_ratio_bins(x, ratios, bin_labels=None, window_size=10):
+def plot_ratio_bins(x, ratios, bin_labels=None, window_size=100):
     if not x:
         print("❌ プロットできるデータがありません。")
         return
@@ -68,7 +68,7 @@ def plot_ratio_bins(x, ratios, bin_labels=None, window_size=10):
         plt.plot(smoothed_x, values, label=label, color=color, alpha=0.6)
 
     plt.xlabel("Step", fontsize=14)
-    plt.ylabel("Post Ratio (10-step average)", fontsize=14)
+    plt.ylabel("Post Ratio (100-step average)", fontsize=14)
     #plt.title("Smoothed Ratio of Posts in Each Bin (10-step average)")
     plt.ylim(0, 1)
     plt.legend(fontsize=12)

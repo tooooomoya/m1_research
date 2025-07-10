@@ -181,7 +181,7 @@ public class RepostVisualize {
                 lambdaDir.mkdirs();
             }
 
-            String fileName = lambdaFolder + "/step_" + step + ".gexf";
+            String fileName = lambdaFolder + "/repost_step_" + step + ".gexf";
             File file = new File(fileName);
 
             exportController.exportFile(file);

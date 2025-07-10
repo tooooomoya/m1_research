@@ -10,7 +10,8 @@ def analyze_and_plot_indegree_fit(in_degrees, output_path):
     # フィッティング
     fit = powerlaw.Fit(filtered, discrete=True, verbose=False)
     alpha = fit.power_law.alpha
-    xmin = fit.power_law.xmin
+    #xmin = fit.power_law.xmin
+    xmin = 1
 
     # ▶ lognormal との比較
     R, p = fit.distribution_compare('power_law', 'lognormal')
@@ -36,7 +37,7 @@ def analyze_and_plot_indegree_fit(in_degrees, output_path):
     fit.power_law.plot_ccdf(ax=ax, color='red', linestyle='--', linewidth=2, label='Power-law fit')
 
     # Log-normal フィット（青線）
-    fit.lognormal.plot_ccdf(ax=ax, color='blue', linestyle='-', linewidth=2, label='Log-normal fit')
+    #fit.lognormal.plot_ccdf(ax=ax, color='blue', linestyle='-', linewidth=2, label='Log-normal fit')
 
     plt.xscale('log')
     plt.yscale('log')
@@ -58,7 +59,7 @@ def analyze_and_plot_indegree_fit(in_degrees, output_path):
 
 
 def main():
-    df = pd.read_csv("results/degrees/degree_result_10000.csv")
+    df = pd.read_csv("results/degrees/degree_result_0.csv")
     in_degrees = df["inDegree"]
     results = analyze_and_plot_indegree_fit(
         in_degrees,

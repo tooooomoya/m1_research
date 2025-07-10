@@ -52,7 +52,7 @@ public class OpinionDynamics {
     private void setNetwork() {
         ///// you can change the initial network bellow
         //this.network = new RandomNetwork(agentNum, connectionProbability);
-        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.6);
+        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.3);
         /////
 
         this.network.makeNetwork(agentSet);

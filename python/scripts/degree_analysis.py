@@ -59,7 +59,7 @@ def analyze_and_plot_indegree_fit(in_degrees, output_path):
 
 
 def main():
-    df = pd.read_csv("results/degrees/degree_result_0.csv")
+    df = pd.read_csv("results/degrees/degree_result_10000.csv")
     in_degrees = df["inDegree"]
     results = analyze_and_plot_indegree_fit(
         in_degrees,

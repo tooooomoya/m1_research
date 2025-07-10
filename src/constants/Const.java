@@ -24,7 +24,7 @@ public class Const {
     public static final double BOUNDED_CONFIDENCE = 1.0;
     public static final double MINIMUM_BC = 0.1;
     public static final double REPOST_PROB = 0.4;
-    public static final double POST_COST = 0.1;
+    public static final double POST_COST = 0.5;
     public static final double MU_PRAM = 0.1; // Marginal Utility log func parameter
 
     // user num = 1000
@@ -38,7 +38,7 @@ public class Const {
     public static final double DECREMENT_MUR = 0.0;
     public static final double MIN_PP = 0.1;
     public static final double MIN_MUR = INITIAL_MEDIA_USER_RATE;
-    public static final double DECREMENT_BC_BY_UNFOLLOW = 0.025;
+    public static final double DECREMENT_BC_BY_UNFOLLOW = 0.05;
     //public static final double INCREMENT_BC = 0.00001;
 
     // user num = 5000

@@ -32,13 +32,13 @@ public class Const {
     public static final double INITIAL_CNN_SEED_GRAPH_CONNECT_PROB = 0.2;
     public static final double INITIAL_POST_PROB = 0.1;
     public static final double INITIAL_MEDIA_USER_RATE = 0.1;
-    public static final double INCREMENT_PP = 0.1;
+    public static final double INCREMENT_PP = 0.2;
     public static final double INCREMENT_MUR = 0.0;
     public static final double DECREMENT_PP = 0.0;
     public static final double DECREMENT_MUR = 0.0;
     public static final double MIN_PP = 0.1;
     public static final double MIN_MUR = INITIAL_MEDIA_USER_RATE;
-    public static final double DECREMENT_BC_BY_UNFOLLOW = 0.05;
+    public static final double DECREMENT_BC_BY_UNFOLLOW = 0.02;
     //public static final double INCREMENT_BC = 0.00001;
 
     // user num = 5000
@@ -56,7 +56,7 @@ public class Const {
     public static final double DECREMENT_BC_BY_UNFOLLOW = 0.01;
     public static final double INCREMENT_BC = 0.000001;*/
 
-    public static final double COMFORT_RATE = 0.5;
+    public static final double COMFORT_RATE = 0.3;
     public static final double INITIAL_TOLERANCE = 0.8; // 0.8は決してunrealisticではない
     public static final double FEED_PREFERENTIALITY_RATE = 0.0;
 

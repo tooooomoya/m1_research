@@ -230,8 +230,12 @@ public class Agent {
 
     public void updatePostProb(){
         // post prob is set based on the marginal utility theory
-        this.postProb += Const.MU_PRAM * Math.log(this.recievedLikeCount * this.recievedLikeCount + 1);
-        if (this.recievedLikeCount > 0 && (this.id == 141 || this.id == 11 )) {
+        double increment = Const.MU_PRAM * Math.log(this.recievedLikeCount * this.recievedLikeCount + 1);
+        if(increment > 0.5){
+            increment = 0.5;
+        }
+        this.postProb += increment;
+        if (this.recievedLikeCount > 0 && (this.id == 93 || this.id == 32 || this.id == 8 )) {
              System.out.println("id : " + this.id + ", follower : " + this.followerNum + ", like " + this.recievedLikeCount);
         }
         if (this.postProb > 1.0) {
@@ -259,6 +263,13 @@ public class Agent {
             // if (Math.abs(post.getPostOpinion() - this.opinion) < 0.2) {
                 comfortPostNum++;
             }
+
+            ///
+            if (Math.abs(post.getPostOpinion() - this.opinion) > this.bc) {
+                this.bc -= Const.DECREMENT_BC_BY_UNFOLLOW;
+                }
+            ///
+            
         }
 
         if (postNum == 0)
@@ -266,8 +277,8 @@ public class Agent {
 
         double comfortPostRate = (double) comfortPostNum / postNum;
 
-        if(this.id == 640){
-            //System.out.println("compostnum : " + comfortPostNum + ", comfort : " + comfortPostRate);
+        if(this.id == rand.nextInt(NUM_OF_AGENTS)){
+            System.out.println("id: " + this.id + ", opinion: " + this.opinion +  ", compostnum : " + comfortPostNum + ", comfort : " + comfortPostRate);
         }
 
         if (comfortPostRate > Const.COMFORT_RATE && this.feed.size() > 2) {
@@ -384,6 +395,9 @@ public class Agent {
             this.useProb = 1.0;
         } else if (this.useProb < Const.MIN_MUR) {
             this.useProb = Const.MIN_MUR;
+        }
+        if(this.bc < Const.MINIMUM_BC){
+            this.bc = Const.MINIMUM_BC;
         }
 
 

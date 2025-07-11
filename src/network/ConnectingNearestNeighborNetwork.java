@@ -43,11 +43,14 @@ public class ConnectingNearestNeighborNetwork extends Network {
         //int currentSize = seedNodes;
         System.out.println("start making network");
 
-        double r = 0.07;
+        double r = 0.05;
         
-        int currentSize = 1;
-        //setEdge(0, 0, 1); // 最初のノードは自己ループなどで開始してもOK
-
+        int currentSize = 3;
+        setEdge(0, 1, 1);
+        setEdge(1, 0, 1);
+        setEdge(2, 0, 1);
+        setEdge(2, 1, 1);
+        
         while (currentSize < getSize()) {
             if (rand.nextDouble() < 1 - this.p) {
                 // 新しいノードを追加
@@ -82,27 +85,6 @@ public class ConnectingNearestNeighborNetwork extends Network {
             }
         }
 
-        // 全ノードを確認し、出次数0のノードがいたらランダムに誰かをフォロー
-        /*
-         * for (int i = 0; i < getSize(); i++) {
-         * boolean hasFollowee = false;
-         * for (int j = 0; j < getSize(); j++) {
-         * if (adjacencyMatrix[i][j] > 0) {
-         * hasFollowee = true;
-         * break;
-         * }
-         * }
-         * if (!hasFollowee) {
-         * int randomTarget;
-         * do {
-         * randomTarget = rand.nextInt(getSize());
-         * } while (randomTarget == i); // 自分自身は避ける
-         * 
-         * setEdge(i, randomTarget, rand.nextInt(5) + 1);
-         * }
-         * }
-         */
-
         // exp
         ///
         /*
@@ -114,9 +96,33 @@ public class ConnectingNearestNeighborNetwork extends Network {
          */
         ///
         ///
+        
+
+        
+
+        // 全ノードを確認し、出次数0のノードがいたらランダムに誰かをフォロー
+        
+          /*for (int i = 0; i < getSize(); i++) {
+          boolean hasFollowee = false;
+          for (int j = 0; j < getSize(); j++) {
+          if (adjacencyMatrix[i][j] > 0) {
+          hasFollowee = true;
+          break;
+          }
+          }
+          if (!hasFollowee) {
+          int randomTarget;
+          do {
+          randomTarget = rand.nextInt(getSize());
+          } while (randomTarget == i); // 自分自身は避ける
+          
+          setEdge(i, randomTarget, rand.nextInt(5) + 1);
+          }
+          }*/
+         
 
         // --- Step: 全エッジ収集 ---
-        List<Edge> edgeList = new ArrayList<>();
+        /*List<Edge> edgeList = new ArrayList<>();
         for (int from = 0; from < getSize(); from++) {
             for (int to = 0; to < getSize(); to++) {
                 if (adjacencyMatrix[from][to] > 0) {
@@ -126,7 +132,7 @@ public class ConnectingNearestNeighborNetwork extends Network {
         }
 
         // --- Step: エッジスワップを指定回数試行 ---
-        /*int rewiringTrials = 1000;
+        int rewiringTrials = 1000;
         int swapCount = 0;
 
         for (int t = 0; t < rewiringTrials; t++) {

@@ -16,7 +16,7 @@ def smooth_ratios(ratios, window_size=100):
     return smoothed
 
 
-def read_and_compute_ratios(data_dir, bins, max_index=15000):
+def read_and_compute_ratios(data_dir, bins, max_index=5000):
     ratios = {bin_name: [] for bin_name in bins}
     x = []
 

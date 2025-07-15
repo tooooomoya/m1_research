@@ -71,6 +71,10 @@ public class OpinionDynamics {
                 agentSet[i].setOpinion(newO);
             }*/
 
+            if(agentSet[i].getId() == 1){
+                agentSet[i].setIntrinsicOpinion(-1.0);
+            }
+
             /*if(agentSet[i].getId() < 20){
                 if(agentSet[i].getId() % 5 == 0){
                     agentSet[i].setIntrinsicOpinion(-0.8);

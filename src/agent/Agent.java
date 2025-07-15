@@ -231,12 +231,12 @@ public class Agent {
     public void updatePostProb(){
         // post prob is set based on the marginal utility theory
         double increment = Const.MU_PRAM * Math.log(this.recievedLikeCount * this.recievedLikeCount + 1);
-        if(increment > 0.5){
-            increment = 0.5;
+        if(increment > 0.3){
+            increment = 0.3;
         }
         this.postProb += increment;
         if (this.recievedLikeCount > 0 && (this.id == 93 || this.id == 32 || this.id == 8 )) {
-             System.out.println("id : " + this.id + ", follower : " + this.followerNum + ", like " + this.recievedLikeCount);
+             //System.out.println("id : " + this.id + ", follower : " + this.followerNum + ", like " + this.recievedLikeCount);
         }
         if (this.postProb > 1.0) {
             this.postProb = 1.0;
@@ -259,8 +259,8 @@ public class Agent {
                 //System.out.println("read post opinion " + post.getPostOpinion());
             }
             postNum++;
-            if (Math.abs(post.getPostOpinion() - this.opinion) < Const.MINIMUM_BC) {
-            // if (Math.abs(post.getPostOpinion() - this.opinion) < 0.2) {
+            //if (Math.abs(post.getPostOpinion() - this.opinion) < Const.MINIMUM_BC) {
+            if (Math.abs(post.getPostOpinion() - this.opinion) < 0.2) {
                 comfortPostNum++;
             }
 
@@ -277,11 +277,15 @@ public class Agent {
 
         double comfortPostRate = (double) comfortPostNum / postNum;
 
-        if(this.id == rand.nextInt(NUM_OF_AGENTS)){
-            System.out.println("id: " + this.id + ", opinion: " + this.opinion +  ", compostnum : " + comfortPostNum + ", comfort : " + comfortPostRate);
-        }
+        /*if(this.id == 582 || this.id == 680){
+            System.out.println("id: " + this.id + ", opinion: " + this.opinion + ", post num: " + postNum + ", compostnum : " + comfortPostNum + ", comfort : " + comfortPostRate);
+            for(Post post : this.feed){
+                System.out.println("\n post opinion : " + post.getPostOpinion());
+            }
+        }*/
 
-        if (comfortPostRate > Const.COMFORT_RATE && this.feed.size() > 2) {
+        // if (comfortPostRate > Const.COMFORT_RATE && this.feed.size() > 2) {
+        if(comfortPostRate > Const.COMFORT_RATE){
             this.postProb += Const.INCREMENT_PP * decayFunc(this.timeStep);
             this.useProb += Const.INCREMENT_MUR * decayFunc(this.timeStep);
         } else {
@@ -467,6 +471,10 @@ public class Agent {
     }
 
     public int follow() {
+        if(rand.nextDouble() > 0.1){
+            return -1;
+        }
+
         List<Integer> candidates = new ArrayList<>();
 
         for (Post post : this.feed) {
@@ -487,13 +495,17 @@ public class Agent {
 
     // 閲覧した投稿の中でBC以上の意見の差があったらunfollowする
     public int unfollow() {
+        if(rand.nextDouble() > 0.1){
+            return -1;
+        }
+
         int followeeNum = 0;
         for (int i = 0; i < NUM_OF_AGENTS; i++) {
             if (this.followList[i]) {
                 followeeNum++;
             }
         }
-        if (this.feed.size() <= 0.0 || followeeNum <= 2) {
+        if (this.feed.size() <= 0.0 || followeeNum <= 1) {
             return -1;
         }
 

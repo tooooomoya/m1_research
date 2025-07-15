@@ -49,30 +49,6 @@ public class AdminOptim {
         }
     }
 
-    /*public void updateRecommendPostQueue(List<Post> postList) {
-        int maxLike = -1;
-        List<Post> candidates = new ArrayList<>();
-
-        // 最大の「いいね」数を持つ投稿を集める
-        for (Post post : postList) {
-            int likes = post.getReceivedLike();
-            if (likes > maxLike) {
-                maxLike = likes;
-                candidates.clear();
-                candidates.add(post);
-            } else if (likes == maxLike) {
-                candidates.add(post);
-            }
-        }
-
-        // 複数候補がある場合はランダムに1つ選ぶ
-        if (!candidates.isEmpty()) {
-            Random rand = new Random();
-            Post chosen = candidates.get(rand.nextInt(candidates.size()));
-            addRecommendPost(chosen);
-        }
-    }*/
-
     public void updateAdjacencyMatrix(int userId, int followedId, int unfollowedId) {
 
         if (followedId >= 0) {
@@ -118,17 +94,16 @@ public class AdminOptim {
             recommendPostNum = 0;
         }
 
-        int addedPost = 0;
+       
         List<Post> tempFeed = new ArrayList<>();
         if (agentSet[userId].getId() % 100 == 0) {
             // System.out.println("post cash size : " +
             // agentSet[userId].getPostCash().getSize());
         }
         for (Post post : agentSet[userId].getPostCash().getAllPosts()) {
-            // if(this.W[userId][post.getPostUserId()] > 0.0){
-            tempFeed.add(post);
-            addedPost++;
-            // }
+            if(!agentSet[userId].getUnfollowList()[post.getPostUserId()]){
+                tempFeed.add(post);
+            }
         }
         Collections.shuffle(tempFeed, randomGenerater.rand);
         for(Post post : tempFeed){

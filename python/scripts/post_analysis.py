@@ -1,22 +1,26 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
+import numpy as np
 
-def smooth_ratios(ratios, window_size=100):
-    smoothed = {bin_name: [] for bin_name in ratios}
+def smooth_ratios_and_sems(ratios, window_size=100):
+    smoothed_means = {bin_name: [] for bin_name in ratios}
+    smoothed_sems = {bin_name: [] for bin_name in ratios}
     num_steps = len(next(iter(ratios.values())))
 
     for i in range(0, num_steps, window_size):
         for bin_name in ratios:
             window = ratios[bin_name][i:i+window_size]
             if window:
-                avg = sum(window) / len(window)
-                smoothed[bin_name].append(avg)
+                mean = np.mean(window)
+                sem = np.std(window, ddof=1) / np.sqrt(len(window))  # 標準誤差
+                smoothed_means[bin_name].append(mean)
+                smoothed_sems[bin_name].append(sem)
 
-    return smoothed
+    return smoothed_means, smoothed_sems
 
 
-def read_and_compute_ratios(data_dir, bins, max_index=20000):
+def read_and_compute_ratios(data_dir, bins, max_index=10000):
     ratios = {bin_name: [] for bin_name in bins}
     x = []
 
@@ -55,28 +59,35 @@ def plot_ratio_bins(x, ratios, bin_labels=None, window_size=100):
         print("❌ プロットできるデータがありません。")
         return
 
-    # スムージング
-    smoothed_ratios = smooth_ratios(ratios, window_size)
+    # スムージング + 標準誤差計算
+    smoothed_means, smoothed_sems = smooth_ratios_and_sems(ratios, window_size)
     smoothed_x = [x[i] for i in range(0, len(x), window_size)]
 
     plt.figure(figsize=(10, 6))
     colors = ["blue", "dodgerblue", "green", "orange", "red"]
 
-    for idx, (bin_name, values) in enumerate(smoothed_ratios.items()):
+    for idx, bin_name in enumerate(smoothed_means):
+        mean_values = smoothed_means[bin_name]
+        sem_values = smoothed_sems[bin_name]
         label = bin_labels[idx] if bin_labels and idx < len(bin_labels) else bin_name
         color = colors[idx % len(colors)]
-        plt.plot(smoothed_x, values, label=label, color=color, alpha=0.6)
+
+        plt.plot(smoothed_x, mean_values, label=label, color=color, alpha=0.8)
+        plt.fill_between(smoothed_x,
+                         np.array(mean_values) - np.array(sem_values),
+                         np.array(mean_values) + np.array(sem_values),
+                         color=color, alpha=0.2)
 
     plt.xlabel("Step", fontsize=14)
-    plt.ylabel("Post Ratio (100-step average)", fontsize=14)
-    #plt.title("Smoothed Ratio of Posts in Each Bin (10-step average)")
+    plt.ylabel("Post Ratio (100-step average ±1 SE)", fontsize=14)
     plt.ylim(0, 1)
     plt.legend(fontsize=12)
     plt.grid(True)
     plt.tight_layout()
-    output_path = "./results/figures/ratio_bins_smoothed.png"
+    output_path = "./results/figures/ratio_bins_smoothed_with_se.png"
     plt.savefig(output_path)
-    print(f"✅ 平滑化プロットを保存しました: {output_path}")
+    print(f"✅ 平滑化プロット（±SE帯つき）を保存しました: {output_path}")
+
 
 
 def main():

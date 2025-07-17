@@ -49,7 +49,7 @@ def analyze_and_plot_clustering_vs_indegree(step, output_path):
     }
 
 def main():
-    analyze_and_plot_clustering_vs_indegree(4000, "results/figures/clusteringCoefficinet_dist.png")
+    analyze_and_plot_clustering_vs_indegree(10000, "results/figures/clusteringCoefficinet_dist.png")
  
 if __name__ == "__main__":
     main()

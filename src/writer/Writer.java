@@ -277,4 +277,20 @@ public class Writer {
         }
     }
 
+    public void writeClusteringCoefficients(double[] clustering, String outputDirPath) {
+        String filePath = outputDirPath + "/clusterings/clustering_result_" + simulationStep + ".csv";
+
+        try (PrintWriter pw = new PrintWriter(new FileWriter(filePath, false))) {
+            // ヘッダー行
+            pw.println("agentId,clusteringCoefficient");
+
+            for (int i = 0; i < clustering.length; i++) {
+                pw.printf("%d,%.6f%n", i, clustering[i]);
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

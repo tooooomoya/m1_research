@@ -6,7 +6,9 @@ public class Const {
     public static final int NUM_OF_USER = 1000;
     public static final int NUM_OF_SEED_USER = (int) (0.003 * NUM_OF_USER);
     public static final int NUM_OF_SNS_USER = NUM_OF_USER;
-    public static final int RANDOM_SEED = 24;
+    public static final int RANDOM_SEED = 64;
+    // 30は4側インフルエンサーが強い
+    // 32は0側が安定して強い、４側は不安定だが中庸と拮抗
 
     // Admin feedback parameter
     // public static final double FEEDBACK_INCREASE_WEIGHT = 0.1;
@@ -33,9 +35,9 @@ public class Const {
     public static final double INITIAL_POST_PROB = 0.1;
     public static final double INITIAL_MEDIA_USER_RATE = 0.1;
     public static final double INCREMENT_PP = 0.3;
-    public static final double INCREMENT_MUR = 0.005;
+    public static final double INCREMENT_MUR = 0.05;
     public static final double DECREMENT_PP = 0.0;
-    public static final double DECREMENT_MUR = 0.005;
+    public static final double DECREMENT_MUR = 0.05;
     public static final double MIN_PP = 0.1;
     public static final double MIN_MUR = INITIAL_MEDIA_USER_RATE;
     public static final double DECREMENT_BC_BY_UNFOLLOW = 0.003;

@@ -52,7 +52,7 @@ public class OpinionDynamics {
     private void setNetwork() {
         ///// you can change the initial network bellow
         //this.network = new RandomNetwork(agentNum, connectionProbability);
-        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.6);
+        this.network = new ConnectingNearestNeighborNetwork(agentNum, 0.3);
         /////
 
         this.network.makeNetwork(agentSet);
@@ -65,34 +65,50 @@ public class OpinionDynamics {
             agentSet[i] = new Agent(i);
             agentSet[i].setFollowList(tempAdjacencyMatrix);
             agentSet[i].setFollowerNum(tempAdjacencyMatrix);
+            
             /*if(agentSet[i].getFollwerNum() > 10){
-                double newO = 2.0 * rand.nextDouble() -1.0;
-                agentSet[i].setIntrinsicOpinion(newO);
-                agentSet[i].setOpinion(newO);
+            double newO = 2.0 * rand.nextDouble() -1.0;
+            agentSet[i].setIntrinsicOpinion(newO);
+            agentSet[i].setOpinion(newO);
             }*/
 
-            if(agentSet[i].getId() == 1){
-                agentSet[i].setIntrinsicOpinion(-1.0);
-            }
-
-            /*if(agentSet[i].getId() < 20){
-                if(agentSet[i].getId() % 5 == 0){
-                    agentSet[i].setIntrinsicOpinion(-0.8);
-                    agentSet[i].setOpinion(-0.8);
-                }else if(agentSet[i].getId() % 5 == 1){
-                    agentSet[i].setIntrinsicOpinion(-0.4);
-                    agentSet[i].setOpinion(-0.4);
-                }else if(agentSet[i].getId() % 5 == 2){
+            /*switch (agentSet[i].getId()) {
+                case 0 -> {
                     agentSet[i].setIntrinsicOpinion(0.0);
-                    agentSet[i].setOpinion(0.0);
-                }else if(agentSet[i].getId() % 5 == 3){
-                    agentSet[i].setIntrinsicOpinion(0.4);
-                    agentSet[i].setOpinion(0.4);
-                }else if(agentSet[i].getId() % 5 == 4){
+                    agentSet[i].setTolerance(1.0);
+                }
+                case 3 -> {
                     agentSet[i].setIntrinsicOpinion(0.8);
-                    agentSet[i].setOpinion(0.8);
+                    agentSet[i].setTolerance(1.0);
+                }
+                case 4 -> {
+                    agentSet[i].setIntrinsicOpinion(-0.8);
+                    agentSet[i].setTolerance(1.0);
+                }
+                case 1 -> {
+                    agentSet[i].setIntrinsicOpinion(-0.4);
+                    agentSet[i].setTolerance(1.0);
+                }
+                case 2 -> {
+                    agentSet[i].setIntrinsicOpinion(0.4);
+                    agentSet[i].setTolerance(1.0);
+                }
+                default -> {
                 }
             }*/
+            switch (agentSet[i].getId()) {
+                case 0 -> {
+                    agentSet[i].setIntrinsicOpinion(0.0);
+                }
+                case 1 -> {
+                    agentSet[i].setIntrinsicOpinion(-1.0);
+                }
+                case 2 -> {
+                    agentSet[i].setIntrinsicOpinion(1.0);
+                }
+                default -> {
+                }
+            }
         }
     }
 
@@ -336,6 +352,7 @@ public class OpinionDynamics {
                     Arrays.fill(repostNetwork1, 0);
                 }
                 writer.writeDegrees(W, folerPath);
+                writer.writeClusteringCoefficients(analyzer.computeClusteringCoefficients(W), folerPath);
             }
             // export metrics
             writer.setOpinionVar(analyzer.computeVarianceOpinion(agentSet));

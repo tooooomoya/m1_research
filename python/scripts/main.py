@@ -4,10 +4,11 @@ import subprocess
 scripts = [
     "post_analysis.py",
     "degree_analysis.py",
+    "clustering_analysis.py",
     "feed_analysis.py",
     "latent_opinion_analysis.py",
-    "opinion_change_gif_maker.py",
-    "opinion_variance_analysis.py"
+    "opinion_variance_analysis.py",
+    "opinion_change_gif_maker.py"
 ]
 
 for script in scripts:

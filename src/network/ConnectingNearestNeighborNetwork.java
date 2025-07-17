@@ -43,13 +43,13 @@ public class ConnectingNearestNeighborNetwork extends Network {
         //int currentSize = seedNodes;
         System.out.println("start making network");
 
-        double r = 0.05;
+        double r = 0.01;
         
         int currentSize = 3;
         setEdge(0, 1, 1);
+        setEdge(0, 2, 1);
         setEdge(1, 0, 1);
         setEdge(2, 0, 1);
-        setEdge(2, 1, 1);
         
         while (currentSize < getSize()) {
             if (rand.nextDouble() < 1 - this.p) {

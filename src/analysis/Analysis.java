@@ -207,4 +207,39 @@ public class Analysis {
     public double getPostOpinionVar() {
         return postOpinionVar;
     }
+
+    public double[] computeClusteringCoefficients(double[][] adj) {
+        double[] clustering = new double[n];
+
+        for (int i = 0; i < n; i++) {
+            // 隣接ノード（in + out）を集める（自身は含めない）
+            Set<Integer> neighbors = new HashSet<>();
+            for (int j = 0; j < n; j++) {
+                if (adj[i][j] > 0.0) neighbors.add(j); // out-neighbor
+                if (adj[j][i] > 0.0) neighbors.add(j); // in-neighbor
+            }
+            neighbors.remove(i); // 自分自身を除く
+
+            int k_total = neighbors.size();
+            if (k_total < 2) {
+                clustering[i] = 0.0;
+                continue;
+            }
+
+            // 隣接ノード間の辺を数える（三角形を構成する候補）
+            int linkCount = 0;
+            for (int u : neighbors) {
+                for (int v : neighbors) {
+                    if (u != v && adj[u][v] > 0.0) {
+                        linkCount++;
+                    }
+                }
+            }
+
+            // 有向グラフでは最大で k_total * (k_total - 1) 通りのリンクが存在可能
+            clustering[i] = (double) linkCount / (k_total * (k_total - 1));
+        }
+
+        return clustering;
+    }
 }

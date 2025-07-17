@@ -296,6 +296,27 @@ public class Agent {
 
         this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
 
+
+        /*switch (this.id) {
+            case 0:
+                this.opinion = 0.0;
+                break;
+            case 1:
+                this.opinion = 0.8;
+                break;
+            case 2:
+                this.opinion = -0.8;
+                break;
+            case 3:
+                this.opinion = -0.4;
+                break;
+            case 4:
+                this.opinion = 0.4;
+                break;
+            default:
+                break;
+        }*/
+
         // exp 3-3 : infulencerの買収
         ///
         

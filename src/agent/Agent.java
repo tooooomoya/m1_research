@@ -2,7 +2,7 @@ package agent;
 
 import constants.Const;
 import java.util.*;
-import rand.randomGenerater;
+import rand.randomGenerator;
 
 public class Agent {
     private int id;
@@ -11,7 +11,7 @@ public class Agent {
     private double bc; // Bounded Confidence
     private double intrinsicOpinion;
     private final int NUM_OF_AGENTS = Const.NUM_OF_SNS_USER;
-    private static final Random rand = randomGenerater.rand;
+    private static final Random rand = randomGenerator.rand;
     private int toPost; // ある時刻において何件の投稿をするか
     private int numOfPosts; // 一度に何件の投稿を閲覧するか
     private int opinionClass;
@@ -24,7 +24,6 @@ public class Agent {
     private int timeStep;
     private boolean[] followList = new boolean[NUM_OF_AGENTS];
     private boolean[] unfollowList = new boolean[NUM_OF_AGENTS];
-    private Set<Integer> alreadyAddedPostIds = new HashSet<>();
     private int followerNum;
     private boolean used;
     private int recievedLikeCount;
@@ -136,9 +135,6 @@ public class Agent {
 
     public void setBoundedConfidence(double value) {
         this.bc = value;
-        if (this.bc > Const.BOUNDED_CONFIDENCE) {
-            // this.bc = Const.BOUNDED_CONFIDENCE;
-        }
     }
 
     public void setTimeStep(int time) {
@@ -194,7 +190,7 @@ public class Agent {
     }
 
     public void addToPostCash(Post post) {
-        if (!this.alreadyAddedPostIds.contains(post.getPostId()) && post.getPostUserId() != this.id
+        if (post.getPostUserId() != this.id
                 && !this.unfollowList[post.getPostUserId()]) {
             this.postCash.addPost(post);
         }
@@ -219,7 +215,7 @@ public class Agent {
     }
 
     public void addPostToFeed(Post post) {
-        if (!this.alreadyAddedPostIds.contains(post.getPostId()) || !this.unfollowList[post.getPostUserId()]) {
+        if (!this.unfollowList[post.getPostUserId()]) {
             this.feed.add(post);
         }
     }
@@ -296,35 +292,14 @@ public class Agent {
 
         this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
 
-
-        /*switch (this.id) {
-            case 0:
-                this.opinion = 0.0;
-                break;
-            case 1:
-                this.opinion = 0.8;
-                break;
-            case 2:
-                this.opinion = -0.8;
-                break;
-            case 3:
-                this.opinion = -0.4;
-                break;
-            case 4:
-                this.opinion = 0.4;
-                break;
-            default:
-                break;
-        }*/
-
         // exp 3-3 : infulencerの買収
         ///
         
-          /*if ((this.id == 34 || this.id == 21) && this.timeStep > 5000 ) { 
-            this.opinion += 0.0001;
+          if ((this.id == 7 || this.id == 6) && this.timeStep > 2000 ) { 
+            this.opinion += 0.05;
           } else {
             this.opinion = this.tolerance * this.intrinsicOpinion + (1 - this.tolerance) * (temp / postNum);
-          }*/
+          }
          
         ///    
 
@@ -531,7 +506,6 @@ public class Agent {
         }
 
         List<Integer> dislikeUser = new ArrayList<>();
-        Collections.shuffle(this.feed);
         for (Post post : this.feed) {
             if (Math.abs(post.getPostOpinion() - this.opinion) > this.bc && this.followList[post.getPostUserId()]) {
                 this.unfollowList[post.getPostUserId()] = true;

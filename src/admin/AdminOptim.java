@@ -3,7 +3,7 @@ package admin;
 import agent.*;
 import constants.Const;
 import java.util.*;
-import rand.randomGenerater;
+import rand.randomGenerator;
 
 public class AdminOptim {
     private int n;
@@ -19,7 +19,11 @@ public class AdminOptim {
     }
 
     public double[][] getAdjacencyMatrix() {
-        return this.W.clone();
+        double[][] copy = new double[n][n];
+        for (int i = 0; i < n; i++) {
+            copy[i] = Arrays.copyOf(this.W[i], n);
+        }
+        return copy;
     }
 
     public int[] getFollowerList() {
@@ -52,34 +56,12 @@ public class AdminOptim {
     public void updateAdjacencyMatrix(int userId, int followedId, int unfollowedId) {
 
         if (followedId >= 0) {
-            // this.W[userId][followedId] = Const.FOLLOW_INCREASE_WEIGHT;
             this.W[userId][followedId] = 1.0;
         }
         if (unfollowedId >= 0) {
             this.W[userId][unfollowedId] = 0.0;
         }
 
-        /*
-         * double rowSum = 0.0;
-         * for (int j = 0; j < n; j++) {
-         * if (this.W[userId][j] > 0.5) {
-         * this.W[userId][j] = 0.5;
-         * }else if(this.W[userId][j] < 0.0){
-         * this.W[userId][j] = 0.0;
-         * }
-         * rowSum += this.W[userId][j];
-         * }
-         * if (rowSum > 0.0) {
-         * for (int j = 0; j < n; j++) {
-         * this.W[userId][j] /= rowSum;
-         * }
-         * }
-         * if(userId == 10){
-         * for(int i = 0; i < n ; i++){
-         * System.out.println(this.W[userId][i]);
-         * }
-         * }
-         */
         setFollowerNumArray();
     }
 
@@ -94,19 +76,15 @@ public class AdminOptim {
             recommendPostNum = 0;
         }
 
-       
         List<Post> tempFeed = new ArrayList<>();
-        if (agentSet[userId].getId() % 100 == 0) {
-            // System.out.println("post cash size : " +
-            // agentSet[userId].getPostCash().getSize());
-        }
+
         for (Post post : agentSet[userId].getPostCash().getAllPosts()) {
-            if(!agentSet[userId].getUnfollowList()[post.getPostUserId()]){
+            if (!agentSet[userId].getUnfollowList()[post.getPostUserId()]) {
                 tempFeed.add(post);
             }
         }
-        Collections.shuffle(tempFeed, randomGenerater.rand);
-        for(Post post : tempFeed){
+        Collections.shuffle(tempFeed, randomGenerator.rand);
+        for (Post post : tempFeed) {
             agentSet[userId].addPostToFeed(post);
         }
     }

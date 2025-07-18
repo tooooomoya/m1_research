@@ -12,7 +12,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import network.*;
-import rand.randomGenerater;
+import rand.randomGenerator;
 import writer.Writer;
 
 public class OpinionDynamics {
@@ -29,7 +29,7 @@ public class OpinionDynamics {
     private RepostVisualize repostGephi;
     private double connectionProbability = Const.CONNECTION_PROB_OF_RANDOM_NW;
     private AdminOptim admin;
-    private static final Random rand = randomGenerater.rand;
+    private static final Random rand = randomGenerator.rand;
     private int[][] repostNetwork;
 
     // constructor
@@ -65,12 +65,6 @@ public class OpinionDynamics {
             agentSet[i] = new Agent(i);
             agentSet[i].setFollowList(tempAdjacencyMatrix);
             agentSet[i].setFollowerNum(tempAdjacencyMatrix);
-            
-            /*if(agentSet[i].getFollwerNum() > 10){
-            double newO = 2.0 * rand.nextDouble() -1.0;
-            agentSet[i].setIntrinsicOpinion(newO);
-            agentSet[i].setOpinion(newO);
-            }*/
 
             /*switch (agentSet[i].getId()) {
                 case 0 -> {
@@ -206,24 +200,6 @@ public class OpinionDynamics {
                 admin.AdminFeedback(agentId, agentSet, latestPostList);
                 analyzer.setFeedMap(agent);
                 agent.updatePostProb();
-
-                /*int likedId = -1;
-
-                for (int i = 0; i < 5; i++) {
-                    Post likedPost = agent.like();
-                    if (likedPost != null) {
-                        repostNetwork[agentId][likedPost.getPostUserId()]++;
-                        for (Agent otherAgent : agentSet) {
-                            if (W[otherAgent.getId()][agentId] > 0.00) { // follower全員のpostCashに追加
-                                otherAgent.addToPostCash(likedPost);
-                            }
-                        }
-                        likedId = likedPost.getPostUserId();
-                    }
-                    if (likedId >= 0) {
-                        agentSet[likedId].receiveLike();
-                    }
-                }*/
 
                 List<Post> repostedPostList = agent.repost();
                 for(Post repostedPost : repostedPostList){

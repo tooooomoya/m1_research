@@ -2,13 +2,13 @@ package constants;
 
 public class Const {
     // simulation parameter
-    public static final int MAX_SIMULATION_STEP = 20000;
+    public static final int MAX_SIMULATION_STEP = 5000;
     public static final int NUM_OF_USER = 1000;
     public static final int NUM_OF_SEED_USER = (int) (0.003 * NUM_OF_USER);
     public static final int NUM_OF_SNS_USER = NUM_OF_USER;
-    public static final int RANDOM_SEED = 64;
-    // 30は4側インフルエンサーが強い
-    // 32は0側が安定して強い、４側は不安定だが中庸と拮抗
+    public static final int RANDOM_SEED = 1896;
+    // 64が綺麗
+    // 1896も綺麗
 
     // Admin feedback parameter
     // public static final double FEEDBACK_INCREASE_WEIGHT = 0.1;

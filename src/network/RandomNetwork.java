@@ -2,11 +2,11 @@ package network;
 
 import agent.Agent;
 import java.util.Random;
-import rand.randomGenerater;
+import rand.randomGenerator;
 
 public class RandomNetwork extends Network {
     private double connectionProbability; // エッジを張る確率
-    private Random rand = randomGenerater.rand;
+    private Random rand = randomGenerator.rand;
 
     // Constructor
     public RandomNetwork(int size, double connectionProbability) {
